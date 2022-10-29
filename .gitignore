@@ -1,3 +1,7 @@
+# Custom
+
+.DS_Store
+
 # Logs
 logs
 *.log

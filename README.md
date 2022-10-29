@@ -1,2 +1,3 @@
 # weather-display
-Weather display for our home
+
+Weather display for our home.
