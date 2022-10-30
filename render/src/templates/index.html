@@ -40,6 +40,7 @@
     }
 
     /* Reset styles */
+
     html,
     body,
     div,
@@ -70,7 +71,7 @@
       box-sizing: inherit;
     }
 
-    /* Typography */
+    /* Variables */
 
     :root {
       --text-size-xs: 0.833rem;
@@ -93,12 +94,21 @@
       --space-8: 32rem;
     }
 
+    /* Typography */
+
     html {
       font-family: 'Hyperlegible';
+      /*
+       * Base font-size. Ideally, everything else scales appropriately when this is changed.
+
+       * This is large because we render the page as a PNG. The device has quite high DPI.
+       * @see: https://dpi.lv/
+       */
       font-size: 32px;
     }
 
     .Container {
+      /* Default to bold */
       font-weight: bold;
     }
 
@@ -143,6 +153,7 @@
     }
 
     /* Main layout */
+
     html,
     body {
       width: 100%;
@@ -171,6 +182,7 @@
     }
 
     /* Top section */
+
     .Top {
       display: flex;
       justify-content: space-between;
@@ -211,7 +223,6 @@
       justify-content: center;
       margin-top: var(--space-2);
     }
-
 
     /* Middle section */
 
@@ -395,33 +406,34 @@
 <body>
   <main class="Container">
     <div class="Top">
-      <p class="Date">Monday, Oct 17</p>
-      <h1 class="Location text-xl">Espoo</h1>
+      <p id="date" class="Date">Monday, Oct 17</p>
+      <h1 id="location" class="Location text-xl">Espoo</h1>
       <div class="SystemInfo">
         <span class="SystemInfo-refresh-time"><img class="SystemInfo-refresh-time-icon" src="refresh.svg" /> <span
-            class="SystemInfo-refresh-time-value">06:12</span></span>
-        <img class="SystemInfo-battery-icon" src="battery_75.svg" />
+            class="SystemInfo-refresh-time-value" id="refresh-timestamp">06:12</span></span>
+        <img id="battery-icon" class="SystemInfo-battery-icon" src="battery_75.svg" />
       </div>
     </div>
 
     <div class="Middle">
       <div class="CurrentWeather">
         <div class="CurrentWeather-icon">
-          <i class="wi wi-day-cloudy"></i>
+          <i id="current-weather-icon" class="wi wi-day-cloudy"></i>
         </div>
         <p class="CurrentWeather-temperature">
-          <span class="CurrentWeather-temperature-value">17</span>
+          <span id="current-weather-temperature" class="CurrentWeather-temperature-value">17</span>
           <span class="CurrentWeather-temperature-unit">°C</span>
         </p>
         <div class="CurrentWeather-details">
-          <h2>Partly sunny</h2>
+          <h2 id="current-weather-description">Partly sunny</h2>
           <ul class="WeatherDetails">
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <i class="WeatherDetails-item-icon wi wi-strong-wind"></i>
               </div>
               <div>
-                <span class="WeatherDetails-item-value">5</span><span class="WeatherDetails-item-unit">m/s</span>
+                <span id="current-weather-wind" class="WeatherDetails-item-value">5</span><span
+                  class="WeatherDetails-item-unit">m/s</span>
               </div>
             </li>
 
@@ -430,7 +442,8 @@
                 <img class="WeatherDetails-item-icon WeatherDetails-item-icon--svg" src="humidity.svg" />
               </div>
               <div>
-                <span class="WeatherDetails-item-value">23</span><span class="WeatherDetails-item-unit">%</span>
+                <span id="current-rain-probability" class="WeatherDetails-item-value">23</span><span
+                  class="WeatherDetails-item-unit">%</span>
               </div>
             </li>
 
@@ -439,7 +452,7 @@
                 <i class="WeatherDetails-item-icon wi wi-sunrise"></i>
               </div>
               <div>
-                <span class="WeatherDetails-item-value">6:12</span>
+                <span id="current-weather-sunrise" class="WeatherDetails-item-value">6:12</span>
               </div>
             </li>
 
@@ -448,7 +461,7 @@
                 <i class="WeatherDetails-item-icon wi wi-sunset"></i>
               </div>
               <div>
-                <span class="WeatherDetails-item-value">19:01</span>
+                <span id="current-weather-sunset" class="WeatherDetails-item-value">19:01</span>
               </div>
             </li>
 
@@ -457,7 +470,8 @@
                 <i class="WeatherDetails-item-icon wi wi-day-sunny"></i>
               </div>
               <div>
-                <span class="WeatherDetails-item-value">10</span><span class="WeatherDetails-item-unit">h</span> <span
+                <span id="current-weather-daylight-hours" class="WeatherDetails-item-value">10</span><span
+                  class="WeatherDetails-item-unit">h</span> <span id="current-weather-daylight-minutes"
                   class="WeatherDetails-item-value">29</span><span class="WeatherDetails-item-unit">m</span>
               </div>
             </li>
@@ -467,7 +481,8 @@
                 <i class="WeatherDetails-item-icon wi wi-hot"></i>
               </div>
               <div>
-                <span class="WeatherDetails-item-value">UVI 3</span><span class="WeatherDetails-item-unit">at 12</span>
+                <span id="current-weather-uvi-at-12" class="WeatherDetails-item-value">UVI 3</span><span
+                  class="WeatherDetails-item-unit">at 12</span>
               </div>
             </li>
           </ul>
@@ -666,8 +681,6 @@
             </div>
           </div>
         </div>
-
-
       </div>
     </div>
   </main>

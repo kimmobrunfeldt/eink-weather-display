@@ -1,3 +1,5 @@
+import * as turf from '@turf/turf'
+
 type Coordinate = {
   lat: number
   lon: number
@@ -14,7 +16,11 @@ type LocalWeather = {
 
 export function getLocalWeather(location: Coordinate): LocalWeather {
   const point = turf.point([location.lon, location.lat])
-  const bbox = turf.bbox(turf.buffer(point, 10, 'kilometers'))
+  console.log(point)
+  const buffered = turf.buffer(point, 10, { units: 'kilometers' })
+  console.log(buffered)
+  const bbox = turf.bbox(buffered)
+
   return {
     current: {
       time: new Date(),

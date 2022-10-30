@@ -1,19 +1,13 @@
-import fs from 'fs'
-import path from 'path'
 import puppeteer from 'puppeteer'
-;(async () => {
-  const { page, browser } = await createPuppeteer()
-  const html = await fs.readFileSync(
-    path.join(__dirname, 'templates/weather.html'),
-    { encoding: 'utf8' }
-  )
-  const png = await takeScreenshot(page, html, '#test')
-  fs.writeFileSync('out.png', png, { encoding: null })
-  await browser.close()
-})()
 
-async function createPuppeteer(
-  { width, height }: puppeteer.Viewport = { width: 800, height: 480 }
+const createDefaults = () => ({
+  // 10.3" Waveshare e-ink display resolution
+  width: 1872,
+  height: 1404,
+})
+
+export async function createPuppeteer(
+  { width, height }: puppeteer.Viewport = createDefaults()
 ) {
   // Launch headless Chrome. Turn off sandbox so Chrome can run under root
   const browser = await puppeteer.launch({ args: ['--no-sandbox'] })
@@ -30,11 +24,11 @@ async function createPuppeteer(
   }
 }
 
-async function takeScreenshot(
+export async function takeScreenshot(
   page: puppeteer.Page,
   html: string,
   selector?: string
-) {
+): Promise<Buffer> {
   await page.setContent(html, { waitUntil: 'networkidle0' })
 
   let element
@@ -44,11 +38,11 @@ async function takeScreenshot(
   }
 
   if (element) {
-    return await element.screenshot({ encoding: 'binary' })
+    return (await element.screenshot({ encoding: 'binary' })) as Buffer
   }
 
-  return await page.screenshot({
+  return (await page.screenshot({
     fullPage: true,
     encoding: 'binary',
-  })
+  })) as Buffer
 }

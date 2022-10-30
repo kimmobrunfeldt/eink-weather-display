@@ -1,5 +1,5 @@
 #!/usr/bin/env ./bin/ts-node
-import { getLocalWeather } from 'src/fmi'
+import { generateHtml } from 'src/core'
 import yargs from 'yargs'
 
 const argv = yargs(process.argv.slice(2))
@@ -10,8 +10,8 @@ const argv = yargs(process.argv.slice(2))
   .parseSync()
 
 async function main() {
-  const weather = getLocalWeather({ lat: argv.lat, lon: argv.lon })
-  console.log(argv, weather)
+  const html = await generateHtml(argv)
+  console.log(html)
 }
 
 main()

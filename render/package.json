@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server src/templates/ -c0"
+    "start": "http-server src/templates/ -c 0"
   },
   "author": "",
   "license": "ISC",
@@ -13,6 +13,8 @@
     "@turf/turf": "^6.5.0",
     "axios": "^1.1.3",
     "fast-xml-parser": "^4.0.11",
+    "posthtml": "^0.16.6",
+    "posthtml-inline-assets": "^3.1.0",
     "puppeteer": "^19.2.0",
     "puppeteer-core": "^19.2.0",
     "typescript": "^4.8.4",
@@ -20,7 +22,6 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
-    "@types/turf": "^3.5.32",
     "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "eslint": "^8.26.0",
