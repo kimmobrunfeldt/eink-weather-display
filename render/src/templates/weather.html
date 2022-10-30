@@ -71,37 +71,75 @@
     }
 
     /* Typography */
+
+    :root {
+      --text-size-xs: 0.833rem;
+      --text-size-s: 0.9rem;
+      --text-size: 1rem;
+      --text-size-m: 1.2rem;
+      --text-size-l: 1.44rem;
+      --text-size-xl: 1.728rem;
+      --text-size-xxl: 2.074rem;
+      --text-size-xxxl: 2.488rem;
+
+      --space-0: 0.125rem;
+      --space-1: 0.25rem;
+      --space-2: 0.5rem;
+      --space-3: 1rem;
+      --space-4: 2rem;
+      --space-5: 4rem;
+      --space-6: 8rem;
+      --space-7: 16rem;
+      --space-8: 32rem;
+    }
+
     html {
       font-family: 'Hyperlegible';
-      font-size: 16px;
+      font-size: 32px;
     }
 
     .Container {
       font-weight: bold;
     }
 
+    .text {
+      font-size: var(--text-size);
+    }
+
     .text-xs {
-      font-size: 12px;
+      font-size: var(--text-size-xs);
     }
 
     .text-s {
-      font-size: 14px;
+      font-size: var(--text-size-s);
     }
 
-    .text {
-      font-size: 16px;
+    .text-m {
+      font-size: var(--text-size-m);
     }
 
-    .text-lg {
-      font-size: 32px;
+    .text-l {
+      font-size: var(--text-size-l);
+    }
+
+    .text-xl {
+      font-size: var(--text-size-xl);
+    }
+
+    .text-xxl {
+      font-size: var(--text-size-xxl);
+    }
+
+    .text-xxxl {
+      font-size: var(--text-size-xxxl);
     }
 
     h1 {
-      font-size: 32px;
+      font-size: var(--text-size-xxl)
     }
 
     h2 {
-      font-size: 18px;
+      font-size: var(--text-size-xl);
     }
 
     /* Main layout */
@@ -121,17 +159,15 @@
     .Top,
     .Middle,
     .Bottom {
-      padding-left: 10px;
-      padding-right: 10px;
+      padding-left: var(--space-3);
+      padding-right: var(--space-3);
     }
 
     .Middle {
       flex: 1;
-    }
-
-    .Bottom {
-      padding-left: 20px;
-      padding-right: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
     }
 
     /* Top section */
@@ -139,7 +175,7 @@
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      padding-top: 8px;
+      margin-top: var(--space-2);
     }
 
     .SystemInfo {
@@ -148,22 +184,44 @@
     }
 
     .SystemInfo-refresh-time {
-      margin-right: 8px;
+      display: flex;
+      align-items: center;
+      margin-right: var(--space-2);
     }
 
-    .SystemInfo-refresh-time .wi {
-      font-size: 18px;
+    .SystemInfo-refresh-time-value {
+      margin-top: 0.12rem;
     }
+
+    .SystemInfo-refresh-time-icon {
+      height: var(--text-size);
+      margin-right: var(--space-1);
+    }
+
+    .SystemInfo-battery-icon {
+      height: var(--text-size-xl);
+    }
+
+    .Location {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-top: var(--space-2);
+    }
+
+
+    /* Middle section */
 
     .CurrentWeather {
       display: flex;
       align-items: center;
-      height: 100%;
     }
 
     .CurrentWeather-icon {
-      font-size: 140px;
-      margin-top: 10px;
+      font-size: 28vh;
     }
 
     .CurrentWeather-icon>* {
@@ -176,13 +234,13 @@
     }
 
     .CurrentWeather-temperature-value {
-      font-size: 160px;
+      font-size: 28vh;
       font-weight: normal;
     }
 
     .CurrentWeather-temperature-unit {
-      font-size: 40px;
-      margin-top: 24px;
+      font-size: 5vh;
+      margin-top: 4.8vh;
       margin-left: 4px;
     }
 
@@ -195,10 +253,11 @@
 
     .CurrentWeather-details {
       flex-direction: column;
+      padding-left: 0.8rem;
     }
 
     .CurrentWeather-details h2 {
-      margin-bottom: 8px;
+      margin-bottom: var(--space-2);
     }
 
     .WeatherDetails {
@@ -212,7 +271,7 @@
     .WeatherDetails-item {
       display: flex;
       align-items: center;
-      height: 35px;
+      height: 2.5rem;
       width: 50%;
     }
 
@@ -220,31 +279,60 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      width: 30px;
-      margin-right: 10px;
+      width: var(--text-size-xl);
+      margin-right: var(--space-3);
     }
 
     .WeatherDetails-item-icon {
-      font-size: 20px;
+      font-size: var(--text-size-l);
     }
 
     .WeatherDetails-item-icon--svg {
-      height: 23px;
+      height: var(--text-size-l);
     }
 
     .WeatherDetails-item-value {
       margin-right: 4px;
+      font-size: var(--text-size-m);
     }
 
     .WeatherDetails-item-unit {
-      font-size: 0.85em;
+      font-size: var(--text-size);
+    }
+
+    /* Bottom section */
+
+    .Forecast {
+      padding-left: var(--space-4);
+      padding-right: var(--space-3);
     }
 
     .Forecast {
       display: flex;
       flex-direction: row;
-      justify-content: space-between;
-      padding-bottom: 30px;
+      padding-bottom: var(--space-4);
+    }
+
+    .Forecast>* {
+      width: 6rem;
+    }
+
+    .Forecast:last-of-type>* {
+      width: 6.5rem;
+    }
+
+    .Forecast:first-of-type {
+      padding-bottom: 2.5rem;
+    }
+
+    .Forecast-today {
+      font-size: var(--text-size-xl);
+      width: 6rem;
+    }
+
+    .Forecast-week {
+      font-size: var(--text-size-xl);
+      width: 6rem;
     }
 
     .Forecast-item {
@@ -254,12 +342,19 @@
     }
 
     .Forecast-item-time {
-      margin-bottom: 8px;
+      margin-bottom: var(--space-1);
     }
 
     .Forecast-item-icon {
-      font-size: 50px;
-      margin-bottom: 16px;
+      font-size: 2.3rem;
+      margin-bottom: var(--space-2);
+      background: #eee;
+      width: 4.2rem;
+      height: 4.2rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 1rem;
     }
 
     .Forecast-item-numbers {
@@ -267,11 +362,16 @@
     }
 
     .Forecast-item-value {
-      margin-right: 4px;
+      display: inline-block;
+      margin-right: var(--space-1);
+      width: 1.8rem;
+      text-align: right;
     }
 
     .Forecast-item-unit {
-      font-size: 0.85em;
+      display: inline-block;
+      font-size: var(--text-size-s);
+      width: 1.8rem;
     }
 
     .Forecast-item-temperature {
@@ -281,11 +381,11 @@
     }
 
     .Forecast-item-temperature .Forecast-item-value {
-      margin-right: 1px;
+      margin-right: 2px;
     }
 
     .Forecast-item-temperature .Forecast-item-unit {
-      font-size: 0.8em;
+      font-size: var(--text-size-s);
       position: relative;
       top: 1px;
     }
@@ -294,13 +394,13 @@
 
 <body>
   <main class="Container">
-    <div class="Top text-s">
-      <p class="Date">Monday, 17 Oct</p>
-      <h1 class="Location text-lg">Espoo</h1>
+    <div class="Top">
+      <p class="Date">Monday, Oct 17</p>
+      <h1 class="Location text-xl">Espoo</h1>
       <div class="SystemInfo">
-        <span class="SystemInfo-refresh-time"><i class="wi wi-time-10"></i> <span
+        <span class="SystemInfo-refresh-time"><img class="SystemInfo-refresh-time-icon" src="refresh.svg" /> <span
             class="SystemInfo-refresh-time-value">06:12</span></span>
-        <span class="SystemInfo-battery">🀳</span>
+        <img class="SystemInfo-battery-icon" src="battery_75.svg" />
       </div>
     </div>
 
@@ -324,6 +424,7 @@
                 <span class="WeatherDetails-item-value">5</span><span class="WeatherDetails-item-unit">m/s</span>
               </div>
             </li>
+
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <img class="WeatherDetails-item-icon WeatherDetails-item-icon--svg" src="humidity.svg" />
@@ -332,6 +433,7 @@
                 <span class="WeatherDetails-item-value">23</span><span class="WeatherDetails-item-unit">%</span>
               </div>
             </li>
+
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <i class="WeatherDetails-item-icon wi wi-sunrise"></i>
@@ -340,6 +442,7 @@
                 <span class="WeatherDetails-item-value">6:12</span>
               </div>
             </li>
+
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <i class="WeatherDetails-item-icon wi wi-sunset"></i>
@@ -348,6 +451,7 @@
                 <span class="WeatherDetails-item-value">19:01</span>
               </div>
             </li>
+
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <i class="WeatherDetails-item-icon wi wi-day-sunny"></i>
@@ -357,6 +461,7 @@
                   class="WeatherDetails-item-value">29</span><span class="WeatherDetails-item-unit">m</span>
               </div>
             </li>
+
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <i class="WeatherDetails-item-icon wi wi-hot"></i>
@@ -365,13 +470,17 @@
                 <span class="WeatherDetails-item-value">UVI 3</span><span class="WeatherDetails-item-unit">at 12</span>
               </div>
             </li>
-
           </ul>
         </div>
       </div>
+
     </div>
+
     <div class="Bottom">
       <div class="Forecast">
+        <div class="Forecast-today">
+          Today
+        </div>
         <div class="Forecast-item">
           <div class="Forecast-item-time">9:00</div>
           <div class="Forecast-item-icon-container">
@@ -424,7 +533,7 @@
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
-              <span class="Forecast-item-value">6</span><span class="Forecast-item-unit">°C</span>
+              <span class="Forecast-item-value">7</span><span class="Forecast-item-unit">°C</span>
             </div>
             <div>
               <span class="Forecast-item-value">0.4</span><span class="Forecast-item-unit">m/s</span>
@@ -439,7 +548,7 @@
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
-              <span class="Forecast-item-value">5</span><span class="Forecast-item-unit">°C</span>
+              <span class="Forecast-item-value">15</span><span class="Forecast-item-unit">°C</span>
             </div>
             <div>
               <span class="Forecast-item-value">2</span><span class="Forecast-item-unit">m/s</span>
@@ -491,6 +600,74 @@
             </div>
           </div>
         </div>
+      </div>
+
+      <div class="Forecast">
+        <div class="Forecast-week">
+          5 days
+        </div>
+
+        <div class="Forecast-item">
+          <div class="Forecast-item-time">Tue</div>
+          <div class="Forecast-item-icon-container">
+            <i class="Forecast-item-icon wi wi-day-sunny"></i>
+          </div>
+          <div class="Forecast-item-numbers">
+            <div class="Forecast-item-temperature">
+              <span class="Forecast-item-value">5</span><span class="Forecast-item-unit">°C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="Forecast-item">
+          <div class="Forecast-item-time">Wed</div>
+          <div class="Forecast-item-icon-container">
+            <i class="Forecast-item-icon wi wi-day-sunny"></i>
+          </div>
+          <div class="Forecast-item-numbers">
+            <div class="Forecast-item-temperature">
+              <span class="Forecast-item-value">5</span><span class="Forecast-item-unit">°C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="Forecast-item">
+          <div class="Forecast-item-time">Thu</div>
+          <div class="Forecast-item-icon-container">
+            <i class="Forecast-item-icon wi wi-day-fog"></i>
+          </div>
+          <div class="Forecast-item-numbers">
+            <div class="Forecast-item-temperature">
+              <span class="Forecast-item-value">7</span><span class="Forecast-item-unit">°C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="Forecast-item">
+          <div class="Forecast-item-time">Fri</div>
+          <div class="Forecast-item-icon-container">
+            <i class="Forecast-item-icon wi wi-day-fog"></i>
+          </div>
+          <div class="Forecast-item-numbers">
+            <div class="Forecast-item-temperature">
+              <span class="Forecast-item-value">6</span><span class="Forecast-item-unit">°C</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="Forecast-item">
+          <div class="Forecast-item-time">Sat</div>
+          <div class="Forecast-item-icon-container">
+            <i class="Forecast-item-icon wi wi-night-cloudy-windy"></i>
+          </div>
+          <div class="Forecast-item-numbers">
+            <div class="Forecast-item-temperature">
+              <span class="Forecast-item-value">5</span><span class="Forecast-item-unit">°C</span>
+            </div>
+          </div>
+        </div>
+
+
       </div>
     </div>
   </main>
