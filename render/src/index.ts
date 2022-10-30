@@ -11,7 +11,7 @@ const argv = yargs(process.argv.slice(2))
 
 async function main() {
   const html = await generateHtml(argv)
-  console.log(html)
+  //console.log(html)
 }
 
 main()
