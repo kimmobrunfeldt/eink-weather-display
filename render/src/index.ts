@@ -6,12 +6,14 @@ const argv = yargs(process.argv.slice(2))
   .options({
     lat: { type: 'number', demandOption: true },
     lon: { type: 'number', demandOption: true },
+    locationName: { type: 'string', demandOption: true },
+    batteryLevel: { type: 'number', demandOption: true },
   })
   .parseSync()
 
 async function main() {
   const html = await generateHtml(argv)
-  //console.log(html)
+  console.log(html)
 }
 
 main()
