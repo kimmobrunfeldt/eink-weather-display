@@ -23,6 +23,7 @@ import posthtmlReplace, { Replacement } from './posthtmlReplace'
 
 export type GenerateOptions = {
   locationName: string
+  timezone: string
   batteryLevel: number // 0-100
   lat: number
   lon: number
@@ -31,6 +32,7 @@ export type GenerateOptions = {
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
   const weather = await getLocalWeatherData({
     location: { lat: opts.lat, lon: opts.lon },
+    timezone: opts.timezone,
   })
   writeDebugFileSync('weather.json', weather)
 
@@ -135,11 +137,11 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-uvi' } },
-      newContent: `UVI ${weather.todaySummary.maxUvIndex.value}`,
+      newContent: formatWindSpeed(weather.todaySummary.maxUvIndex.value),
     },
     {
       match: { attrs: { id: 'current-weather-uvi-at' } },
-      newContent: `at ${dateFns.format(
+      newContent: `UVI at ${dateFns.format(
         weather.todaySummary.maxUvIndex.time,
         'HH'
       )}`,

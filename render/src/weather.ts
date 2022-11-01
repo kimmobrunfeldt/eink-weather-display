@@ -71,8 +71,10 @@ const API_URL = 'http://opendata.fmi.fi/wfs'
 
 export async function getLocalWeatherData({
   location,
+  timezone,
 }: {
   location: Coordinate
+  timezone: string
 }): Promise<LocalWeather> {
   const harmonieRes = await axios.get(API_URL, {
     params: getFmiHarmonieParameters(location),
@@ -92,9 +94,21 @@ export async function getLocalWeatherData({
   )
   writeDebugFileSync('fmi-harmonie-parsed-data.json', fmiHarmonieData)
 
+  const meteoLongTermRes = await getLongTermForecastFromMeteo(
+    location,
+    timezone
+  )
+  writeDebugFileSync('meteo-response-long-term.json', meteoLongTermRes)
+  const meteoShortTermRes = await getShortTermForecastFromMeteo(
+    location,
+    timezone
+  )
+  writeDebugFileSync('meteo-response-short-term.json', meteoShortTermRes)
+  const maxUv = findHighestUVIndex(meteoShortTermRes)
+
   const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
   return {
-    todaySummary,
+    todaySummary: { ...todaySummary, maxUvIndex: maxUv },
     forecastShortTerm: calculateShortTermForecast(fmiHarmonieData),
     forecastLongTerm: calculateLongTermForecast(fmiEcmwfData).map((data) => {
       return {
@@ -103,6 +117,89 @@ export async function getLocalWeatherData({
       }
     }),
   }
+}
+
+function findHighestUVIndex(forecast: MeteoShortTermResponse): MaxUvIndex {
+  const nextH = getNextHour(START_FORECAST_HOUR)
+  const hoursToday = forecast.hourly.time
+    .map((time, index) => ({
+      time: new Date(time),
+      index,
+    }))
+    .filter(
+      ({ time }) =>
+        dateFns.isAfter(time, dateFns.startOfDay(nextH)) &&
+        dateFns.isBefore(time, dateFns.endOfDay(nextH))
+    )
+
+  const maxHour = _.maxBy(
+    hoursToday,
+    ({ index }) => forecast.hourly.uv_index[index]
+  )
+  if (!maxHour) {
+    throw new Error('Unable to find max UV index for day')
+  }
+  return {
+    time: maxHour.time,
+    value: forecast.hourly.uv_index[maxHour.index],
+  }
+}
+
+type MeteoLongTermResponse = {
+  daily: {
+    time: string[]
+    weathercode: number[]
+  }
+}
+async function getLongTermForecastFromMeteo(
+  location: Coordinate,
+  timezone: string
+): Promise<MeteoLongTermResponse> {
+  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+  const firstDay = dateFns.addDays(start, 1)
+  const lastDay = dateFns.addDays(firstDay, 5)
+
+  const res = await axios.get('https://api.open-meteo.com/v1/forecast', {
+    params: {
+      latitude: location.lat,
+      longitude: location.lon,
+      daily: ['weathercode', 'precipitation_sum', 'sunrise', 'sunset'].join(
+        ','
+      ),
+      timezone,
+      start_date: dateFns.format(firstDay, 'yyyy-MM-dd'),
+      end_date: dateFns.format(lastDay, 'yyyy-MM-dd'),
+    },
+  })
+  return res.data
+}
+
+type MeteoShortTermResponse = {
+  hourly: {
+    time: string[]
+    uv_index: number[]
+  }
+}
+async function getShortTermForecastFromMeteo(
+  location: Coordinate,
+  timezone: string
+): Promise<MeteoShortTermResponse> {
+  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+  const end = dateFns.addDays(start, 2)
+  const res = await axios.get(
+    'https://air-quality-api.open-meteo.com/v1/air-quality',
+    {
+      params: {
+        latitude: location.lat,
+        longitude: location.lon,
+        hourly: ['uv_index'].join(','),
+        timezone,
+        start_date: dateFns.format(start, 'yyyy-MM-dd'),
+        end_date: dateFns.format(end, 'yyyy-MM-dd'),
+      },
+    }
+  )
+  return res.data
 }
 
 export function getSymbolIcon(
@@ -232,7 +329,7 @@ function calculateLongTermForecast(fmiData: FmiECMWFDataPoint[]) {
 function calculateTodaySummary(
   fmiData: FmiHarmonieDataPoint[],
   location: Coordinate
-): LocalWeather['todaySummary'] {
+) {
   const nextH = getNextHour(START_FORECAST_HOUR)
 
   const today = fmiData.filter(
@@ -278,7 +375,6 @@ function calculateTodaySummary(
     sunrise,
     sunset,
     dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
-    maxUvIndex: { value: 2, time: new Date() }, // TODO
     precipitationAmount,
   }
 }

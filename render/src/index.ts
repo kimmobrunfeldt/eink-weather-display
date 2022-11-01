@@ -7,6 +7,7 @@ const argv = yargs(process.argv.slice(2))
     lat: { type: 'number', demandOption: true },
     lon: { type: 'number', demandOption: true },
     locationName: { type: 'string', demandOption: true },
+    timezone: { type: 'string', demandOption: true },
     batteryLevel: { type: 'number', demandOption: true },
   })
   .parseSync()
