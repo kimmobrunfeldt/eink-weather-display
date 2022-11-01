@@ -20,59 +20,88 @@ type MaxUvIndex = {
 }
 
 type WeatherTodaySummary = {
+  avgTemperature: number
   minTemperature: number
   maxTemperature: number
-  minWindMs: number
-  maxWindMs: number
+  avgWindSpeedMs: number
+  minWindSpeedMs: number
+  maxWindSpeedMs: number
   symbol: WeatherSymbolNumber
   description: string
   sunrise: Date
   sunset: Date
   dayDurationInSeconds: number
   maxUvIndex: MaxUvIndex
-  precipitationAmount: number
+  precipitationAmount: number | null
 }
 
-type WeatherDataPoint = {
+// All numbers should be nullable to treat NaN returned by FMI API in type-safe manner...
+// ...but that's a bit more work.
+type ShortTermWeatherDataPoint = {
   time: Date
   temperature: number
   windSpeedMs: number
   windGustMs: number
   pressure: number
-  precipitationAmountFromNowToNext: number
+  precipitationAmountFromNowToNext: number | null
   precipitation1h: number
   dewPoint: number
   symbol: WeatherSymbolNumber
 }
 
-export type LocalWeather = {
-  todaySummary: WeatherTodaySummary
-  forecast: WeatherDataPoint[]
+type LongTermWeatherDataPoint = {
+  time: Date
+  avgTemperature: number
+  minTemperature: number
+  maxTemperature: number
+  avgWindSpeedMs: number
+  minWindSpeedMs: number
+  maxWindSpeedMs: number
+  precipitationAmountFromNowToNext: number | null
+  symbol: WeatherSymbolNumber
 }
 
-type ForecastType = 'today' | '5days'
+export type LocalWeather = {
+  todaySummary: WeatherTodaySummary
+  forecastShortTerm: ShortTermWeatherDataPoint[]
+  forecastLongTerm: LongTermWeatherDataPoint[]
+}
 
 const API_URL = 'http://opendata.fmi.fi/wfs'
 
 export async function getLocalWeatherData({
   location,
-  type,
 }: {
   location: Coordinate
-  type: ForecastType
 }): Promise<LocalWeather> {
-  const res = await axios.get(API_URL, {
-    params: getFmiParameters(location, type),
+  const harmonieRes = await axios.get(API_URL, {
+    params: getFmiHarmonieParameters(location),
   })
-  writeDebugFileSync('fmi-response.xml', res.data)
+  writeDebugFileSync('fmi-harmonie-response.xml', harmonieRes.data)
+  const fmiHarmonieData = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(
+    harmonieRes.data
+  )
+  writeDebugFileSync('fmi-harmonie-parsed-data.json', fmiHarmonieData)
 
-  const fmiData = parseWeatherTodayXmlResponse(res.data)
-  writeDebugFileSync('parsed-fmi-data.json', fmiData)
+  const ecmwfRes = await axios.get(API_URL, {
+    params: getFmiECMWFParameters(location),
+  })
+  writeDebugFileSync('fmi-ecmwf-response.xml', harmonieRes.data)
+  const fmiEcmwfData = parseWeatherTodayXmlResponse<FmiECMWFDataPoint>(
+    ecmwfRes.data
+  )
+  writeDebugFileSync('fmi-harmonie-parsed-data.json', fmiHarmonieData)
 
-  const todaySummary = calculateTodaySummary(fmiData, location)
+  const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
   return {
     todaySummary,
-    forecast: calculateTodayForecast(fmiData),
+    forecastShortTerm: calculateShortTermForecast(fmiHarmonieData),
+    forecastLongTerm: calculateLongTermForecast(fmiEcmwfData).map((data) => {
+      return {
+        ...data,
+        symbol: 1, // TODO: Get this data from another API
+      }
+    }),
   }
 }
 
@@ -98,7 +127,7 @@ export function getSymbolClass(
   return weatherSymbolIcons[theme][symbol]
 }
 
-function calculateTodayForecast(fmiData: FmiDataPoint[]) {
+function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
   const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
   const forecastTimes = [9, 12, 15, 18, 21, 24, 24 + 9, 24 + 9 * 2].map((h) =>
     dateFns.addHours(start, h)
@@ -129,26 +158,79 @@ function calculateTodayForecast(fmiData: FmiDataPoint[]) {
         dateFns.isEqual(f.time, time) ||
         (dateFns.isAfter(f.time, time) && dateFns.isBefore(f.time, nextTime))
     )
-
     return {
       time,
-      temperature: found.Temperature,
-      windSpeedMs: found.WindSpeedMS,
-      windGustMs: found.WindGust,
-      pressure: found.Pressure,
-      precipitationAmountFromNowToNext: _.sumBy(
+      temperature: _.mean(fmiDataBetweenNext.map((d) => d.Temperature)),
+      windSpeedMs: _.mean(fmiDataBetweenNext.map((d) => d.WindSpeedMS)),
+      windGustMs: _.mean(fmiDataBetweenNext.map((d) => d.WindGust)),
+      pressure: _.mean(fmiDataBetweenNext.map((d) => d.Pressure)),
+      precipitationAmountFromNowToNext: sumByOrNull(
         fmiDataBetweenNext,
         (f) => f.PrecipitationAmount
       ),
       precipitation1h: found.Precipitation1h,
-      dewPoint: found.DewPoint,
+      dewPoint: _.mean(fmiDataBetweenNext.map((d) => d.DewPoint)),
       symbol: found.WeatherSymbol3 as WeatherSymbolNumber,
     }
   })
 }
 
+function calculateLongTermForecast(fmiData: FmiECMWFDataPoint[]) {
+  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+  const forecastTimes = [1, 2, 3, 4, 5].map((h) => dateFns.addDays(start, h))
+
+  return forecastTimes.map((time, index) => {
+    const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
+    const found = fmiData[fmiIndex]
+    if (!found) {
+      console.error('Time:', time)
+      console.error('FMI Data:', JSON.stringify(fmiData))
+      throw new Error(`Could not find FMI forecast data point for date ${time}`)
+    }
+
+    const nextIndex = index + 1
+    const nextTime =
+      nextIndex >= forecastTimes.length
+        ? dateFns.addDays(start, 5) // for the last item, keep the same interval
+        : forecastTimes[nextIndex]
+    const fmiDataBetweenNext = fmiData.filter(
+      (f) =>
+        dateFns.isEqual(f.time, time) ||
+        (dateFns.isAfter(f.time, time) && dateFns.isBefore(f.time, nextTime))
+    )
+    const avgWindSpeedMs = _.mean(fmiDataBetweenNext.map((d) => d.WindSpeedMS))
+    const maxWindSpeedMs = Math.max(
+      ...fmiDataBetweenNext.map((d) => d.WindSpeedMS)
+    )
+    const minWindSpeedMs = Math.min(
+      ...fmiDataBetweenNext.map((d) => d.WindSpeedMS)
+    )
+    const avgTemperature = _.mean(fmiDataBetweenNext.map((d) => d.Temperature))
+    const maxTemperature = Math.max(
+      ...fmiDataBetweenNext.map((d) => d.Temperature)
+    )
+    const minTemperature = Math.max(
+      ...fmiDataBetweenNext.map((d) => d.Temperature)
+    )
+
+    return {
+      time,
+      avgTemperature,
+      minTemperature,
+      maxTemperature,
+      avgWindSpeedMs,
+      minWindSpeedMs,
+      maxWindSpeedMs,
+      precipitationAmountFromNowToNext: sumByOrNull(
+        fmiDataBetweenNext,
+        (f) => f.Precipitation1h
+      ),
+    }
+  })
+}
+
 function calculateTodaySummary(
-  fmiData: FmiDataPoint[],
+  fmiData: FmiHarmonieDataPoint[],
   location: Coordinate
 ): LocalWeather['todaySummary'] {
   const nextH = getNextHour(START_FORECAST_HOUR)
@@ -158,8 +240,10 @@ function calculateTodaySummary(
       dateFns.isAfter(d.time, dateFns.startOfDay(nextH)) &&
       dateFns.isBefore(d.time, dateFns.endOfDay(nextH))
   )
-  const maxWindMs = Math.max(...today.map((d) => d.WindSpeedMS))
-  const minWindMs = Math.min(...today.map((d) => d.WindSpeedMS))
+  const avgWindSpeedMs = _.mean(today.map((d) => d.WindSpeedMS))
+  const maxWindSpeedMs = Math.max(...today.map((d) => d.WindSpeedMS))
+  const minWindSpeedMs = Math.min(...today.map((d) => d.WindSpeedMS))
+  const avgTemperature = _.mean(today.map((d) => d.Temperature))
   const maxTemperature = Math.max(...today.map((d) => d.Temperature))
   const minTemperature = Math.max(...today.map((d) => d.Temperature))
   const symbolCounts = _.countBy(today, (d) => d.WeatherSymbol3)
@@ -171,7 +255,7 @@ function calculateTodaySummary(
   const { key: topSymbol } = _.maxBy(symbolCountsArr, ({ value }) => value)!
   const symbol = Number(topSymbol) as WeatherSymbolNumber
 
-  const precipitationAmount = _.sumBy(today, (d) => d.PrecipitationAmount)
+  const precipitationAmount = sumByOrNull(today, (d) => d.PrecipitationAmount)
   const sunrise = getSunrise(
     location.lat,
     location.lon,
@@ -183,10 +267,12 @@ function calculateTodaySummary(
     dateFns.startOfDay(nextH)
   )
   return {
+    avgTemperature,
     minTemperature,
     maxTemperature,
-    minWindMs,
-    maxWindMs,
+    avgWindSpeedMs,
+    minWindSpeedMs,
+    maxWindSpeedMs,
     description: weatherSymbolDescriptions[symbol],
     symbol,
     sunrise,
@@ -209,35 +295,37 @@ export function getNextHour(startHour = 9) {
   return tomorrow
 }
 
-function getDateParameters(type: ForecastType): {
-  startDate: Date
-  endDate: Date
-  timeStepMin: number
-} {
-  switch (type) {
-    case 'today': {
-      const startDate = getNextHour(START_FORECAST_HOUR) // 09:00
-      return {
-        startDate,
-        timeStepMin: 60,
-        endDate: dateFns.addHours(startDate, 50),
-      }
-    }
+function getFmiECMWFParameters(location: Coordinate) {
+  const startOfNextHDay = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+  const startDate = dateFns.addHours(startOfNextHDay, 12) // 12:00 the day after
+  const endDate = dateFns.addDays(startDate, 5)
+  const timeStepMin = 60
 
-    case '5days': {
-      const startDate = dateFns.addHours(dateFns.startOfTomorrow(), 12)
-      // Tomorrow 12:00
-      return {
-        startDate,
-        timeStepMin: 60 * 24,
-        endDate: dateFns.addDays(startDate, 5),
-      }
-    }
+  return {
+    service: 'WFS',
+    version: '2.0.0',
+    request: 'getFeature',
+    storedquery_id: 'ecmwf::forecast::surface::point::simple',
+    starttime: startDate.toISOString(),
+    endtime: endDate.toISOString(),
+    latlon: `${location.lat},${location.lon}`,
+    timestep: timeStepMin,
+    // This model returns limited data
+    parameters: [
+      'Temperature',
+      'WindSpeedMS',
+      'Pressure',
+      'Precipitation1h',
+    ].join(','),
+    // i.e. what Google Maps uses
+    crs: 'EPSG::3857', // https://en.wikipedia.org/wiki/Web_Mercator_projection#EPSG:3785
   }
 }
 
-function getFmiParameters(location: Coordinate, type: ForecastType) {
-  const { startDate, endDate, timeStepMin } = getDateParameters(type)
+function getFmiHarmonieParameters(location: Coordinate) {
+  const startDate = getNextHour(START_FORECAST_HOUR) // 09:00
+  const endDate = dateFns.addHours(startDate, 50)
+  const timeStepMin = 60
 
   return {
     service: 'WFS',
@@ -248,7 +336,6 @@ function getFmiParameters(location: Coordinate, type: ForecastType) {
     endtime: endDate.toISOString(),
     latlon: `${location.lat},${location.lon}`,
     timestep: timeStepMin,
-    // Comment this parameter to see unfiltered fields
     parameters: [
       'Temperature',
       'Humidity',
@@ -262,29 +349,47 @@ function getFmiParameters(location: Coordinate, type: ForecastType) {
       'DewPoint',
       'WeatherSymbol3', // https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje
     ].join(','),
-
     // i.e. what Google Maps uses
     crs: 'EPSG::3857', // https://en.wikipedia.org/wiki/Web_Mercator_projection#EPSG:3785
   }
 }
 
-type FmiDataPoint = {
-  time: Date
-  Temperature: number
-  location: Coordinate
-  Humidity: number
-  WindSpeedMS: number
-  WindGust: number
-  WindDirection: number
-  Pressure: number
-  Visibility: number
-  PrecipitationAmount: number
-  Precipitation1h: number
-  DewPoint: number
-  WeatherSymbol3: number
+function sumByOrNull<T>(arr: T[], fn: (item: T) => number): number | null {
+  const sum = _.sumBy(arr, fn)
+  if (!_.isFinite(sum)) {
+    return null
+  }
+
+  return sum
 }
 
-function parseWeatherTodayXmlResponse(xmlString: string): FmiDataPoint[] {
+type FmiBaseDataPoint = {
+  time: Date
+  location: Coordinate
+}
+
+type FmiECMWFDataPoint = FmiBaseDataPoint & {
+  Temperature: number
+  Humidity: number
+  WindSpeedMS: number
+  Pressure: number
+  Precipitation1h: number
+}
+
+type FmiHarmonieDataPoint = FmiBaseDataPoint &
+  FmiECMWFDataPoint & {
+    Humidity: number
+    WindGust: number
+    WindDirection: number
+    Visibility: number
+    PrecipitationAmount: number
+    DewPoint: number
+    WeatherSymbol3: number
+  }
+
+function parseWeatherTodayXmlResponse<
+  T extends FmiHarmonieDataPoint | FmiECMWFDataPoint
+>(xmlString: string): T[] {
   const parser = new XMLParser()
   const parsed = parser.parse(xmlString)
   const dataPoints = parseMembersFromRoot(parsed).map(parseMember)
@@ -302,7 +407,7 @@ function parseWeatherTodayXmlResponse(xmlString: string): FmiDataPoint[] {
       ...values,
       time: dateFns.parseISO(key),
       location: byTimeDataPoints[0].location,
-    } as FmiDataPoint
+    } as T
   })
 }
 

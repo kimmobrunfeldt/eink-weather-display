@@ -232,11 +232,16 @@
     }
 
     .CurrentWeather-icon {
-      height: 28vh;
+      position: relative;
+      width: 100%;
     }
 
-    .CurrentWeather-icon>* {
-      display: block;
+    .CurrentWeather-icon>img {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      height: 46vh;
     }
 
     .CurrentWeather-temperature {
@@ -665,7 +670,7 @@
         <div class="Forecast-item">
           <div id="forecast-5days-item-0-time" class="Forecast-item-time">Tue</div>
           <div class="Forecast-item-icon-container">
-            <i class="Forecast-item-icon wi wi-day-sunny"></i>
+            <img id="forecast-5days-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
@@ -678,7 +683,7 @@
         <div class="Forecast-item">
           <div id="forecast-5days-item-1-time" class="Forecast-item-time">Wed</div>
           <div class="Forecast-item-icon-container">
-            <i class="Forecast-item-icon wi wi-day-sunny"></i>
+            <img id="forecast-5days-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
@@ -691,7 +696,7 @@
         <div class="Forecast-item">
           <div id="forecast-5days-item-2-time" class="Forecast-item-time">Thu</div>
           <div class="Forecast-item-icon-container">
-            <i class="Forecast-item-icon wi wi-day-fog"></i>
+            <img id="forecast-5days-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
@@ -704,7 +709,7 @@
         <div class="Forecast-item">
           <div id="forecast-5days-item-3-time" class="Forecast-item-time">Fri</div>
           <div class="Forecast-item-icon-container">
-            <i class="Forecast-item-icon wi wi-day-fog"></i>
+            <img id="forecast-5days-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">
@@ -717,7 +722,7 @@
         <div class="Forecast-item">
           <div id="forecast-5days-item-4-time" class="Forecast-item-time">Sat</div>
           <div class="Forecast-item-icon-container">
-            <i class="Forecast-item-icon wi wi-night-cloudy-windy"></i>
+            <img id="forecast-5days-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
           </div>
           <div class="Forecast-item-numbers">
             <div class="Forecast-item-temperature">

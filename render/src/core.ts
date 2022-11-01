@@ -5,6 +5,7 @@ import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
 import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
 import {
+  formatNumber,
   formatWindSpeed,
   getBatteryIcon,
   isDark,
@@ -30,7 +31,6 @@ export type GenerateOptions = {
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
   const weather = await getLocalWeatherData({
     location: { lat: opts.lat, lon: opts.lon },
-    type: 'today',
   })
   writeDebugFileSync('weather.json', weather)
 
@@ -96,7 +96,7 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-temperature' } },
-      newContent: String(Math.round(weather.todaySummary.maxTemperature)),
+      newContent: String(Math.round(weather.todaySummary.avgTemperature)),
     },
     {
       match: { attrs: { id: 'current-weather-description' } },
@@ -104,11 +104,14 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-wind' } },
-      newContent: formatWindSpeed(weather.todaySummary.maxWindMs),
+      newContent: formatWindSpeed(weather.todaySummary.avgWindSpeedMs),
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },
-      newContent: String(Math.round(weather.todaySummary.precipitationAmount)),
+      newContent: formatNumber(
+        weather.todaySummary.precipitationAmount,
+        Math.round
+      ),
     },
     {
       match: { attrs: { id: 'current-weather-sunrise' } },
@@ -141,7 +144,8 @@ function getHtmlReplacements(
         'HH'
       )}`,
     },
-    ...weather.forecast
+
+    ...weather.forecastShortTerm
       .map((item, index): Replacement[] => {
         return [
           {
@@ -158,12 +162,43 @@ function getHtmlReplacements(
           },
           {
             match: { attrs: { id: `forecast-item-${index}-precipitation` } },
-            newContent: String(
-              Math.round(item.precipitationAmountFromNowToNext)
+            newContent: formatNumber(
+              item.precipitationAmountFromNowToNext,
+              Math.round
             ),
           },
           {
             match: { attrs: { id: `forecast-item-${index}-icon` } },
+            modifier: (node) =>
+              (node.attrs = {
+                ...node.attrs,
+                src: getSymbolIcon(
+                  item.symbol,
+                  isDark({ lat: opts.lat, lon: opts.lon }, item.time)
+                    ? 'dark'
+                    : 'light'
+                ),
+              }),
+          },
+        ]
+      })
+      .flat(),
+
+    ...weather.forecastLongTerm
+      .map((item, index): Replacement[] => {
+        return [
+          {
+            match: { attrs: { id: `forecast-5days-item-${index}-time` } },
+            newContent: dateFns.format(item.time, 'EEE'),
+          },
+          {
+            match: {
+              attrs: { id: `forecast-5days-item-${index}-temperature` },
+            },
+            newContent: String(Math.round(item.avgTemperature)),
+          },
+          {
+            match: { attrs: { id: `forecast-5days-item-${index}-icon` } },
             modifier: (node) =>
               (node.attrs = {
                 ...node.attrs,

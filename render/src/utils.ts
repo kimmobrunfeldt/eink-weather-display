@@ -64,3 +64,14 @@ export function getFileContent(data: any): {
     encoding: 'utf8',
   }
 }
+
+export function formatNumber(
+  val: number | null,
+  fn: (val: number) => any
+): string {
+  if (_.isNull(val)) {
+    return '-'
+  }
+
+  return `${fn(val)}`
+}
