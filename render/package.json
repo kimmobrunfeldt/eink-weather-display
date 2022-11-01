@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "http-server src/templates/ -c-1"
+    "start": "http-server src/templates/ -c-1",
+    "render": "./src/index.ts --lat 60.222 --lon 24.83 --locationName Espoo --batteryLevel 100 > src/templates/render.html"
   },
   "author": "",
   "license": "ISC",

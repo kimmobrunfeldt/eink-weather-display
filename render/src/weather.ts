@@ -1,15 +1,22 @@
 import axios from 'axios'
 import * as dateFns from 'date-fns'
 import { XMLParser } from 'fast-xml-parser'
+import * as fs from 'fs'
 import _ from 'lodash'
+import * as path from 'path'
 import { writeDebugFileSync } from 'src/utils'
 import { getSunrise, getSunset } from 'sunrise-sunset-js'
 
 export const START_FORECAST_HOUR = 9
 
-type Coordinate = {
+export type Coordinate = {
   lat: number
   lon: number
+}
+
+type MaxUvIndex = {
+  value: number
+  time: Date
 }
 
 type WeatherTodaySummary = {
@@ -22,7 +29,7 @@ type WeatherTodaySummary = {
   sunrise: Date
   sunset: Date
   dayDurationInSeconds: number
-  maxUvIndex: number
+  maxUvIndex: MaxUvIndex
   precipitationAmount: number
 }
 
@@ -73,11 +80,22 @@ export function getSymbolIcon(
   symbol: WeatherSymbolNumber,
   theme: 'light' | 'dark'
 ): string {
-  if (!(symbol in weatherSymbols[theme])) {
+  if (!(symbol in weatherSymbolIcons[theme])) {
     throw new Error(`Weather symbol not found for number: ${symbol} (${theme})`)
   }
 
-  return weatherSymbols[theme][symbol]
+  return `weather-icons/${weatherSymbolIcons[theme][symbol]}.svg`
+}
+
+export function getSymbolClass(
+  symbol: WeatherSymbolNumber,
+  theme: 'light' | 'dark'
+): string {
+  if (!(symbol in weatherSymbolIcons[theme])) {
+    throw new Error(`Weather symbol not found for number: ${symbol} (${theme})`)
+  }
+
+  return weatherSymbolIcons[theme][symbol]
 }
 
 function calculateTodayForecast(fmiData: FmiDataPoint[]) {
@@ -174,7 +192,7 @@ function calculateTodaySummary(
     sunrise,
     sunset,
     dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
-    maxUvIndex: 2, // TODO
+    maxUvIndex: { value: 2, time: new Date() }, // TODO
     precipitationAmount,
   }
 }
@@ -281,8 +299,8 @@ function parseWeatherTodayXmlResponse(xmlString: string): FmiDataPoint[] {
     }, {} as Record<string, number>)
 
     return {
-      time: dateFns.parseISO(key),
       ...values,
+      time: dateFns.parseISO(key),
       location: byTimeDataPoints[0].location,
     } as FmiDataPoint
   })
@@ -322,67 +340,66 @@ function parseMember(member: Record<string, any>): {
   }
 }
 
-type WeatherSymbolNumber = keyof typeof weatherSymbols['light']
+type WeatherSymbolNumber = keyof typeof weatherSymbolIcons['light']
 
-const weatherSymbols = {
+const weatherSymbolIcons = {
   light: {
-    // TODO
-    1: 'humidity.svg',
-    2: 'humidity.svg',
-    3: 'humidity.svg',
-    21: 'humidity.svg',
-    22: 'humidity.svg',
-    23: 'humidity.svg',
-    31: 'humidity.svg',
-    32: 'humidity.svg',
-    33: 'humidity.svg',
-    41: 'humidity.svg',
-    42: 'humidity.svg',
-    43: 'humidity.svg',
-    51: 'humidity.svg',
-    52: 'humidity.svg',
-    53: 'humidity.svg',
-    61: 'humidity.svg',
-    62: 'humidity.svg',
-    63: 'humidity.svg',
-    64: 'humidity.svg',
-    71: 'humidity.svg',
-    72: 'humidity.svg',
-    73: 'humidity.svg',
-    81: 'humidity.svg',
-    82: 'humidity.svg',
-    83: 'humidity.svg',
-    91: 'humidity.svg',
-    92: 'humidity.svg',
+    1: 'wi-day-sunny', // 'Clear',
+    2: 'wi-day-cloudy', // 'Partly cloudy',
+    3: 'wi-cloudy', // 'Cloudy',
+    21: 'wi-day-showers', // 'Scattered showers',
+    22: 'wi-showers', // 'Showers',
+    23: 'wi-rain-mix', // 'Heavy showers',
+    31: 'wi-day-sprinkle', // 'Light showers',
+    32: 'wi-day-rain', // 'Moderate rain',
+    33: 'wi-rain', // 'Heavy rain',
+    41: 'wi-day-snow', // 'Light snow showers',
+    42: 'wi-day-snow', // 'Snow showers',
+    43: 'wi-day-snow-wind', // 'Heavy snow showers',
+    51: 'wi-day-snow', // 'Light snowfall',
+    52: 'wi-day-snow', // 'Moderate snowfall',
+    53: 'wi-day-snow', // 'Heavy snowfall',
+    61: 'wi-day-storm-showers', // 'Thundershowers',
+    62: 'wi-day-storm-showers', // 'Heavy thundershowers',
+    63: 'wi-day-lightning', // 'Thunder',
+    64: 'wi-day-thunderstorm', // 'Heavy thunder',
+    71: 'wi-day-sleet', // 'Light sleet showers',
+    72: 'wi-day-sleet', // 'Moderate sleet showers',
+    73: 'wi-day-rain-mix', // 'Heavy sleet showers',
+    81: 'wi-day-sleet', // 'Light sleet',
+    82: 'wi-day-sleet', // 'Moderate sleet',
+    83: 'wi-sleet', // 'Heavy sleet',
+    91: 'wi-day-haze', // 'Mist',
+    92: 'wi-fog', // 'Fog',
   },
   dark: {
-    1: 'humidity.svg',
-    2: 'humidity.svg',
-    3: 'humidity.svg',
-    21: 'humidity.svg',
-    22: 'humidity.svg',
-    23: 'humidity.svg',
-    31: 'humidity.svg',
-    32: 'humidity.svg',
-    33: 'humidity.svg',
-    41: 'humidity.svg',
-    42: 'humidity.svg',
-    43: 'humidity.svg',
-    51: 'humidity.svg',
-    52: 'humidity.svg',
-    53: 'humidity.svg',
-    61: 'humidity.svg',
-    62: 'humidity.svg',
-    63: 'humidity.svg',
-    64: 'humidity.svg',
-    71: 'humidity.svg',
-    72: 'humidity.svg',
-    73: 'humidity.svg',
-    81: 'humidity.svg',
-    82: 'humidity.svg',
-    83: 'humidity.svg',
-    91: 'humidity.svg',
-    92: 'humidity.svg',
+    1: 'wi-night-clear', // 'Clear',
+    2: 'wi-night-alt-cloudy', // 'Partly cloudy',
+    3: 'wi-cloudy', // 'Cloudy',
+    21: 'wi-night-alt-showers', // 'Scattered showers',
+    22: 'wi-showers', // 'Showers',
+    23: 'wi-rain-mix', // 'Heavy showers',
+    31: 'wi-night-alt-sprinkle', // 'Light showers',
+    32: 'wi-night-alt-rain', // 'Moderate rain',
+    33: 'wi-rain', // 'Heavy rain',
+    41: 'wi-night-alt-snow', // 'Light snow showers',
+    42: 'wi-night-alt-snow', // 'Snow showers',
+    43: 'wi-night-alt-snow-wind', // 'Heavy snow showers',
+    51: 'wi-night-alt-snow', // 'Light snowfall',
+    52: 'wi-night-alt-snow', // 'Moderate snowfall',
+    53: 'wi-night-alt-snow', // 'Heavy snowfall',
+    61: 'wi-night-alt-storm-showers', // 'Thundershowers',
+    62: 'wi-night-alt-storm-showers', // 'Heavy thundershowers',
+    63: 'wi-night-alt-lightning', // 'Thunder',
+    64: 'wi-night-alt-thunderstorm', // 'Heavy thunder',
+    71: 'wi-night-alt-sleet', // 'Light sleet showers',
+    72: 'wi-night-alt-sleet', // 'Moderate sleet showers',
+    73: 'wi-night-alt-rain-mix', // 'Heavy sleet showers',
+    81: 'wi-night-alt-sleet', // 'Light sleet',
+    82: 'wi-night-alt-sleet', // 'Moderate sleet',
+    83: 'wi-sleet', // 'Heavy sleet',
+    91: 'wi-dust', // 'Mist',
+    92: 'wi-fog', // 'Fog',
   },
 }
 
@@ -415,3 +432,36 @@ const weatherSymbolDescriptions = {
   91: 'Mist',
   92: 'Fog',
 }
+
+// Validations
+
+Object.keys(weatherSymbolDescriptions).forEach((symbol) => {
+  if (!(symbol in weatherSymbolIcons['light'])) {
+    throw new Error(`${symbol} missing from light weather icons object`)
+  }
+  if (!(symbol in weatherSymbolIcons['dark'])) {
+    throw new Error(`${symbol} missing from dark weather icons object`)
+  }
+})
+
+Object.keys(weatherSymbolIcons['light']).forEach((symbol: any) => {
+  const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
+  if (
+    !fs.existsSync(
+      path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
+    )
+  ) {
+    throw new Error(`${icon}.svg not found from weather-icons/ directory`)
+  }
+})
+
+Object.keys(weatherSymbolIcons['dark']).forEach((symbol: any) => {
+  const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
+  if (
+    !fs.existsSync(
+      path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
+    )
+  ) {
+    throw new Error(`${icon}.svg not found from weather-icons/ directory`)
+  }
+})

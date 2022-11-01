@@ -1,6 +1,6 @@
 import { Node } from 'posthtml'
 
-type Replacement = {
+export type Replacement = {
   match: any
   newContent?: string
   modifier?: (node: Node) => void

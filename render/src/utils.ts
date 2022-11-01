@@ -1,7 +1,9 @@
-import { format } from 'date-fns'
+import * as dateFns from 'date-fns'
 import * as fs from 'fs'
 import _ from 'lodash'
 import * as path from 'path'
+import { Coordinate } from 'src/weather'
+import { getSunrise, getSunset } from 'sunrise-sunset-js'
 
 export const secondsToHoursAndMinutes = (s: number) => {
   const h = Math.floor(s / 3600)
@@ -10,6 +12,12 @@ export const secondsToHoursAndMinutes = (s: number) => {
     h,
     m,
   }
+}
+
+export function isDark(location: Coordinate, time: Date) {
+  const sunrise = getSunrise(location.lat, location.lon, time)
+  const sunset = getSunset(location.lat, location.lon, time)
+  return dateFns.isBefore(time, sunrise) || dateFns.isAfter(time, sunset)
 }
 
 export function formatWindSpeed(n: number): string {
@@ -27,7 +35,7 @@ export function getBatteryIcon(level: number): string {
 }
 
 export function writeDebugFileSync(name: string, data: any) {
-  const date = format(new Date(), 'yyyy-MM-dd')
+  const date = dateFns.format(new Date(), 'yyyy-MM-dd')
   const filePath = path.join(__dirname, '../../logs/', `${date}-${name}`)
   const { encoding, content } = getFileContent(data)
   fs.writeFileSync(filePath, content, {

@@ -7,6 +7,7 @@ import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
 import {
   formatWindSpeed,
   getBatteryIcon,
+  isDark,
   secondsToHoursAndMinutes,
   writeDebugFileSync,
 } from 'src/utils'
@@ -14,9 +15,10 @@ import {
   getLocalWeatherData,
   getNextHour,
   getSymbolIcon,
+  LocalWeather,
   START_FORECAST_HOUR,
 } from 'src/weather'
-import posthtmlReplace from './posthtmlReplace'
+import posthtmlReplace, { Replacement } from './posthtmlReplace'
 
 export type GenerateOptions = {
   locationName: string
@@ -26,7 +28,6 @@ export type GenerateOptions = {
 }
 
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
-  const now = new Date()
   const weather = await getLocalWeatherData({
     location: { lat: opts.lat, lon: opts.lon },
     type: 'today',
@@ -43,105 +44,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
       cwd: path.join(__dirname, 'templates/'),
       errors: 'throw',
     }),
-    posthtmlReplace([
-      {
-        match: { attrs: { id: 'date' } },
-        newContent: dateFns.format(
-          getNextHour(START_FORECAST_HOUR),
-          'EEEE, MMM d'
-        ),
-      },
-      {
-        match: { attrs: { id: 'location' } },
-        newContent: opts.locationName,
-      },
-      {
-        match: { attrs: { id: 'refresh-timestamp' } },
-        newContent: dateFns.format(now, 'HH:mm'),
-      },
-      {
-        match: { attrs: { id: 'battery-icon' } },
-        modifier: (node) =>
-          (node.attrs = {
-            ...node.attrs,
-            src: getBatteryIcon(opts.batteryLevel),
-          }),
-      },
-      {
-        match: { attrs: { id: 'current-weather-icon' } },
-        modifier: (node) =>
-          (node.attrs = {
-            ...node.attrs,
-            src: getSymbolIcon(weather.todaySummary.symbol, 'light'),
-          }),
-      },
-      {
-        match: { attrs: { id: 'current-weather-temperature' } },
-        newContent: String(Math.round(weather.todaySummary.maxTemperature)),
-      },
-      {
-        match: { attrs: { id: 'current-weather-description' } },
-        newContent: weather.todaySummary.description,
-      },
-      {
-        match: { attrs: { id: 'current-weather-wind' } },
-        newContent: formatWindSpeed(weather.todaySummary.maxWindMs),
-      },
-      {
-        match: { attrs: { id: 'current-weather-precipitation' } },
-        newContent: String(
-          Math.round(weather.todaySummary.precipitationAmount)
-        ),
-      },
-      {
-        match: { attrs: { id: 'current-weather-sunrise' } },
-        newContent: dateFns.format(weather.todaySummary.sunrise, 'H:mm'),
-      },
-      {
-        match: { attrs: { id: 'current-weather-sunset' } },
-        newContent: dateFns.format(weather.todaySummary.sunset, 'H:mm'),
-      },
-      {
-        match: { attrs: { id: 'current-weather-daylight-hours' } },
-        newContent: String(
-          secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).h
-        ),
-      },
-      {
-        match: { attrs: { id: 'current-weather-daylight-minutes' } },
-        newContent: String(
-          secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).m
-        ),
-      },
-      {
-        match: { attrs: { id: 'current-weather-uvi-at-12' } },
-        newContent: `UVI ${weather.todaySummary.maxUvIndex}`,
-      },
-      ...weather.forecast
-        .map((item, index) => {
-          return [
-            {
-              match: { attrs: { id: `forecast-item-${index}-time` } },
-              newContent: dateFns.format(item.time, 'H:mm'),
-            },
-            {
-              match: { attrs: { id: `forecast-item-${index}-temperature` } },
-              newContent: String(Math.round(item.temperature)),
-            },
-            {
-              match: { attrs: { id: `forecast-item-${index}-wind` } },
-              newContent: formatWindSpeed(item.windSpeedMs),
-            },
-            {
-              match: { attrs: { id: `forecast-item-${index}-precipitation` } },
-              newContent: String(
-                Math.round(item.precipitationAmountFromNowToNext)
-              ),
-            },
-          ]
-        })
-        .flat(),
-    ]),
+    posthtmlReplace(getHtmlReplacements(opts, weather)),
   ]).process(html)
   return processedHtml
 }
@@ -152,4 +55,128 @@ export async function generatePng(opts: GenerateOptions): Promise<Buffer> {
   const png = await takeScreenshot(page, html)
   await browser.close()
   return png
+}
+
+function getHtmlReplacements(
+  opts: GenerateOptions,
+  weather: LocalWeather
+): Replacement[] {
+  const now = new Date()
+  return [
+    {
+      match: { attrs: { id: 'date' } },
+      newContent: dateFns.format(
+        getNextHour(START_FORECAST_HOUR),
+        'EEEE, MMM d'
+      ),
+    },
+    {
+      match: { attrs: { id: 'location' } },
+      newContent: opts.locationName,
+    },
+    {
+      match: { attrs: { id: 'refresh-timestamp' } },
+      newContent: dateFns.format(now, 'HH:mm'),
+    },
+    {
+      match: { attrs: { id: 'battery-icon' } },
+      modifier: (node) =>
+        (node.attrs = {
+          ...node.attrs,
+          src: getBatteryIcon(opts.batteryLevel),
+        }),
+    },
+    {
+      match: { attrs: { id: 'current-weather-icon' } },
+      modifier: (node) =>
+        (node.attrs = {
+          ...node.attrs,
+          src: getSymbolIcon(weather.todaySummary.symbol, 'light'),
+        }),
+    },
+    {
+      match: { attrs: { id: 'current-weather-temperature' } },
+      newContent: String(Math.round(weather.todaySummary.maxTemperature)),
+    },
+    {
+      match: { attrs: { id: 'current-weather-description' } },
+      newContent: weather.todaySummary.description,
+    },
+    {
+      match: { attrs: { id: 'current-weather-wind' } },
+      newContent: formatWindSpeed(weather.todaySummary.maxWindMs),
+    },
+    {
+      match: { attrs: { id: 'current-weather-precipitation' } },
+      newContent: String(Math.round(weather.todaySummary.precipitationAmount)),
+    },
+    {
+      match: { attrs: { id: 'current-weather-sunrise' } },
+      newContent: dateFns.format(weather.todaySummary.sunrise, 'H:mm'),
+    },
+    {
+      match: { attrs: { id: 'current-weather-sunset' } },
+      newContent: dateFns.format(weather.todaySummary.sunset, 'H:mm'),
+    },
+    {
+      match: { attrs: { id: 'current-weather-daylight-hours' } },
+      newContent: String(
+        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).h
+      ),
+    },
+    {
+      match: { attrs: { id: 'current-weather-daylight-minutes' } },
+      newContent: String(
+        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).m
+      ),
+    },
+    {
+      match: { attrs: { id: 'current-weather-uvi' } },
+      newContent: `UVI ${weather.todaySummary.maxUvIndex.value}`,
+    },
+    {
+      match: { attrs: { id: 'current-weather-uvi-at' } },
+      newContent: `at ${dateFns.format(
+        weather.todaySummary.maxUvIndex.time,
+        'HH'
+      )}`,
+    },
+    ...weather.forecast
+      .map((item, index): Replacement[] => {
+        return [
+          {
+            match: { attrs: { id: `forecast-item-${index}-time` } },
+            newContent: dateFns.format(item.time, 'H:mm'),
+          },
+          {
+            match: { attrs: { id: `forecast-item-${index}-temperature` } },
+            newContent: String(Math.round(item.temperature)),
+          },
+          {
+            match: { attrs: { id: `forecast-item-${index}-wind` } },
+            newContent: formatWindSpeed(item.windSpeedMs),
+          },
+          {
+            match: { attrs: { id: `forecast-item-${index}-precipitation` } },
+            newContent: String(
+              Math.round(item.precipitationAmountFromNowToNext)
+            ),
+          },
+          {
+            match: { attrs: { id: `forecast-item-${index}-icon` } },
+            modifier: (node) =>
+              (node.attrs = {
+                ...node.attrs,
+                src: getSymbolIcon(
+                  item.symbol,
+                  isDark({ lat: opts.lat, lon: opts.lon }, item.time)
+                    ? 'dark'
+                    : 'light'
+                ),
+              }),
+          },
+        ]
+      })
+      .flat(),
+  ]
 }
