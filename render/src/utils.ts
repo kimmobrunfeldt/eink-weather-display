@@ -75,3 +75,28 @@ export function formatNumber(
 
   return `${fn(val)}`
 }
+
+export function sumByOrNull<T>(
+  arr: T[],
+  fn: (item: T) => number
+): number | null {
+  const sum = _.sumBy(arr, fn)
+  if (!_.isFinite(sum)) {
+    return null
+  }
+
+  return sum
+}
+
+export const START_FORECAST_HOUR = 9
+export function getNextHour(startHour: number) {
+  const now = new Date()
+  const today = dateFns.addHours(dateFns.startOfToday(), startHour)
+
+  if (dateFns.isBefore(now, today)) {
+    return today
+  }
+
+  const tomorrow = dateFns.addHours(dateFns.startOfTomorrow(), startHour)
+  return tomorrow
+}

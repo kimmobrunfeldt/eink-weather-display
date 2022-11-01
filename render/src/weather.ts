@@ -1,13 +1,20 @@
 import axios from 'axios'
 import * as dateFns from 'date-fns'
 import { XMLParser } from 'fast-xml-parser'
-import * as fs from 'fs'
 import _ from 'lodash'
-import * as path from 'path'
-import { writeDebugFileSync } from 'src/utils'
+import {
+  getNextHour,
+  START_FORECAST_HOUR,
+  sumByOrNull,
+  writeDebugFileSync,
+} from 'src/utils'
+import {
+  meteoToFmiWeatherSymbolNumber,
+  MeteoWeatherCode,
+  weatherSymbolDescriptions,
+  WeatherSymbolNumber,
+} from 'src/weatherSymbol'
 import { getSunrise, getSunset } from 'sunrise-sunset-js'
-
-export const START_FORECAST_HOUR = 9
 
 export type Coordinate = {
   lat: number
@@ -67,7 +74,47 @@ export type LocalWeather = {
   forecastLongTerm: LongTermWeatherDataPoint[]
 }
 
-const API_URL = 'http://opendata.fmi.fi/wfs'
+type FmiBaseDataPoint = {
+  time: Date
+  location: Coordinate
+}
+
+type FmiEcmwfDataPoint = FmiBaseDataPoint & {
+  Temperature: number
+  Humidity: number
+  WindSpeedMS: number
+  Pressure: number
+  Precipitation1h: number
+}
+
+type FmiHarmonieDataPoint = FmiBaseDataPoint &
+  FmiEcmwfDataPoint & {
+    Humidity: number
+    WindGust: number
+    WindDirection: number
+    Visibility: number
+    PrecipitationAmount: number
+    DewPoint: number
+    WeatherSymbol3: number
+  }
+
+type MeteoAirQualityForecastResponse = {
+  utc_offset_seconds: number
+  hourly: {
+    time: Date[]
+    uv_index: number[]
+  }
+}
+
+type MeteoForecastResponse = {
+  utc_offset_seconds: number
+  daily: {
+    time: Date[]
+    weathercode: MeteoWeatherCode[]
+  }
+}
+
+const FMI_API_URL = 'http://opendata.fmi.fi/wfs'
 
 export async function getLocalWeatherData({
   location,
@@ -76,36 +123,16 @@ export async function getLocalWeatherData({
   location: Coordinate
   timezone: string
 }): Promise<LocalWeather> {
-  const harmonieRes = await axios.get(API_URL, {
-    params: getFmiHarmonieParameters(location),
-  })
-  writeDebugFileSync('fmi-harmonie-response.xml', harmonieRes.data)
-  const fmiHarmonieData = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(
-    harmonieRes.data
-  )
-  writeDebugFileSync('fmi-harmonie-parsed-data.json', fmiHarmonieData)
-
-  const ecmwfRes = await axios.get(API_URL, {
-    params: getFmiECMWFParameters(location),
-  })
-  writeDebugFileSync('fmi-ecmwf-response.xml', harmonieRes.data)
-  const fmiEcmwfData = parseWeatherTodayXmlResponse<FmiECMWFDataPoint>(
-    ecmwfRes.data
-  )
-  writeDebugFileSync('fmi-harmonie-parsed-data.json', fmiHarmonieData)
-
-  const meteoLongTermRes = await getLongTermForecastFromMeteo(
+  const fmiHarmonieData = await fetchFmiHarmonieData(location)
+  const fmiEcmwfData = await fetchFmiEcmwfData(location)
+  const meteoForecastData = await fetchMeteoForecast(location, timezone)
+  const meteoAirQualityForecastData = await fetchMeteoAirQualityForecast(
     location,
     timezone
   )
-  writeDebugFileSync('meteo-response-long-term.json', meteoLongTermRes)
-  const meteoShortTermRes = await getShortTermForecastFromMeteo(
-    location,
-    timezone
-  )
-  writeDebugFileSync('meteo-response-short-term.json', meteoShortTermRes)
-  const maxUv = findHighestUVIndex(meteoShortTermRes)
 
+  console.log(calculateLongTermForecast(fmiEcmwfData).map((i) => i.time))
+  const maxUv = findHighestUVIndex(meteoAirQualityForecastData)
   const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
   return {
     todaySummary: { ...todaySummary, maxUvIndex: maxUv },
@@ -113,80 +140,79 @@ export async function getLocalWeatherData({
     forecastLongTerm: calculateLongTermForecast(fmiEcmwfData).map((data) => {
       return {
         ...data,
-        symbol: 1, // TODO: Get this data from another API
+        symbol: findWeatherSymbolForTime(meteoForecastData, data.time),
       }
     }),
   }
 }
 
-function findHighestUVIndex(forecast: MeteoShortTermResponse): MaxUvIndex {
-  const nextH = getNextHour(START_FORECAST_HOUR)
-  const hoursToday = forecast.hourly.time
-    .map((time, index) => ({
-      time: new Date(time),
-      index,
-    }))
-    .filter(
-      ({ time }) =>
-        dateFns.isAfter(time, dateFns.startOfDay(nextH)) &&
-        dateFns.isBefore(time, dateFns.endOfDay(nextH))
-    )
-
-  const maxHour = _.maxBy(
-    hoursToday,
-    ({ index }) => forecast.hourly.uv_index[index]
-  )
-  if (!maxHour) {
-    throw new Error('Unable to find max UV index for day')
-  }
-  return {
-    time: maxHour.time,
-    value: forecast.hourly.uv_index[maxHour.index],
-  }
+async function fetchFmiHarmonieData(
+  location: Coordinate
+): Promise<FmiHarmonieDataPoint[]> {
+  const res = await axios.get(FMI_API_URL, {
+    params: getFmiHarmonieParameters(location),
+  })
+  writeDebugFileSync('fmi-harmonie-response.xml', res.data)
+  const data = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(res.data)
+  writeDebugFileSync('fmi-harmonie-parsed-data.json', data)
+  return data
 }
 
-type MeteoLongTermResponse = {
-  daily: {
-    time: string[]
-    weathercode: number[]
-  }
+async function fetchFmiEcmwfData(
+  location: Coordinate
+): Promise<FmiEcmwfDataPoint[]> {
+  const res = await axios.get(FMI_API_URL, {
+    params: getFmiECMWFParameters(location),
+  })
+  writeDebugFileSync('fmi-ecmwf-response.xml', res.data)
+  const data = parseWeatherTodayXmlResponse<FmiEcmwfDataPoint>(res.data)
+  writeDebugFileSync('fmi-ecmwf-parsed-data.json', data)
+  return data
 }
-async function getLongTermForecastFromMeteo(
+
+async function fetchMeteoForecast(
   location: Coordinate,
   timezone: string
-): Promise<MeteoLongTermResponse> {
+): Promise<MeteoForecastResponse> {
   const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
   const firstDay = dateFns.addDays(start, 1)
   const lastDay = dateFns.addDays(firstDay, 5)
 
-  const res = await axios.get('https://api.open-meteo.com/v1/forecast', {
-    params: {
-      latitude: location.lat,
-      longitude: location.lon,
-      daily: ['weathercode', 'precipitation_sum', 'sunrise', 'sunset'].join(
-        ','
-      ),
-      timezone,
-      start_date: dateFns.format(firstDay, 'yyyy-MM-dd'),
-      end_date: dateFns.format(lastDay, 'yyyy-MM-dd'),
-    },
-  })
-  return res.data
-}
+  const res = await axios.get<MeteoForecastResponse>(
+    'https://api.open-meteo.com/v1/forecast',
+    {
+      params: {
+        latitude: location.lat,
+        longitude: location.lon,
+        daily: ['weathercode', 'precipitation_sum', 'sunrise', 'sunset'].join(
+          ','
+        ),
+        timezone,
+        start_date: dateFns.format(firstDay, 'yyyy-MM-dd'),
+        end_date: dateFns.format(lastDay, 'yyyy-MM-dd'),
+      },
+    }
+  )
+  writeDebugFileSync('meteo-response-forecast.json', res.data)
 
-type MeteoShortTermResponse = {
-  hourly: {
-    time: string[]
-    uv_index: number[]
+  return {
+    ...res.data,
+    daily: {
+      ...res.data.daily,
+      time: res.data.daily.time.map((t) =>
+        dateFns.subSeconds(new Date(t), res.data.utc_offset_seconds)
+      ),
+    },
   }
 }
-async function getShortTermForecastFromMeteo(
+
+async function fetchMeteoAirQualityForecast(
   location: Coordinate,
   timezone: string
-): Promise<MeteoShortTermResponse> {
+): Promise<MeteoAirQualityForecastResponse> {
   const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
   const end = dateFns.addDays(start, 2)
-  const res = await axios.get(
+  const res = await axios.get<MeteoAirQualityForecastResponse>(
     'https://air-quality-api.open-meteo.com/v1/air-quality',
     {
       params: {
@@ -199,29 +225,16 @@ async function getShortTermForecastFromMeteo(
       },
     }
   )
-  return res.data
-}
-
-export function getSymbolIcon(
-  symbol: WeatherSymbolNumber,
-  theme: 'light' | 'dark'
-): string {
-  if (!(symbol in weatherSymbolIcons[theme])) {
-    throw new Error(`Weather symbol not found for number: ${symbol} (${theme})`)
+  writeDebugFileSync('meteo-response-air-quality-forecast.json', res.data)
+  return {
+    ...res.data,
+    hourly: {
+      ...res.data.hourly,
+      time: res.data.hourly.time.map((t) =>
+        dateFns.subSeconds(new Date(t), res.data.utc_offset_seconds)
+      ),
+    },
   }
-
-  return `weather-icons/${weatherSymbolIcons[theme][symbol]}.svg`
-}
-
-export function getSymbolClass(
-  symbol: WeatherSymbolNumber,
-  theme: 'light' | 'dark'
-): string {
-  if (!(symbol in weatherSymbolIcons[theme])) {
-    throw new Error(`Weather symbol not found for number: ${symbol} (${theme})`)
-  }
-
-  return weatherSymbolIcons[theme][symbol]
 }
 
 function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
@@ -272,9 +285,9 @@ function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
   })
 }
 
-function calculateLongTermForecast(fmiData: FmiECMWFDataPoint[]) {
+function calculateLongTermForecast(fmiData: FmiEcmwfDataPoint[]) {
   const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
-  const forecastTimes = [1, 2, 3, 4, 5].map((h) => dateFns.addDays(start, h))
+  const forecastTimes = [1, 2, 3, 4, 5].map((d) => dateFns.addDays(start, d))
 
   return forecastTimes.map((time, index) => {
     const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
@@ -379,16 +392,51 @@ function calculateTodaySummary(
   }
 }
 
-export function getNextHour(startHour = 9) {
-  const now = new Date()
-  const today = dateFns.addHours(dateFns.startOfToday(), startHour)
+function findHighestUVIndex(
+  forecast: MeteoAirQualityForecastResponse
+): MaxUvIndex {
+  const nextH = getNextHour(START_FORECAST_HOUR)
+  const hoursToday = forecast.hourly.time
+    .map((time, index) => ({
+      time: new Date(time),
+      index,
+    }))
+    .filter(
+      ({ time }) =>
+        dateFns.isAfter(time, dateFns.startOfDay(nextH)) &&
+        dateFns.isBefore(time, dateFns.endOfDay(nextH))
+    )
 
-  if (dateFns.isBefore(now, today)) {
-    return today
+  const maxHour = _.maxBy(
+    hoursToday,
+    ({ index }) => forecast.hourly.uv_index[index]
+  )
+  if (!maxHour) {
+    throw new Error('Unable to find max UV index for day')
+  }
+  return {
+    time: maxHour.time,
+    value: forecast.hourly.uv_index[maxHour.index],
+  }
+}
+
+function findWeatherSymbolForTime(
+  forecast: MeteoForecastResponse,
+  time: Date
+): WeatherSymbolNumber {
+  const dates = forecast.daily.time.map((time, index) => ({
+    time: new Date(time),
+    index,
+  }))
+
+  const found = dates.find((d) => dateFns.isEqual(d.time, time))
+  if (!found) {
+    console.log('dates', dates)
+    console.log('time', time)
+    throw new Error('Unable to find matching date from meteo forecast')
   }
 
-  const tomorrow = dateFns.addHours(dateFns.startOfTomorrow(), startHour)
-  return tomorrow
+  return meteoToFmiWeatherSymbolNumber(forecast.daily.weathercode[found.index])
 }
 
 function getFmiECMWFParameters(location: Coordinate) {
@@ -450,41 +498,8 @@ function getFmiHarmonieParameters(location: Coordinate) {
   }
 }
 
-function sumByOrNull<T>(arr: T[], fn: (item: T) => number): number | null {
-  const sum = _.sumBy(arr, fn)
-  if (!_.isFinite(sum)) {
-    return null
-  }
-
-  return sum
-}
-
-type FmiBaseDataPoint = {
-  time: Date
-  location: Coordinate
-}
-
-type FmiECMWFDataPoint = FmiBaseDataPoint & {
-  Temperature: number
-  Humidity: number
-  WindSpeedMS: number
-  Pressure: number
-  Precipitation1h: number
-}
-
-type FmiHarmonieDataPoint = FmiBaseDataPoint &
-  FmiECMWFDataPoint & {
-    Humidity: number
-    WindGust: number
-    WindDirection: number
-    Visibility: number
-    PrecipitationAmount: number
-    DewPoint: number
-    WeatherSymbol3: number
-  }
-
 function parseWeatherTodayXmlResponse<
-  T extends FmiHarmonieDataPoint | FmiECMWFDataPoint
+  T extends FmiHarmonieDataPoint | FmiEcmwfDataPoint
 >(xmlString: string): T[] {
   const parser = new XMLParser()
   const parsed = parser.parse(xmlString)
@@ -540,129 +555,3 @@ function parseMember(member: Record<string, any>): {
     value: values['BsWfs:ParameterValue'],
   }
 }
-
-type WeatherSymbolNumber = keyof typeof weatherSymbolIcons['light']
-
-const weatherSymbolIcons = {
-  light: {
-    1: 'wi-day-sunny', // 'Clear',
-    2: 'wi-day-cloudy', // 'Partly cloudy',
-    3: 'wi-cloudy', // 'Cloudy',
-    21: 'wi-day-showers', // 'Scattered showers',
-    22: 'wi-showers', // 'Showers',
-    23: 'wi-rain-mix', // 'Heavy showers',
-    31: 'wi-day-sprinkle', // 'Light showers',
-    32: 'wi-day-rain', // 'Moderate rain',
-    33: 'wi-rain', // 'Heavy rain',
-    41: 'wi-day-snow', // 'Light snow showers',
-    42: 'wi-day-snow', // 'Snow showers',
-    43: 'wi-day-snow-wind', // 'Heavy snow showers',
-    51: 'wi-day-snow', // 'Light snowfall',
-    52: 'wi-day-snow', // 'Moderate snowfall',
-    53: 'wi-day-snow', // 'Heavy snowfall',
-    61: 'wi-day-storm-showers', // 'Thundershowers',
-    62: 'wi-day-storm-showers', // 'Heavy thundershowers',
-    63: 'wi-day-lightning', // 'Thunder',
-    64: 'wi-day-thunderstorm', // 'Heavy thunder',
-    71: 'wi-day-sleet', // 'Light sleet showers',
-    72: 'wi-day-sleet', // 'Moderate sleet showers',
-    73: 'wi-day-rain-mix', // 'Heavy sleet showers',
-    81: 'wi-day-sleet', // 'Light sleet',
-    82: 'wi-day-sleet', // 'Moderate sleet',
-    83: 'wi-sleet', // 'Heavy sleet',
-    91: 'wi-day-haze', // 'Mist',
-    92: 'wi-fog', // 'Fog',
-  },
-  dark: {
-    1: 'wi-night-clear', // 'Clear',
-    2: 'wi-night-alt-cloudy', // 'Partly cloudy',
-    3: 'wi-cloudy', // 'Cloudy',
-    21: 'wi-night-alt-showers', // 'Scattered showers',
-    22: 'wi-showers', // 'Showers',
-    23: 'wi-rain-mix', // 'Heavy showers',
-    31: 'wi-night-alt-sprinkle', // 'Light showers',
-    32: 'wi-night-alt-rain', // 'Moderate rain',
-    33: 'wi-rain', // 'Heavy rain',
-    41: 'wi-night-alt-snow', // 'Light snow showers',
-    42: 'wi-night-alt-snow', // 'Snow showers',
-    43: 'wi-night-alt-snow-wind', // 'Heavy snow showers',
-    51: 'wi-night-alt-snow', // 'Light snowfall',
-    52: 'wi-night-alt-snow', // 'Moderate snowfall',
-    53: 'wi-night-alt-snow', // 'Heavy snowfall',
-    61: 'wi-night-alt-storm-showers', // 'Thundershowers',
-    62: 'wi-night-alt-storm-showers', // 'Heavy thundershowers',
-    63: 'wi-night-alt-lightning', // 'Thunder',
-    64: 'wi-night-alt-thunderstorm', // 'Heavy thunder',
-    71: 'wi-night-alt-sleet', // 'Light sleet showers',
-    72: 'wi-night-alt-sleet', // 'Moderate sleet showers',
-    73: 'wi-night-alt-rain-mix', // 'Heavy sleet showers',
-    81: 'wi-night-alt-sleet', // 'Light sleet',
-    82: 'wi-night-alt-sleet', // 'Moderate sleet',
-    83: 'wi-sleet', // 'Heavy sleet',
-    91: 'wi-dust', // 'Mist',
-    92: 'wi-fog', // 'Fog',
-  },
-}
-
-const weatherSymbolDescriptions = {
-  1: 'Clear',
-  2: 'Partly cloudy',
-  3: 'Cloudy',
-  21: 'Scattered showers',
-  22: 'Showers',
-  23: 'Heavy showers',
-  31: 'Light showers',
-  32: 'Moderate rain',
-  33: 'Heavy rain',
-  41: 'Light snow showers',
-  42: 'Snow showers',
-  43: 'Heavy snow showers',
-  51: 'Light snowfall',
-  52: 'Moderate snowfall',
-  53: 'Heavy snowfall',
-  61: 'Thundershowers',
-  62: 'Heavy thundershowers',
-  63: 'Thunder',
-  64: 'Heavy thunder',
-  71: 'Light sleet showers',
-  72: 'Moderate sleet showers',
-  73: 'Heavy sleet showers',
-  81: 'Light sleet',
-  82: 'Moderate sleet',
-  83: 'Heavy sleet',
-  91: 'Mist',
-  92: 'Fog',
-}
-
-// Validations
-
-Object.keys(weatherSymbolDescriptions).forEach((symbol) => {
-  if (!(symbol in weatherSymbolIcons['light'])) {
-    throw new Error(`${symbol} missing from light weather icons object`)
-  }
-  if (!(symbol in weatherSymbolIcons['dark'])) {
-    throw new Error(`${symbol} missing from dark weather icons object`)
-  }
-})
-
-Object.keys(weatherSymbolIcons['light']).forEach((symbol: any) => {
-  const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
-  if (
-    !fs.existsSync(
-      path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
-    )
-  ) {
-    throw new Error(`${icon}.svg not found from weather-icons/ directory`)
-  }
-})
-
-Object.keys(weatherSymbolIcons['dark']).forEach((symbol: any) => {
-  const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
-  if (
-    !fs.existsSync(
-      path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
-    )
-  ) {
-    throw new Error(`${icon}.svg not found from weather-icons/ directory`)
-  }
-})

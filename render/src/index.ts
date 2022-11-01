@@ -1,5 +1,6 @@
 #!/usr/bin/env ./bin/ts-node
-import { generateHtml } from 'src/core'
+import { generateHtml, generatePng } from 'src/core'
+import { writeDebugFileSync } from 'src/utils'
 import yargs from 'yargs'
 
 const argv = yargs(process.argv.slice(2))
@@ -15,6 +16,8 @@ const argv = yargs(process.argv.slice(2))
 async function main() {
   const html = await generateHtml(argv)
   console.log(html)
+  const png = await generatePng(argv)
+  writeDebugFileSync('render.png', png)
 }
 
 main()

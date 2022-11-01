@@ -8,17 +8,14 @@ import {
   formatNumber,
   formatWindSpeed,
   getBatteryIcon,
+  getNextHour,
   isDark,
   secondsToHoursAndMinutes,
+  START_FORECAST_HOUR,
   writeDebugFileSync,
 } from 'src/utils'
-import {
-  getLocalWeatherData,
-  getNextHour,
-  getSymbolIcon,
-  LocalWeather,
-  START_FORECAST_HOUR,
-} from 'src/weather'
+import { getLocalWeatherData, LocalWeather } from 'src/weather'
+import { getSymbolIcon } from 'src/weatherSymbol'
 import posthtmlReplace, { Replacement } from './posthtmlReplace'
 
 export type GenerateOptions = {
@@ -204,12 +201,7 @@ function getHtmlReplacements(
             modifier: (node) =>
               (node.attrs = {
                 ...node.attrs,
-                src: getSymbolIcon(
-                  item.symbol,
-                  isDark({ lat: opts.lat, lon: opts.lon }, item.time)
-                    ? 'dark'
-                    : 'light'
-                ),
+                src: getSymbolIcon(item.symbol, 'light'),
               }),
           },
         ]
