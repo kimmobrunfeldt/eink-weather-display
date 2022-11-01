@@ -1,10 +1,15 @@
 import * as dateFns from 'date-fns'
 import fs from 'fs'
-import _ from 'lodash'
 import path from 'path'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
 import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
+import {
+  formatWindSpeed,
+  getBatteryIcon,
+  secondsToHoursAndMinutes,
+  writeDebugFileSync,
+} from 'src/utils'
 import {
   getLocalWeatherData,
   getNextHour,
@@ -20,25 +25,13 @@ export type GenerateOptions = {
   lon: number
 }
 
-const secondsToHoursAndMinutes = (s: number) => {
-  const h = Math.floor(s / 3600)
-  const m = Math.round((s % 3600) / 60)
-  return {
-    h,
-    m,
-  }
-}
-
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
   const now = new Date()
   const weather = await getLocalWeatherData({
     location: { lat: opts.lat, lon: opts.lon },
     type: 'today',
   })
-
-  fs.writeFileSync('weather.json', JSON.stringify(weather, null, 2), {
-    encoding: 'utf-8',
-  })
+  writeDebugFileSync('weather.json', weather)
 
   const html = await fs.readFileSync(
     path.join(__dirname, 'templates/index.html'),
@@ -151,20 +144,6 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     ]),
   ]).process(html)
   return processedHtml
-}
-
-function formatWindSpeed(n: number): string {
-  const str = n.toFixed(1)
-  if (str.endsWith('.0')) {
-    return String(Math.round(n))
-  }
-
-  return str
-}
-
-function getBatteryIcon(level: number): string {
-  const closest = _.minBy([0, 25, 50, 75, 100], (n) => Math.abs(n - level))
-  return `battery_${closest}.svg`
 }
 
 export async function generatePng(opts: GenerateOptions): Promise<Buffer> {

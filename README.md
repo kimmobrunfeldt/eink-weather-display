@@ -38,6 +38,9 @@ curl -vv -o render.png \
 rm -f .temp-body.json
 ```
 
+
+* https://api.open-meteo.com/v1/forecast?latitude=62.22&longitude=24.8&hourly=temperature_2m,precipitation,weathercode&daily=weathercode&timezone=Europe%2FHelsinki&start_date=2022-10-31&end_date=2022-11-05
+
 ## Credits
 
 * Refresh icon: Created by andriwidodo from The Noun Project

@@ -1,8 +1,9 @@
 import axios from 'axios'
 import * as dateFns from 'date-fns'
 import { XMLParser } from 'fast-xml-parser'
-import fs from 'fs'
 import _ from 'lodash'
+import { writeDebugFileSync } from 'src/utils'
+import { getSunrise, getSunset } from 'sunrise-sunset-js'
 
 export const START_FORECAST_HOUR = 9
 
@@ -12,10 +13,12 @@ type Coordinate = {
 }
 
 type WeatherTodaySummary = {
+  minTemperature: number
   maxTemperature: number
+  minWindMs: number
+  maxWindMs: number
   symbol: WeatherSymbolNumber
   description: string
-  maxWindMs: number
   sunrise: Date
   sunset: Date
   dayDurationInSeconds: number
@@ -54,21 +57,12 @@ export async function getLocalWeatherData({
   const res = await axios.get(API_URL, {
     params: getFmiParameters(location, type),
   })
-  fs.writeFileSync('fmi-response.xml', res.data, { encoding: 'utf8' })
-
-  /*
-  const result = parseWeatherTodayXmlResponse(
-    fs.readFileSync(path.join(__dirname, '../res.xml'), { encoding: 'utf8' })
-  )
-  */
+  writeDebugFileSync('fmi-response.xml', res.data)
 
   const fmiData = parseWeatherTodayXmlResponse(res.data)
-  fs.writeFileSync('parsed-fmi-data.json', JSON.stringify(fmiData, null, 2), {
-    encoding: 'utf8',
-  })
+  writeDebugFileSync('parsed-fmi-data.json', fmiData)
 
-  const todaySummary = calculateTodaySummary(fmiData)
-
+  const todaySummary = calculateTodaySummary(fmiData, location)
   return {
     todaySummary,
     forecast: calculateTodayForecast(fmiData),
@@ -136,7 +130,8 @@ function calculateTodayForecast(fmiData: FmiDataPoint[]) {
 }
 
 function calculateTodaySummary(
-  fmiData: FmiDataPoint[]
+  fmiData: FmiDataPoint[],
+  location: Coordinate
 ): LocalWeather['todaySummary'] {
   const nextH = getNextHour(START_FORECAST_HOUR)
 
@@ -146,7 +141,9 @@ function calculateTodaySummary(
       dateFns.isBefore(d.time, dateFns.endOfDay(nextH))
   )
   const maxWindMs = Math.max(...today.map((d) => d.WindSpeedMS))
+  const minWindMs = Math.min(...today.map((d) => d.WindSpeedMS))
   const maxTemperature = Math.max(...today.map((d) => d.Temperature))
+  const minTemperature = Math.max(...today.map((d) => d.Temperature))
   const symbolCounts = _.countBy(today, (d) => d.WeatherSymbol3)
   const symbolCountsArr = Object.keys(symbolCounts).map((key) => ({
     key,
@@ -157,15 +154,26 @@ function calculateTodaySummary(
   const symbol = Number(topSymbol) as WeatherSymbolNumber
 
   const precipitationAmount = _.sumBy(today, (d) => d.PrecipitationAmount)
-
+  const sunrise = getSunrise(
+    location.lat,
+    location.lon,
+    dateFns.startOfDay(nextH)
+  )
+  const sunset = getSunset(
+    location.lat,
+    location.lon,
+    dateFns.startOfDay(nextH)
+  )
   return {
+    minTemperature,
     maxTemperature,
+    minWindMs,
     maxWindMs,
     description: weatherSymbolDescriptions[symbol],
     symbol,
-    sunset: new Date(), // TODO
-    sunrise: new Date(), // TODO
-    dayDurationInSeconds: 100, // TODO
+    sunrise,
+    sunset,
+    dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
     maxUvIndex: 2, // TODO
     precipitationAmount,
   }
