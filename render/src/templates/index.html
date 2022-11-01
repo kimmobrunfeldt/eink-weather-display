@@ -92,6 +92,14 @@
       --space-6: 8rem;
       --space-7: 16rem;
       --space-8: 32rem;
+
+      --color-0: #eee;
+      --color-1: #999;
+      --color-2: #666;
+      --color-3: #333;
+      --color-4: #000;
+
+      --icon-opacity: 0.7;
     }
 
     /* Typography */
@@ -228,7 +236,17 @@
 
     .CurrentWeather {
       display: flex;
-      align-items: center;
+    }
+
+    .CurrentWeather>* {
+      flex-wrap: nowrap;
+      display: flex;
+      justify-content: center;
+    }
+
+    .CurrentWeather-summary {
+      flex-basis: 60%;
+      margin-right: 5%;
     }
 
     .CurrentWeather-icon {
@@ -239,7 +257,7 @@
     .CurrentWeather-icon>img {
       position: absolute;
       left: 50%;
-      top: 50%;
+      top: 46%;
       transform: translate(-50%, -50%);
       height: 46vh;
     }
@@ -260,16 +278,10 @@
       margin-left: 4px;
     }
 
-    .CurrentWeather>* {
-      flex: 33.333%;
-      flex-wrap: nowrap;
-      display: flex;
-      justify-content: center;
-    }
-
     .CurrentWeather-details {
       flex-direction: column;
       padding-left: 0.8rem;
+      flex-basis: 40%;
     }
 
     .CurrentWeather-details h2 {
@@ -282,6 +294,7 @@
       flex-direction: row;
       justify-content: flex-start;
       flex-wrap: wrap;
+      max-width: 18rem;
     }
 
     .WeatherDetails-item {
@@ -296,11 +309,19 @@
       justify-content: center;
       align-items: center;
       width: var(--text-size-xl);
-      margin-right: var(--space-3);
+      margin-right: var(--space-2);
+      opacity: var(--icon-opacity);
     }
 
     .WeatherDetails-item-icon {
       height: var(--text-size-l);
+    }
+
+    .WeatherDetails-item-icon-raindrops {
+      height: 2.7rem;
+      position: relative;
+      left: -0.1rem;
+      top: 0.05rem;
     }
 
     .WeatherDetails-item-value {
@@ -349,13 +370,26 @@
       align-items: center;
     }
 
+    .Forecast-item--has-pre-header {
+      margin-left: 1rem;
+      position: relative;
+    }
+
+    .Forecast-item-pre-header {
+      position: absolute;
+      left: -0.1rem;
+      top: 0.05rem;
+      font-size: var(--text-size-s);
+      color: var(--color-1);
+    }
+
     .Forecast-item-time {
       margin-bottom: var(--space-1);
     }
 
     .Forecast-item-icon {
       margin-bottom: var(--space-2);
-      background: #eee;
+      background: var(--color-0);
       width: 4.2rem;
       height: 4.2rem;
       padding: 0.6rem;
@@ -374,6 +408,10 @@
       margin-right: var(--space-1);
       width: 1.8rem;
       text-align: right;
+    }
+
+    .Forecast-item-numbers>*:not(:first-child) {
+      color: var(--color-4);
     }
 
     .Forecast-item-unit {
@@ -414,13 +452,15 @@
 
     <div class="Middle">
       <div class="CurrentWeather">
-        <div class="CurrentWeather-icon">
-          <img id="current-weather-icon" src="weather-icons/wi-cloudy.svg" />
+        <div class="CurrentWeather-summary">
+          <div class="CurrentWeather-icon">
+            <img id="current-weather-icon" src="weather-icons/wi-cloudy.svg" />
+          </div>
+          <p class="CurrentWeather-temperature">
+            <span id="current-weather-temperature" class="CurrentWeather-temperature-value">17</span>
+            <span class="CurrentWeather-temperature-unit">°C</span>
+          </p>
         </div>
-        <p class="CurrentWeather-temperature">
-          <span id="current-weather-temperature" class="CurrentWeather-temperature-value">17</span>
-          <span class="CurrentWeather-temperature-unit">°C</span>
-        </p>
         <div class="CurrentWeather-details">
           <h2 id="current-weather-description">Partly sunny</h2>
           <ul class="WeatherDetails">
@@ -436,7 +476,8 @@
 
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img class="WeatherDetails-item-icon WeatherDetails-item-icon" src="humidity.svg" />
+                <img class="WeatherDetails-item-icon WeatherDetails-item-icon-raindrops"
+                  src="weather-icons/wi-raindrops.svg" />
               </div>
               <div>
                 <span id="current-weather-precipitation" class="WeatherDetails-item-value">23</span><span
@@ -598,7 +639,9 @@
           </div>
         </div>
 
-        <div class="Forecast-item">
+        <div class="Forecast-item Forecast-item--has-pre-header">
+          <div class="Forecast-item-pre-header">Thu</div>
+
           <div id="forecast-item-5-time" class="Forecast-item-time">9:00</div>
           <div class="Forecast-item-icon-container">
             <img id="forecast-item-5-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
