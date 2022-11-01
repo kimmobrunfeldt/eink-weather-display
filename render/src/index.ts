@@ -7,6 +7,8 @@ const argv = yargs(process.argv.slice(2))
   .options({
     lat: { type: 'number', demandOption: true },
     lon: { type: 'number', demandOption: true },
+    width: { type: 'number', demandOption: false },
+    height: { type: 'number', demandOption: false },
     locationName: { type: 'string', demandOption: true },
     timezone: { type: 'string', demandOption: true },
     batteryLevel: { type: 'number', demandOption: true },

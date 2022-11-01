@@ -24,6 +24,8 @@ export type GenerateOptions = {
   batteryLevel: number // 0-100
   lat: number
   lon: number
+  width?: number
+  height?: number
 }
 
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
@@ -39,17 +41,20 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
   )
 
   const { html: processedHtml } = await posthtml([
+    posthtmlReplace(getHtmlReplacements(opts, weather)),
     posthtmlInlineAssets({
       cwd: path.join(__dirname, 'templates/'),
       errors: 'throw',
     }),
-    posthtmlReplace(getHtmlReplacements(opts, weather)),
   ]).process(html)
   return processedHtml
 }
 
 export async function generatePng(opts: GenerateOptions): Promise<Buffer> {
-  const { page, browser } = await createPuppeteer()
+  const { page, browser } = await createPuppeteer({
+    width: opts.width,
+    height: opts.height,
+  })
   const html = await generateHtml(opts)
   const png = await takeScreenshot(page, html)
   await browser.close()
