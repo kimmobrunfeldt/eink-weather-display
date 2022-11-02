@@ -3,6 +3,7 @@ import _ from 'lodash'
 import { generateHtml, generatePng } from 'src/core'
 import { environment } from 'src/environment'
 import { HttpError } from 'src/HttpError'
+import { logger } from 'src/logger'
 import { writeDebugFile } from 'src/utils'
 
 type ExpressHandler = (request: Request, response: Response) => void
@@ -26,9 +27,7 @@ type WebhookHandler = (request: Request, response: Response) => Promise<any>
  */
 function createExpressHandler(handler: WebhookHandler): ExpressHandler {
   return (request, response) => {
-    console.debug(
-      `Received request to ${request.originalUrl} from ${request.ip}`
-    )
+    logger.info(`Received request to ${request.originalUrl} from ${request.ip}`)
 
     /**
      * Synchronously thrown errors should go into Error Reporting, so they are
@@ -43,17 +42,16 @@ function createExpressHandler(handler: WebhookHandler): ExpressHandler {
       const status = err.status ?? 500
 
       if (status < 500) {
-        console.error('Error while processing', request)
-        console.info(
-          `Responding with status ${status}: ${err.message}`,
-          request
-        )
+        logger.error('Error while processing', { request })
+        logger.info(`Responding with status ${status}: ${err.message}`, {
+          request,
+        })
         response.status(status).send(err.message)
         return
       }
 
-      console.error(`Unexpected error while processing `, { request })
-      console.info(err.stack, request)
+      logger.error(`Unexpected error while processing `, { request })
+      logger.info(err.stack, request)
       response.sendStatus(status)
     })
   }
@@ -69,7 +67,7 @@ async function renderHandler(req: Request, res: Response) {
 
   const opts = {
     lat: Number(req.query.lat),
-    lon: Number(req.query.lng),
+    lon: Number(req.query.lon),
     locationName: String(req.query.locationName),
     timezone: String(req.query.timezone),
     batteryLevel: Number(req.query.batteryLevel),
@@ -114,7 +112,7 @@ async function renderHandler(req: Request, res: Response) {
   }
 
   const html = await generateHtml(opts)
-  console.log(html)
+  logger.log(html)
   await writeDebugFile('render.html', html)
   const png = await generatePng(opts)
   await writeDebugFile('render.png', png)

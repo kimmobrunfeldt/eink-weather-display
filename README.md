@@ -11,6 +11,20 @@ Weather display for our home.
 
 
 
+## Rendering
+
+```sh
+LAT="60.222"
+LON="24.83"
+LOCATION="Espoo"
+BATTERY="100"
+TIMEZONE="Europe/Helsinki"
+
+curl -vv -o weather.png \
+  -H "x-api-key: $API_KEY" \
+  "https://europe-west3-weather-display-367406.cloudfunctions.net/weather-display?lat=$LAT&lon=$LON&locationName=$LOCATION&batteryLevel=$BATTERY&timezone=$TIMEZONE"
+```
+
 
 ## How it works
 

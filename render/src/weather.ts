@@ -2,6 +2,7 @@ import axios from 'axios'
 import * as dateFns from 'date-fns'
 import { XMLParser } from 'fast-xml-parser'
 import _ from 'lodash'
+import { logger } from 'src/logger'
 import {
   getNextHour,
   START_FORECAST_HOUR,
@@ -131,7 +132,10 @@ export async function getLocalWeatherData({
     timezone
   )
 
-  console.log(calculateLongTermForecast(fmiEcmwfData).map((i) => i.time))
+  logger.log(
+    'calculateLongTermForecast',
+    calculateLongTermForecast(fmiEcmwfData).map((i) => i.time)
+  )
   const maxUv = findHighestUVIndex(meteoAirQualityForecastData)
   const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
   return {
@@ -247,14 +251,14 @@ function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
     const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
     const found = fmiData[fmiIndex]
     if (!found) {
-      console.error('Time:', time)
-      console.error('FMI Data:', JSON.stringify(fmiData))
+      logger.error('Time:', time)
+      logger.error('FMI Data:', JSON.stringify(fmiData))
       throw new Error(`Could not find FMI forecast data point for date ${time}`)
     }
     const symbol = found.WeatherSymbol3
     if (!(symbol in weatherSymbolDescriptions)) {
-      console.error('FMI Data:', JSON.stringify(fmiData))
-      console.error('Found:', JSON.stringify(found))
+      logger.error('FMI Data:', JSON.stringify(fmiData))
+      logger.error('Found:', JSON.stringify(found))
       throw new Error(`Unexpected WeatherSymbol3: ${symbol}`)
     }
 
@@ -293,8 +297,8 @@ function calculateLongTermForecast(fmiData: FmiEcmwfDataPoint[]) {
     const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
     const found = fmiData[fmiIndex]
     if (!found) {
-      console.error('Time:', time)
-      console.error('FMI Data:', JSON.stringify(fmiData))
+      logger.error('Time:', time)
+      logger.error('FMI Data:', JSON.stringify(fmiData))
       throw new Error(`Could not find FMI forecast data point for date ${time}`)
     }
 
@@ -431,8 +435,8 @@ function findWeatherSymbolForTime(
 
   const found = dates.find((d) => dateFns.isEqual(d.time, time))
   if (!found) {
-    console.log('dates', dates)
-    console.log('time', time)
+    logger.log('dates', dates)
+    logger.log('time', time)
     throw new Error('Unable to find matching date from meteo forecast')
   }
 
