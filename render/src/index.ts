@@ -74,10 +74,18 @@ function requestToLoggable(req: Request) {
   }
 }
 
+function getGivenApiKey(req: Request): string {
+  if (req.query.apiKey) {
+    return String(req.query.apiKey)
+  }
+  return String(req.headers['x-api-key'])
+}
+
 async function renderHandler(req: Request, res: Response) {
   if (
     environment.NODE_ENV !== 'development' &&
-    req.headers['x-api-key'] !== environment.API_KEY
+    environment.API_KEY &&
+    !environment.API_KEY.split(',').includes(getGivenApiKey(req))
   ) {
     throw new HttpError(401, 'Invalid API key')
   }
