@@ -9,6 +9,9 @@ jobs:
   test:
     name: Test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: render
     steps:
       - uses: actions/checkout@v3
       - name: Read .node-version
@@ -24,6 +27,9 @@ jobs:
     name: Build
     needs: test
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: render
     permissions:
       id-token: write
       contents: read
@@ -69,6 +75,9 @@ jobs:
     name: Deploy
     needs: ["build"]
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: render
     permissions:
       id-token: write
       contents: read
