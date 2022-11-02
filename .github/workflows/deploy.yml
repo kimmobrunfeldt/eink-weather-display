@@ -75,9 +75,6 @@ jobs:
     name: Deploy
     needs: ["build"]
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: render
     permissions:
       id-token: write
       contents: read
