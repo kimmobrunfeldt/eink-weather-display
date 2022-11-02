@@ -23,8 +23,8 @@
     "lodash": "^4.17.21",
     "posthtml": "^0.16.6",
     "posthtml-inline-assets": "^3.1.0",
-    "puppeteer": "^19.2.0",
-    "puppeteer-core": "^19.2.0",
+    "puppeteer": "^18.2.1",
+    "puppeteer-core": "^18.2.1",
     "sunrise-sunset-js": "^2.2.1",
     "typescript": "^4.8.4",
     "yargs": "^17.6.0"

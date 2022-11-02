@@ -52,10 +52,10 @@ function createExpressHandler(handler: WebhookHandler): ExpressHandler {
         return
       }
 
-      logger.error(`Unexpected error while processing `, {
+      logger.error(`Unexpected error while processing`, {
         request: requestToLoggable(request),
       })
-      logger.info(err.message, {
+      logger.error(err.message, {
         stack: err.stack,
         request: requestToLoggable(request),
       })
