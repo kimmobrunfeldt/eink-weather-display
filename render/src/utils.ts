@@ -37,7 +37,7 @@ export function getBatteryIcon(level: number): string {
 }
 
 export async function writeDebugFile(name: string, data: any) {
-  const date = dateFns.format(new Date(), 'yyyy-MM-dd')
+  const date = dateFns.format(new Date(), 'yyyy-MM-dd_HHmmss')
   const fileName = `${date}-${name}`
 
   if (environment.NODE_ENV === 'development') {
