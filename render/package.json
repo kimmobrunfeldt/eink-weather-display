@@ -37,6 +37,7 @@
     "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@zerollup/ts-transform-paths": "^1.7.18",
+    "bunyan": "^1.8.15",
     "eslint": "^8.26.0",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",

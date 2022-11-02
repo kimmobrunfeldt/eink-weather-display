@@ -50,7 +50,9 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
   return processedHtml
 }
 
-export async function generatePng(opts: GenerateOptions): Promise<Buffer> {
+export async function generatePng(
+  opts: GenerateOptions
+): Promise<{ png: Buffer; html: string }> {
   const { page, browser } = await createPuppeteer({
     width: opts.width,
     height: opts.height,
@@ -58,7 +60,7 @@ export async function generatePng(opts: GenerateOptions): Promise<Buffer> {
   const html = await generateHtml(opts)
   const png = await takeScreenshot(page, html)
   await browser.close()
-  return png
+  return { html, png }
 }
 
 function getHtmlReplacements(
