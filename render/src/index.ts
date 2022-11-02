@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { generateHtml, generatePng } from 'src/core'
+import { environment } from 'src/environment'
 import { HttpError } from 'src/HttpError'
 import { writeDebugFile } from 'src/utils'
 
@@ -59,6 +60,13 @@ function createExpressHandler(handler: WebhookHandler): ExpressHandler {
 }
 
 async function renderHandler(req: Request, res: Response) {
+  if (
+    environment.NODE_ENV !== 'development' &&
+    req.headers['x-api-key'] !== environment.API_KEY
+  ) {
+    throw new HttpError(401, 'Invalid API key')
+  }
+
   const opts = {
     lat: Number(req.query.lat),
     lon: Number(req.query.lng),

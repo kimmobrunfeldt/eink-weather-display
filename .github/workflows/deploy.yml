@@ -91,4 +91,4 @@ jobs:
         uses: google-github-actions/setup-gcloud@v0.6.2
         with:
           version: '408.0.0'
-      - run: gcloud functions deploy weather-display --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
+      - run: gcloud functions deploy weather-display --entry-point render --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
