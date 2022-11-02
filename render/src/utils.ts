@@ -1,7 +1,9 @@
+import { Storage } from '@google-cloud/storage'
 import * as dateFns from 'date-fns'
 import * as fs from 'fs'
 import _ from 'lodash'
 import * as path from 'path'
+import { environment } from 'src/environment'
 import { Coordinate } from 'src/weather'
 import { getSunrise, getSunset } from 'sunrise-sunset-js'
 
@@ -34,9 +36,31 @@ export function getBatteryIcon(level: number): string {
   return `battery_${closest}.svg`
 }
 
-export function writeDebugFileSync(name: string, data: any) {
+export async function writeDebugFile(name: string, data: any) {
   const date = dateFns.format(new Date(), 'yyyy-MM-dd')
-  const filePath = path.join(__dirname, '../../logs/', `${date}-${name}`)
+  const fileName = `${date}-${name}`
+
+  if (environment.NODE_ENV === 'development') {
+    return writeLocalDebugFile(fileName, data)
+  } else {
+    return await saveDebugFileToBucket(fileName, data)
+  }
+}
+
+export async function saveDebugFileToBucket(name: string, data: any) {
+  const { encoding, content } = getFileContent(data)
+  const storage = new Storage()
+  const bucket = storage.bucket(environment.GCP_BUCKET)
+  const file = bucket.file(name)
+  await file.save(content, {
+    metadata: {
+      contentType: encoding,
+    },
+  })
+}
+
+export function writeLocalDebugFile(name: string, data: any) {
+  const filePath = path.join(__dirname, '../../logs/', name)
   const { encoding, content } = getFileContent(data)
   fs.writeFileSync(filePath, content, {
     encoding,

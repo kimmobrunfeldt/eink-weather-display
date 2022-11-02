@@ -6,7 +6,7 @@ import {
   getNextHour,
   START_FORECAST_HOUR,
   sumByOrNull,
-  writeDebugFileSync,
+  writeDebugFile,
 } from 'src/utils'
 import {
   meteoToFmiWeatherSymbolNumber,
@@ -152,9 +152,9 @@ async function fetchFmiHarmonieData(
   const res = await axios.get(FMI_API_URL, {
     params: getFmiHarmonieParameters(location),
   })
-  writeDebugFileSync('fmi-harmonie-response.xml', res.data)
+  await writeDebugFile('fmi-harmonie-response.xml', res.data)
   const data = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(res.data)
-  writeDebugFileSync('fmi-harmonie-parsed-data.json', data)
+  await writeDebugFile('fmi-harmonie-parsed-data.json', data)
   return data
 }
 
@@ -164,9 +164,9 @@ async function fetchFmiEcmwfData(
   const res = await axios.get(FMI_API_URL, {
     params: getFmiECMWFParameters(location),
   })
-  writeDebugFileSync('fmi-ecmwf-response.xml', res.data)
+  await writeDebugFile('fmi-ecmwf-response.xml', res.data)
   const data = parseWeatherTodayXmlResponse<FmiEcmwfDataPoint>(res.data)
-  writeDebugFileSync('fmi-ecmwf-parsed-data.json', data)
+  await writeDebugFile('fmi-ecmwf-parsed-data.json', data)
   return data
 }
 
@@ -193,7 +193,7 @@ async function fetchMeteoForecast(
       },
     }
   )
-  writeDebugFileSync('meteo-response-forecast.json', res.data)
+  await writeDebugFile('meteo-response-forecast.json', res.data)
 
   return {
     ...res.data,
@@ -225,7 +225,7 @@ async function fetchMeteoAirQualityForecast(
       },
     }
   )
-  writeDebugFileSync('meteo-response-air-quality-forecast.json', res.data)
+  await writeDebugFile('meteo-response-air-quality-forecast.json', res.data)
   return {
     ...res.data,
     hourly: {

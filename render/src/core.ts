@@ -12,7 +12,7 @@ import {
   isDark,
   secondsToHoursAndMinutes,
   START_FORECAST_HOUR,
-  writeDebugFileSync,
+  writeDebugFile,
 } from 'src/utils'
 import { getLocalWeatherData, LocalWeather } from 'src/weather'
 import { getSymbolIcon } from 'src/weatherSymbol'
@@ -33,7 +33,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     location: { lat: opts.lat, lon: opts.lon },
     timezone: opts.timezone,
   })
-  writeDebugFileSync('weather.json', weather)
+  await writeDebugFile('weather.json', weather)
 
   const html = await fs.readFileSync(
     path.join(__dirname, 'templates/index.html'),

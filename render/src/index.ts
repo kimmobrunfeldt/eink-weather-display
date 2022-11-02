@@ -1,10 +1,8 @@
-import 'tsconfig-paths/register'
-
 import { Request, Response } from 'express'
 import _ from 'lodash'
 import { generateHtml, generatePng } from 'src/core'
 import { HttpError } from 'src/HttpError'
-import { writeDebugFileSync } from 'src/utils'
+import { writeDebugFile } from 'src/utils'
 
 type ExpressHandler = (request: Request, response: Response) => void
 type WebhookHandler = (request: Request, response: Response) => Promise<any>
@@ -109,9 +107,9 @@ async function renderHandler(req: Request, res: Response) {
 
   const html = await generateHtml(opts)
   console.log(html)
-  writeDebugFileSync('render.html', html)
+  await writeDebugFile('render.html', html)
   const png = await generatePng(opts)
-  writeDebugFileSync('render.png', png)
+  await writeDebugFile('render.png', png)
 
   res.set('content-type', 'image/png')
   res.status(200).end(png)
