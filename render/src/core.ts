@@ -3,6 +3,8 @@ import fs from 'fs'
 import path from 'path'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
+import posthtmlInlineStyleCssImports from 'src/posthtmlInlineStyleCssImports'
+import posthtmlReplace, { Replacement } from 'src/posthtmlReplace'
 import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
 import {
   formatNumber,
@@ -16,7 +18,6 @@ import {
 } from 'src/utils'
 import { getLocalWeatherData, LocalWeather } from 'src/weather'
 import { getSymbolIcon } from 'src/weatherSymbol'
-import posthtmlReplace, { Replacement } from './posthtmlReplace'
 
 export type GenerateOptions = {
   locationName: string
@@ -42,6 +43,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
 
   const { html: processedHtml } = await posthtml([
     posthtmlReplace(getHtmlReplacements(opts, weather)),
+    posthtmlInlineStyleCssImports(),
     posthtmlInlineAssets({
       cwd: path.join(__dirname, 'templates/'),
       errors: 'throw',

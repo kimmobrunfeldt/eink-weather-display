@@ -132,10 +132,6 @@ export async function getLocalWeatherData({
     timezone
   )
 
-  logger.log(
-    'calculateLongTermForecast',
-    calculateLongTermForecast(fmiEcmwfData).map((i) => i.time)
-  )
   const maxUv = findHighestUVIndex(meteoAirQualityForecastData)
   const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
   return {
