@@ -1,5 +1,8 @@
 # Custom
 
+# Ignore generated credentials from google-github-actions/auth
+gha-creds-*.json
+
 .DS_Store
 # exclude everything
 logs/*

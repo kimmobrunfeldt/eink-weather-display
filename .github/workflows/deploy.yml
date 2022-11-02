@@ -1,0 +1,88 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Read .node-version
+        run: echo ::set-output name=version::$(cat .node-version)
+        id: node-version
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: ${{steps.node-version.outputs.version}}
+      - run: npm install
+      - run: npm test
+
+  build:
+    name: Build
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      GITHUB_SHA: ${{ github.sha }}
+      GCP_REGION: europe-west3
+      GCP_PROJECT: weather-display
+      GCP_BUCKET: weather-display-deployment
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0.8.3
+        with:
+          credentials_json:  ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.6.2
+        with:
+          version: '408.0.0'
+      - name: Read .node-version
+        run: echo ::set-output name=version::$(cat .node-version)
+        id: node-version
+      - uses: actions/setup-node@v3.5.1
+        with:
+          node-version: ${{steps.node-version.outputs.version}}
+      - run: npm install
+      - run: npm run build
+      - name: Get current timestamp
+        id: timestamp
+        run: echo "::set-output name=timestamp::$(date +'%s')"
+      - name: Upload deployable zip
+        env:
+          FILE_NAME: weather-display-${{ steps.timestamp.outputs.timestamp }}-${{ env.GITHUB_SHA }}.zip
+        run: |
+          cd dist/
+          zip -r ../$FILE_NAME .
+          cd ..
+          gcloud storage cp $FILE_NAME gs://$GCP_BUCKET
+    outputs:
+      file-name: weather-display-${{ steps.timestamp.outputs.timestamp }}-${{ env.GITHUB_SHA }}.zip
+
+  deploy:
+    name: Deploy
+    needs: ["build"]
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    env:
+      FILE_URL: gs://weather-display-deployment/${{ needs.build.outputs.file-name }}
+      GCP_REGION: europe-west3
+      GCP_PROJECT: weather-display
+    steps:
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v0.8.3
+        with:
+          credentials_json:  ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0.6.2
+        with:
+          version: '408.0.0'
+      - run: gcloud functions deploy weather-display --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
