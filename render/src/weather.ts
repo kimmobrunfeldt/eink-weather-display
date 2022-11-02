@@ -445,8 +445,10 @@ function findWeatherSymbolForTime(
 
   const found = dates.find((d) => dateFns.isEqual(d.time, time))
   if (!found) {
-    logger.log('dates', dates)
-    logger.log('time', time)
+    logger.error('Unable to find matching date', {
+      dates,
+      time,
+    })
     throw new Error('Unable to find matching date from meteo forecast')
   }
 

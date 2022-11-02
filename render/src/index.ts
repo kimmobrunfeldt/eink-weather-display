@@ -42,18 +42,35 @@ function createExpressHandler(handler: WebhookHandler): ExpressHandler {
       const status = err.status ?? 500
 
       if (status < 500) {
-        logger.error('Error while processing', { request })
+        logger.error('Error while processing', {
+          request: requestToLoggable(request),
+        })
         logger.info(`Responding with status ${status}: ${err.message}`, {
-          request,
+          request: requestToLoggable(request),
         })
         response.status(status).send(err.message)
         return
       }
 
-      logger.error(`Unexpected error while processing `, { request })
-      logger.info(err.stack, request)
+      logger.error(`Unexpected error while processing `, {
+        request: requestToLoggable(request),
+      })
+      logger.info(err.message, {
+        stack: err.stack,
+        request: requestToLoggable(request),
+      })
       response.sendStatus(status)
     })
+  }
+}
+
+function requestToLoggable(req: Request) {
+  return {
+    originalUrl: req.originalUrl,
+    body: req.body,
+    query: req.query,
+    headers: req.headers,
+    method: req.method,
   }
 }
 
