@@ -75,6 +75,7 @@ jobs:
     name: Deploy
     needs: ["build"]
     runs-on: ubuntu-latest
+    concurrency: cloud-function-deploy
     permissions:
       id-token: write
       contents: read
