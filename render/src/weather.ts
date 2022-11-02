@@ -1,6 +1,5 @@
 import axios from 'axios'
 import * as dateFns from 'date-fns'
-import dateFnsFiLocale from 'date-fns/locale/fi'
 import { XMLParser } from 'fast-xml-parser'
 import _ from 'lodash'
 import { logger } from 'src/logger'
@@ -204,14 +203,14 @@ async function fetchMeteoForecast(
     ...res.data,
     daily: {
       ...res.data.daily,
-      time: res.data.daily.time.map((t) =>
-        dateFns.subSeconds(
-          dateFns.parse(t as unknown as string, 'yyyy-MM-dd', new Date(), {
-            locale: dateFnsFiLocale,
-          }),
-          res.data.utc_offset_seconds
+      time: res.data.daily.time.map((t) => {
+        const date = dateFns.parse(
+          t as unknown as string,
+          'yyyy-MM-dd',
+          new Date()
         )
-      ),
+        return date
+      }),
     },
   }
 }
@@ -240,20 +239,14 @@ async function fetchMeteoAirQualityForecast(
     ...res.data,
     hourly: {
       ...res.data.hourly,
-      time: res.data.hourly.time.map((t) =>
-        dateFns.subSeconds(
-          dateFns.parse(
-            t as unknown as string,
-            "yyyy-MM-dd'T'HH:mm",
-            new Date(),
-            {
-              //todo: based on timezone?
-              locale: dateFnsFiLocale,
-            }
-          ),
-          res.data.utc_offset_seconds
+      time: res.data.hourly.time.map((t) => {
+        const date = dateFns.parse(
+          t as unknown as string,
+          "yyyy-MM-dd'T'HH:mm",
+          new Date()
         )
-      ),
+        return date
+      }),
     },
   }
 }
