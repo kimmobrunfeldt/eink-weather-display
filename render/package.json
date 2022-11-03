@@ -7,7 +7,6 @@
     "test": "echo 'pass, lol'",
     "start": "http-server src/templates/ -c-1",
     "clean": "rm -r dist/",
-    "function": "npm run build && functions-framework --source=dist/",
     "build": "ttsc && cp -r src/templates dist/templates && cp package.json package-lock.json tsconfig.json dist/",
     "render": "./src/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html"
   },

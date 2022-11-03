@@ -1,17 +1,30 @@
-# weather-display
+# eink-weather-display
 
 Weather display for our home.
 
+**Goals:**
+
+* Easily glanceable weather forecast at the heart of our home. Ideally eliminates one more reason to pick up the phone.
+* Looks like a "real product". The housing should look professional.
+* Fully battery-powered. We didn't want a visible cable, and drilling the cable inside wall wasn't an option.
+* Always visible and doesn't light up the hallway during evening / night -> e-Ink display
 
 ## Get started
 
+Note! Since the display updates only once or twice a day, everything has been designed that in mind. The forecast always starts 9AM, and doesn't show any real observations during the day.
+
+### Developing with placeholder data
+
 * `npm i`
 * `npm start`
-* Open http://127.0.0.1:8080/
+* Open http://127.0.0.1:8080/ to tune visuals with placeholder values hardcoded within [src/templates/index.html](src/templates/index.html)
 
+### Rendering real values
 
+* Open http://127.0.0.1:8080/render.html
+* `npm run render` to run the CLI tool that renders HTML to `src/templates/render.html`
 
-## Rendering
+### Calling cloud function
 
 ```sh
 LAT="60.222"
@@ -28,14 +41,28 @@ curl -vv -o weather.png \
 
 ## How it works
 
-The project has two separate parts:
+The project has two separate parts: render and rasp.
 
-* [render](render/) - Generates a PNG containing the weather forecast at render time. Runs in Google Cloud Function (mostly for convenience).
-  * Weather data is fetched from API by Finnish Meteorological Institute
-  * HTML, CSS, and Headless Chrome are utilised to generate the PNG file. This part could be done with a lower-level approach, but using CSS for layouting is super convenient.
-  * The view is a purposely dumb single HTML file, which has mock data to make development easy. The mock data will be replaced with real data using DOM ids. Not having a build tool removes a lot of unnecessary complexity.
 
-* [rasp](rasp/) - Fetches the PNG from `render`, updates the ePaper display, and goes back to idle. Runs on Raspberry Pi Zero.
+### `render`
+
+Generates HTML that will be eventually rendered as PNG. The image contains the weather forecast. `render` is exposed via Google Cloud Function. It's the perfect tool for this type of task. The endpoint is quite rarely called and latencies don't matter that much.
+
+* Weather data is fetched from API by Finnish Meteorological Institute
+* HTML, CSS, and Headless Chrome are utilised to generate the PNG file. This part could be done with a lower-level approach, but using CSS for layouting is super convenient.
+* The view is a purposely dumb single HTML file, which has mock data to make development easy. The mock data will be replaced with real data using DOM ids. Not having a build tool removes a lot of unnecessary complexity.
+
+
+### `rasp`
+
+Runs on Raspberry Pi Zero.
+
+All code related to the hardware that will display the weather image. This
+part doesn't know anything about weather, it just downloads a PNG from given URL and renders it on e-Ink display.
+
+* Fetch PNG from given URL, render it to e-Ink display, and go back to idle. goes back to idle.
+* Consumes as little power as possible
+* Microcontroller could've been enough, but I also wanted to finish the project in a lifetime.
 
 
 ## Random notes
@@ -58,7 +85,8 @@ rm -f .temp-body.json
 
 * https://api.open-meteo.com/v1/forecast?latitude=62.22&longitude=24.8&hourly=temperature_2m,precipitation,weathercode&daily=weathercode&timezone=Europe%2FHelsinki&start_date=2022-10-31&end_date=2022-11-05
 
-
+* https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje
+* https://www.ilmatieteenlaitos.fi/tallennetut-kyselyt
 ### All fields for `fmi::forecast::harmonie::surface::point::simple`
 
 The model can return data up to 50h from now.
