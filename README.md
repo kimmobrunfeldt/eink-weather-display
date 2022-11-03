@@ -74,6 +74,8 @@ part doesn't know anything about weather, it just downloads a PNG from given URL
 * https://open-meteo.com/en/docs/air-quality-api
 * https://www.ilmatieteenlaitos.fi/latauspalvelun-pikaohje
 * https://www.ilmatieteenlaitos.fi/tallennetut-kyselyt
+* https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
+* https://github.com/waveshare/IT8951-ePaper
 
 ### All fields for `fmi::forecast::harmonie::surface::point::simple`
 
