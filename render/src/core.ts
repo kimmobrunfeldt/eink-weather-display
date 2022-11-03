@@ -1,4 +1,5 @@
 import * as dateFns from 'date-fns'
+import * as dateFnsTz from 'date-fns-tz'
 import fs from 'fs'
 import path from 'path'
 import posthtml from 'posthtml'
@@ -10,30 +11,26 @@ import {
   formatNumber,
   formatWindSpeed,
   getBatteryIcon,
-  getNextHour,
+  getNextHourDates,
   isDark,
   secondsToHoursAndMinutes,
-  START_FORECAST_HOUR,
   writeDebugFile,
 } from 'src/utils'
-import { getLocalWeatherData, LocalWeather } from 'src/weather'
+import { Coordinate, getLocalWeatherData, LocalWeather } from 'src/weather'
 import { getSymbolIcon } from 'src/weatherSymbol'
 
 export type GenerateOptions = {
+  location: Coordinate
   locationName: string
   timezone: string
   batteryLevel: number // 0-100
-  lat: number
-  lon: number
+  startForecastAtHour: number
   width?: number
   height?: number
 }
 
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
-  const weather = await getLocalWeatherData({
-    location: { lat: opts.lat, lon: opts.lon },
-    timezone: opts.timezone,
-  })
+  const weather = await getLocalWeatherData(opts)
   await writeDebugFile('weather.json', weather)
 
   const html = await fs.readFileSync(
@@ -73,8 +70,9 @@ function getHtmlReplacements(
   return [
     {
       match: { attrs: { id: 'date' } },
-      newContent: dateFns.format(
-        getNextHour(START_FORECAST_HOUR),
+      newContent: dateFnsTz.formatInTimeZone(
+        getNextHourDates(opts.startForecastAtHour, opts.timezone).hourInUtc,
+        opts.timezone,
         'EEEE, MMM d'
       ),
     },
@@ -84,7 +82,7 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'refresh-timestamp' } },
-      newContent: dateFns.format(now, 'HH:mm'),
+      newContent: dateFnsTz.formatInTimeZone(now, opts.timezone, 'HH:mm'),
     },
     {
       match: { attrs: { id: 'battery-icon' } },
@@ -123,11 +121,19 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-sunrise' } },
-      newContent: dateFns.format(weather.todaySummary.sunrise, 'H:mm'),
+      newContent: dateFnsTz.formatInTimeZone(
+        weather.todaySummary.sunrise,
+        opts.timezone,
+        'H:mm'
+      ),
     },
     {
       match: { attrs: { id: 'current-weather-sunset' } },
-      newContent: dateFns.format(weather.todaySummary.sunset, 'H:mm'),
+      newContent: dateFnsTz.formatInTimeZone(
+        weather.todaySummary.sunset,
+        opts.timezone,
+        'H:mm'
+      ),
     },
     {
       match: { attrs: { id: 'current-weather-daylight-hours' } },
@@ -147,18 +153,33 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-uvi-at' } },
-      newContent: `UVI at ${dateFns.format(
+      newContent: `UVI at ${dateFnsTz.formatInTimeZone(
         weather.todaySummary.maxUvIndex.time,
+        opts.timezone,
         'HH'
       )}`,
     },
-
+    {
+      match: { attrs: { id: 'forecast-item-pre-header' } },
+      newContent: dateFnsTz.formatInTimeZone(
+        dateFns.addDays(
+          getNextHourDates(opts.startForecastAtHour, opts.timezone).hourInUtc,
+          1
+        ),
+        opts.timezone,
+        'EEE'
+      ),
+    },
     ...weather.forecastShortTerm
       .map((item, index): Replacement[] => {
         return [
           {
             match: { attrs: { id: `forecast-item-${index}-time` } },
-            newContent: dateFns.format(item.time, 'H:mm'),
+            newContent: dateFnsTz.formatInTimeZone(
+              item.time,
+              opts.timezone,
+              'H:mm'
+            ),
           },
           {
             match: { attrs: { id: `forecast-item-${index}-temperature` } },
@@ -182,9 +203,7 @@ function getHtmlReplacements(
                 ...node.attrs,
                 src: getSymbolIcon(
                   item.symbol,
-                  isDark({ lat: opts.lat, lon: opts.lon }, item.time)
-                    ? 'dark'
-                    : 'light'
+                  isDark(opts.location, item.time) ? 'dark' : 'light'
                 ),
               }),
           },
@@ -197,7 +216,11 @@ function getHtmlReplacements(
         return [
           {
             match: { attrs: { id: `forecast-5days-item-${index}-time` } },
-            newContent: dateFns.format(item.time, 'EEE'),
+            newContent: dateFnsTz.formatInTimeZone(
+              item.time,
+              opts.timezone,
+              'EEE'
+            ),
           },
           {
             match: {

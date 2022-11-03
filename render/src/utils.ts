@@ -1,5 +1,6 @@
 import { Storage } from '@google-cloud/storage'
 import * as dateFns from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import * as fs from 'fs'
 import _ from 'lodash'
 import * as path from 'path'
@@ -112,15 +113,30 @@ export function sumByOrNull<T>(
   return sum
 }
 
-export const START_FORECAST_HOUR = 9
-export function getNextHour(startHour: number) {
-  const now = new Date()
-  const today = dateFns.addHours(dateFns.startOfToday(), startHour)
+export function getNextHourDates(startHour: number, timezone: string) {
+  const startOfLocalTodayInUtc = zonedTimeToUtc(
+    dateFns.startOfToday(),
+    timezone
+  )
 
-  if (dateFns.isBefore(now, today)) {
-    return today
+  const nowUtc = new Date()
+  const hToday = dateFns.addHours(startOfLocalTodayInUtc, startHour)
+  if (dateFns.isBefore(nowUtc, hToday)) {
+    return {
+      hourInUtc: hToday,
+      startOfLocalDayInUtc: startOfLocalTodayInUtc,
+      endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfToday(), timezone),
+    }
   }
 
-  const tomorrow = dateFns.addHours(dateFns.startOfTomorrow(), startHour)
-  return tomorrow
+  const startOfLocalTomorrowInUtc = zonedTimeToUtc(
+    dateFns.startOfTomorrow(),
+    timezone
+  )
+  const hTomorrow = dateFns.addHours(startOfLocalTomorrowInUtc, startHour)
+  return {
+    hourInUtc: hTomorrow,
+    startOfLocalDayInUtc: startOfLocalTomorrowInUtc,
+    endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfTomorrow(), timezone),
+  }
 }

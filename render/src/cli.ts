@@ -16,7 +16,12 @@ const argv = yargs(process.argv.slice(2))
   .parseSync()
 
 async function main() {
-  const { png, html } = await generatePng(argv)
+  const { lat, lon, ...otherArgv } = argv
+  const { png, html } = await generatePng({
+    ...otherArgv,
+    location: { lat, lon },
+    startForecastAtHour: 9,
+  })
   console.log(html)
   await writeDebugFile('render.png', png)
 }

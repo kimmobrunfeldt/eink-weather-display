@@ -38,7 +38,10 @@ The project has two separate parts:
 * [rasp](rasp/) - Fetches the PNG from `render`, updates the ePaper display, and goes back to idle. Runs on Raspberry Pi Zero.
 
 
-## Notes
+## Random notes
+
+* All dates within the system are UTC, they are converted to local times on render. "Start of day" and "End of day" concepts are tricky.
+
 
 ```sh
 jq -c -Rs '{ html: .}' src/templates/weather.html > .temp-body.json

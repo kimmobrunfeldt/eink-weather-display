@@ -91,8 +91,7 @@ async function renderHandler(req: Request, res: Response) {
   }
 
   const opts = {
-    lat: Number(req.query.lat),
-    lon: Number(req.query.lon),
+    location: { lat: Number(req.query.lat), lon: Number(req.query.lon) },
     locationName: String(req.query.locationName),
     timezone: String(req.query.timezone),
     batteryLevel: Number(req.query.batteryLevel),
@@ -101,10 +100,10 @@ async function renderHandler(req: Request, res: Response) {
     height: req.query.height ? Number(req.query.height) : undefined,
   }
 
-  if (!_.isFinite(opts.lat)) {
+  if (!_.isFinite(opts.location.lat)) {
     throw new HttpError(400, `Invalid 'lat' query parameter: must be a number`)
   }
-  if (!_.isFinite(opts.lon)) {
+  if (!_.isFinite(opts.location.lon)) {
     throw new HttpError(400, `Invalid 'lon' query parameter: must be a number`)
   }
   if (
@@ -136,7 +135,7 @@ async function renderHandler(req: Request, res: Response) {
     )
   }
 
-  const { png, html } = await generatePng(opts)
+  const { png, html } = await generatePng({ ...opts, startForecastAtHour: 9 })
   await writeDebugFile('render.html', html)
   await writeDebugFile('render.png', png)
 

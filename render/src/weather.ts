@@ -1,14 +1,11 @@
 import axios from 'axios'
 import * as dateFns from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import { XMLParser } from 'fast-xml-parser'
 import _ from 'lodash'
+import { GenerateOptions } from 'src/core'
 import { logger } from 'src/logger'
-import {
-  getNextHour,
-  START_FORECAST_HOUR,
-  sumByOrNull,
-  writeDebugFile,
-} from 'src/utils'
+import { getNextHourDates, sumByOrNull, writeDebugFile } from 'src/utils'
 import {
   meteoToFmiWeatherSymbolNumber,
   MeteoWeatherCode,
@@ -117,40 +114,40 @@ type MeteoForecastResponse = {
 
 const FMI_API_URL = 'http://opendata.fmi.fi/wfs'
 
-export async function getLocalWeatherData({
-  location,
-  timezone,
-}: {
-  location: Coordinate
-  timezone: string
-}): Promise<LocalWeather> {
-  const fmiHarmonieData = await fetchFmiHarmonieData(location)
-  const fmiEcmwfData = await fetchFmiEcmwfData(location)
-  const meteoForecastData = await fetchMeteoForecast(location, timezone)
-  const meteoAirQualityForecastData = await fetchMeteoAirQualityForecast(
-    location,
-    timezone
+export async function getLocalWeatherData(
+  opts: GenerateOptions
+): Promise<LocalWeather> {
+  logger.debug(
+    'getNextHourDates',
+    getNextHourDates(opts.startForecastAtHour, opts.timezone)
   )
 
-  const maxUv = findHighestUVIndex(meteoAirQualityForecastData)
-  const todaySummary = calculateTodaySummary(fmiHarmonieData, location)
+  const fmiHarmonieData = await fetchFmiHarmonieData(opts)
+  const fmiEcmwfData = await fetchFmiEcmwfData(opts)
+  const meteoForecastData = await fetchMeteoForecast(opts)
+  const meteoAirQualityForecastData = await fetchMeteoAirQualityForecast(opts)
+
+  const maxUv = findHighestUVIndex(meteoAirQualityForecastData, opts)
+  const todaySummary = calculateTodaySummary(fmiHarmonieData, opts)
   return {
     todaySummary: { ...todaySummary, maxUvIndex: maxUv },
-    forecastShortTerm: calculateShortTermForecast(fmiHarmonieData),
-    forecastLongTerm: calculateLongTermForecast(fmiEcmwfData).map((data) => {
-      return {
-        ...data,
-        symbol: findWeatherSymbolForTime(meteoForecastData, data.time),
+    forecastShortTerm: calculateShortTermForecast(fmiHarmonieData, opts),
+    forecastLongTerm: calculateLongTermForecast(fmiEcmwfData, opts).map(
+      (data) => {
+        return {
+          ...data,
+          symbol: findWeatherSymbolForDay(meteoForecastData, data.time),
+        }
       }
-    }),
+    ),
   }
 }
 
 async function fetchFmiHarmonieData(
-  location: Coordinate
+  opts: GenerateOptions
 ): Promise<FmiHarmonieDataPoint[]> {
   const res = await axios.get(FMI_API_URL, {
-    params: getFmiHarmonieParameters(location),
+    params: getFmiHarmonieParameters(opts),
   })
   await writeDebugFile('fmi-harmonie-response.xml', res.data)
   const data = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(res.data)
@@ -159,10 +156,10 @@ async function fetchFmiHarmonieData(
 }
 
 async function fetchFmiEcmwfData(
-  location: Coordinate
+  opts: GenerateOptions
 ): Promise<FmiEcmwfDataPoint[]> {
   const res = await axios.get(FMI_API_URL, {
-    params: getFmiECMWFParameters(location),
+    params: getFmiECMWFParameters(opts),
   })
   await writeDebugFile('fmi-ecmwf-response.xml', res.data)
   const data = parseWeatherTodayXmlResponse<FmiEcmwfDataPoint>(res.data)
@@ -170,11 +167,15 @@ async function fetchFmiEcmwfData(
   return data
 }
 
-async function fetchMeteoForecast(
-  location: Coordinate,
-  timezone: string
-): Promise<MeteoForecastResponse> {
-  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+async function fetchMeteoForecast({
+  location,
+  startForecastAtHour,
+  timezone,
+}: GenerateOptions): Promise<MeteoForecastResponse> {
+  const { startOfLocalDayInUtc: start } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
   const firstDay = dateFns.addDays(start, 1)
   const lastDay = dateFns.addDays(firstDay, 5)
 
@@ -187,7 +188,7 @@ async function fetchMeteoForecast(
         daily: ['weathercode', 'precipitation_sum', 'sunrise', 'sunset'].join(
           ','
         ),
-        timezone,
+        timezone: 'UTC',
         start_date: dateFns.format(firstDay, 'yyyy-MM-dd'),
         end_date: dateFns.format(lastDay, 'yyyy-MM-dd'),
       },
@@ -205,17 +206,23 @@ async function fetchMeteoForecast(
           'yyyy-MM-dd',
           new Date()
         )
-        return date
+        // Parsing returns e.g. 2022-11-04T00:00:00.000Z
+        // Convert it to the real start of day according to given timezone
+        return zonedTimeToUtc(date, timezone)
       }),
     },
   }
 }
 
-async function fetchMeteoAirQualityForecast(
-  location: Coordinate,
-  timezone: string
-): Promise<MeteoAirQualityForecastResponse> {
-  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
+async function fetchMeteoAirQualityForecast({
+  location,
+  startForecastAtHour,
+  timezone,
+}: GenerateOptions): Promise<MeteoAirQualityForecastResponse> {
+  const { startOfLocalDayInUtc: start } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
   const end = dateFns.addDays(start, 2)
   const res = await axios.get<MeteoAirQualityForecastResponse>(
     'https://air-quality-api.open-meteo.com/v1/air-quality',
@@ -224,7 +231,7 @@ async function fetchMeteoAirQualityForecast(
         latitude: location.lat,
         longitude: location.lon,
         hourly: ['uv_index'].join(','),
-        timezone,
+        timezone: 'UTC',
         start_date: dateFns.format(start, 'yyyy-MM-dd'),
         end_date: dateFns.format(end, 'yyyy-MM-dd'),
       },
@@ -241,19 +248,33 @@ async function fetchMeteoAirQualityForecast(
           "yyyy-MM-dd'T'HH:mm",
           new Date()
         )
-        return date
+        // Parsing returns e.g. 2022-11-04T00:00:00.000Z
+        // Convert it to the real start of day according to given timezone
+        return zonedTimeToUtc(date, timezone)
       }),
     },
   }
 }
 
-function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
-  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
-  const forecastTimes = [9, 12, 15, 18, 21, 24, 24 + 9, 24 + 9 * 2].map((h) =>
-    dateFns.addHours(start, h)
-  )
+function calculateShortTermForecast(
+  fmiData: FmiHarmonieDataPoint[],
+  { startForecastAtHour, timezone }: GenerateOptions
+) {
+  const { hourInUtc: start } = getNextHourDates(startForecastAtHour, timezone)
+  const forecastTimes = [
+    0,
+    3,
+    6,
+    9,
+    12,
+    15, // end of day, when forecast starts at 9AM
+    15 + 9,
+    15 + 9 * 2,
+    15 + 9 * 3, // to give end date range for the previous item
+  ].map((h) => dateFns.addHours(start, h))
+  logger.debug('calculateShortTermForecast forecastTimes', forecastTimes)
 
-  return forecastTimes.map((time, index) => {
+  return _.take(forecastTimes, forecastTimes.length - 1).map((time, index) => {
     const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
     const found = fmiData[fmiIndex]
     if (!found) {
@@ -269,10 +290,7 @@ function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
     }
 
     const nextIndex = index + 1
-    const nextTime =
-      nextIndex >= forecastTimes.length
-        ? dateFns.addHours(start, 24 + 9 * 3) // for the last item, keep the same +9h interval
-        : forecastTimes[nextIndex]
+    const nextTime = forecastTimes[nextIndex]
     const fmiDataBetweenNext = fmiData.filter(
       (f) =>
         dateFns.isEqual(f.time, time) ||
@@ -295,11 +313,21 @@ function calculateShortTermForecast(fmiData: FmiHarmonieDataPoint[]) {
   })
 }
 
-function calculateLongTermForecast(fmiData: FmiEcmwfDataPoint[]) {
-  const start = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
-  const forecastTimes = [1, 2, 3, 4, 5].map((d) => dateFns.addDays(start, d))
+function calculateLongTermForecast(
+  fmiData: FmiEcmwfDataPoint[],
+  { startForecastAtHour, timezone }: GenerateOptions
+) {
+  const { startOfLocalDayInUtc: start } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
+  const forecastTimes = [
+    1, 2, 3, 4, 5,
+    6 /* last item to give end date range for the previous item */,
+  ].map((d) => dateFns.addDays(start, d))
+  logger.debug('calculateLongTermForecast forecastTimes', forecastTimes)
 
-  return forecastTimes.map((time, index) => {
+  return _.take(forecastTimes, forecastTimes.length - 1).map((time, index) => {
     const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
     const found = fmiData[fmiIndex]
     if (!found) {
@@ -309,10 +337,7 @@ function calculateLongTermForecast(fmiData: FmiEcmwfDataPoint[]) {
     }
 
     const nextIndex = index + 1
-    const nextTime =
-      nextIndex >= forecastTimes.length
-        ? dateFns.addDays(start, 5) // for the last item, keep the same interval
-        : forecastTimes[nextIndex]
+    const nextTime = forecastTimes[nextIndex]
     const fmiDataBetweenNext = fmiData.filter(
       (f) =>
         dateFns.isEqual(f.time, time) ||
@@ -351,14 +376,17 @@ function calculateLongTermForecast(fmiData: FmiEcmwfDataPoint[]) {
 
 function calculateTodaySummary(
   fmiData: FmiHarmonieDataPoint[],
-  location: Coordinate
+  { location, startForecastAtHour, timezone }: GenerateOptions
 ) {
-  const nextH = getNextHour(START_FORECAST_HOUR)
-
+  const {
+    hourInUtc: nextH,
+    startOfLocalDayInUtc,
+    endOfLocalDayInUtc,
+  } = getNextHourDates(startForecastAtHour, timezone)
   const today = fmiData.filter(
     (d) =>
-      dateFns.isAfter(d.time, dateFns.startOfDay(nextH)) &&
-      dateFns.isBefore(d.time, dateFns.endOfDay(nextH))
+      dateFns.isAfter(d.time, startOfLocalDayInUtc) &&
+      dateFns.isBefore(d.time, endOfLocalDayInUtc)
   )
   const avgWindSpeedMs = _.mean(today.map((d) => d.WindSpeedMS))
   const maxWindSpeedMs = Math.max(...today.map((d) => d.WindSpeedMS))
@@ -376,16 +404,9 @@ function calculateTodaySummary(
   const symbol = Number(topSymbol) as WeatherSymbolNumber
 
   const precipitationAmount = sumByOrNull(today, (d) => d.PrecipitationAmount)
-  const sunrise = getSunrise(
-    location.lat,
-    location.lon,
-    dateFns.startOfDay(nextH)
-  )
-  const sunset = getSunset(
-    location.lat,
-    location.lon,
-    dateFns.startOfDay(nextH)
-  )
+  const sunrise = getSunrise(location.lat, location.lon, nextH)
+  const sunset = getSunset(location.lat, location.lon, nextH)
+
   return {
     avgTemperature,
     minTemperature,
@@ -403,34 +424,37 @@ function calculateTodaySummary(
 }
 
 function findHighestUVIndex(
-  forecast: MeteoAirQualityForecastResponse
+  forecast: MeteoAirQualityForecastResponse,
+  { startForecastAtHour, timezone }: GenerateOptions
 ): MaxUvIndex {
-  const nextH = getNextHour(START_FORECAST_HOUR)
+  const { startOfLocalDayInUtc, endOfLocalDayInUtc } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
   const hoursToday = forecast.hourly.time
     .map((time, index) => ({
       time: new Date(time),
-      index,
+      uvIndex: forecast.hourly.uv_index[index],
     }))
     .filter(
       ({ time }) =>
-        dateFns.isAfter(time, dateFns.startOfDay(nextH)) &&
-        dateFns.isBefore(time, dateFns.endOfDay(nextH))
+        dateFns.isAfter(time, startOfLocalDayInUtc) &&
+        dateFns.isBefore(time, endOfLocalDayInUtc)
     )
 
-  const maxHour = _.maxBy(
-    hoursToday,
-    ({ index }) => forecast.hourly.uv_index[index]
-  )
+  logger.debug('findHighestUVIndex: uv index and hours', hoursToday)
+
+  const maxHour = _.maxBy(hoursToday, ({ uvIndex }) => uvIndex)
   if (!maxHour) {
     throw new Error('Unable to find max UV index for day')
   }
   return {
     time: maxHour.time,
-    value: forecast.hourly.uv_index[maxHour.index],
+    value: maxHour.uvIndex,
   }
 }
 
-function findWeatherSymbolForTime(
+function findWeatherSymbolForDay(
   forecast: MeteoForecastResponse,
   time: Date
 ): WeatherSymbolNumber {
@@ -451,10 +475,14 @@ function findWeatherSymbolForTime(
   return meteoToFmiWeatherSymbolNumber(forecast.daily.weathercode[found.index])
 }
 
-function getFmiECMWFParameters(location: Coordinate) {
-  const startOfNextHDay = dateFns.startOfDay(getNextHour(START_FORECAST_HOUR))
-  const startDate = dateFns.addHours(startOfNextHDay, 12) // 12:00 the day after
-  const endDate = dateFns.addDays(startDate, 5)
+function getFmiECMWFParameters({
+  location,
+  startForecastAtHour,
+  timezone,
+}: GenerateOptions) {
+  const { hourInUtc } = getNextHourDates(startForecastAtHour, timezone)
+  const startDate = hourInUtc
+  const endDate = dateFns.addDays(startDate, 6)
   const timeStepMin = 60
 
   return {
@@ -478,8 +506,15 @@ function getFmiECMWFParameters(location: Coordinate) {
   }
 }
 
-function getFmiHarmonieParameters(location: Coordinate) {
-  const startDate = getNextHour(START_FORECAST_HOUR) // 09:00
+function getFmiHarmonieParameters({
+  location,
+  startForecastAtHour,
+  timezone,
+}: GenerateOptions) {
+  const { hourInUtc: startDate } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
   const endDate = dateFns.addHours(startDate, 50)
   const timeStepMin = 60
 
