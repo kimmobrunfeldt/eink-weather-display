@@ -9,6 +9,31 @@ Weather display for our home.
 * Fully battery-powered. We didn't want a visible cable, and drilling the cable inside wall wasn't an option.
 * Always visible and doesn't light up the hallway during evening / night -> e-Ink display
 
+
+## Hardware
+
+* Raspberry PI Zero W
+* [PiJuice Zero](https://uk.pi-supply.com/products/pijuice-zero)
+* [PiJuice 12000mAh battery](https://uk.pi-supply.com/products/pijuice-12000mah-battery)
+
+    As large as possible to avoid having to charge the device often.
+
+* [Waveshare 10.3" 1872x1404 e-Ink display with Raspberry PI HAT](https://www.waveshare.com/10.3inch-e-paper-hat.htm)
+
+    Supports 16 shades of black and white.
+
+* [GeeekPi Micro Connectors Raspberry Pi 40-pin GPIO 1 to 2 Expansion Board](https://www.amazon.de/-/en/gp/product/B08C4S8NPH/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
+
+    To connect PiJuice and e-Ink display nicely.
+
+* [GPIO Cable for Raspberry Pi 40 Pin](https://www.amazon.de/-/en/gp/product/B08VRJ51T4/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
+
+    To allow a bit more flexibility inside the build.
+
+* [Geekworm Raspberry Pi Installation Tool 132 Pcs](https://www.amazon.de/-/en/gp/product/B07MN2GY6Y/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1)
+
+    For a set of spacers and screws that fit Raspberry PI projects nicely.
+
 ## Get started
 
 Note! Since the display updates only once or twice a day, everything has been designed that in mind. The forecast always starts 9AM, and doesn't show any real observations during the day.
@@ -65,6 +90,11 @@ part doesn't know anything about weather, it just downloads a PNG from given URL
 * Fetch PNG from given URL, render it to e-Ink display, and go back to idle. goes back to idle.
 * Consumes as little power as possible
 * Microcontroller could've been enough, but I also wanted to finish the project in a lifetime.
+* IT8951-ePaper code copied from https://github.com/waveshare/IT8951-ePaper/
+
+#### Installation
+
+https://github.com/PiSupply/PiJuice/blob/master/Software/README.md
 
 
 ## Notes
@@ -155,3 +185,4 @@ The model can return data up to 10 days from now.
 
 * Refresh icon: Created by andriwidodo from The Noun Project
 * Severi Salminen for inspiration and assets https://github.com/sevesalm/eInk-weather-display
+* https://raspberrypi-guide.github.io/other/boot-automation-pijuice

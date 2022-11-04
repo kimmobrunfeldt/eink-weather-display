@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "EPD_IT8951.C": "cpp",
+        "DEV_CONFIG.C": "cpp",
+        "MAIN.C": "cpp",
+        "GUI_PAINT.C": "cpp"
+    }
+}
