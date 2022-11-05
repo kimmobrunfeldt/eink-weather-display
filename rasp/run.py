@@ -14,20 +14,12 @@ logging.basicConfig(
     format='%(asctime)s %(message)s',
     datefmt='%d/%m/%Y %H:%M:%S')
 
-pj = PiJuice(1, 0x14)
-
-pjOK = False
-while not pjOK:
-    stat = pj.status.GetStatus()
-    if stat['error'] == 'NO_ERROR':
-        pjOK = True
-    else:
-        sleep(0.1)
-
 
 def main():
-    data = stat['data']
+    pj = PiJuice(1, 0x14)
+    wait_until_pijuice_ok(pj)
 
+    data = stat['data']
     if data['powerInput'] != "NOT_PRESENT" or data['powerInput5vIo'] != 'NOT_PRESENT':
         logging.info(
             'Raspberry PI runs on connected power. Will not schedule shutdown!')
@@ -49,6 +41,16 @@ def main():
     pj.power.SetPowerOff(30)
 
     os.system("sudo shutdown -h now")
+
+
+def wait_until_pijuice_ok(pj):
+    pjOK = False
+    while not pjOK:
+        stat = pj.status.GetStatus()
+        if stat['error'] == 'NO_ERROR':
+            pjOK = True
+        else:
+            sleep(0.1)
 
 
 def download_image(file_path):
