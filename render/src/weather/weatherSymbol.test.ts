@@ -21,9 +21,7 @@ describe('weatherSymbol', () => {
     Object.keys(weatherSymbolIcons['light']).forEach((symbol: any) => {
       const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
       if (
-        !fs.existsSync(
-          getProjectPath('render/src/templates/weather-icons', `${icon}.svg`)
-        )
+        !fs.existsSync(getProjectPath('templates/weather-icons', `${icon}.svg`))
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
       }
@@ -32,9 +30,7 @@ describe('weatherSymbol', () => {
     Object.keys(weatherSymbolIcons['dark']).forEach((symbol: any) => {
       const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
       if (
-        !fs.existsSync(
-          getProjectPath('render/src/templates/weather-icons', `${icon}.svg`)
-        )
+        !fs.existsSync(getProjectPath('templates/weather-icons', `${icon}.svg`))
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
       }

@@ -4,7 +4,7 @@ import { getProjectPath } from 'src/utils/utils'
 import { parseFmiXmlResponse } from 'src/weather/fmiApi'
 
 const fixture = (name: string) =>
-  fs.readFileSync(getProjectPath('render/fixtures/', name), {
+  fs.readFileSync(getProjectPath('../fixtures/', name), {
     encoding: 'utf8',
   })
 

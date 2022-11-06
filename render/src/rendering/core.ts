@@ -42,16 +42,15 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     : await getLocalWeatherData(opts)
   await writeDebugFile('weather.json', weather)
 
-  const html = await fs.readFileSync(
-    getProjectPath('render/src/templates/index.html'),
-    { encoding: 'utf8' }
-  )
+  const html = await fs.readFileSync(getProjectPath('templates/index.html'), {
+    encoding: 'utf8',
+  })
 
   const { html: processedHtml } = await posthtml([
     posthtmlReplace(getHtmlReplacements(opts, weather)),
     posthtmlInlineStyleCssImports(),
     posthtmlInlineAssets({
-      cwd: getProjectPath('render/src/templates/'),
+      cwd: getProjectPath('templates/'),
       errors: 'throw',
     }),
   ]).process(html)
