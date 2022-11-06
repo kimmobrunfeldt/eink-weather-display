@@ -1,7 +1,6 @@
 import * as dateFns from 'date-fns'
 import * as dateFnsTz from 'date-fns-tz'
 import fs from 'fs'
-import path from 'path'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
 import posthtmlInlineStyleCssImports from 'src/rendering/posthtmlInlineStyleCssImports'
@@ -13,6 +12,7 @@ import {
   formatWindSpeed,
   getBatteryIcon,
   getNextHourDates,
+  getProjectPath,
   isDark,
   secondsToHoursAndMinutes,
   writeDebugFile,
@@ -43,7 +43,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
   await writeDebugFile('weather.json', weather)
 
   const html = await fs.readFileSync(
-    path.join(__dirname, 'templates/index.html'),
+    getProjectPath('render/src/templates/index.html'),
     { encoding: 'utf8' }
   )
 
@@ -51,7 +51,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     posthtmlReplace(getHtmlReplacements(opts, weather)),
     posthtmlInlineStyleCssImports(),
     posthtmlInlineAssets({
-      cwd: path.join(__dirname, 'templates/'),
+      cwd: getProjectPath('render/src/templates/'),
       errors: 'throw',
     }),
   ]).process(html)

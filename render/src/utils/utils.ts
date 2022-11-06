@@ -61,7 +61,7 @@ export async function saveDebugFileToBucket(name: string, data: any) {
 }
 
 export function writeLocalDebugFile(name: string, data: any) {
-  const filePath = path.join(__dirname, '../../../output/', name)
+  const filePath = getProjectPath('output/', name)
   const { encoding, content } = getFileContent(data)
   fs.writeFileSync(filePath, content, {
     encoding,
@@ -99,6 +99,10 @@ export function formatNumber(
   }
 
   return `${fn(val)}`
+}
+
+export function getProjectPath(...components: string[]): string {
+  return path.join(__dirname, '../../../', ...components)
 }
 
 export function sumByOrNull<T>(

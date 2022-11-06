@@ -1,10 +1,10 @@
 import fs from 'fs'
 import _ from 'lodash'
-import path from 'path'
+import { getProjectPath } from 'src/utils/utils'
 import { parseFmiXmlResponse } from 'src/weather/fmiApi'
 
 const fixture = (name: string) =>
-  fs.readFileSync(path.join(__dirname, '../../fixtures/', name), {
+  fs.readFileSync(getProjectPath('render/fixtures/', name), {
     encoding: 'utf8',
   })
 

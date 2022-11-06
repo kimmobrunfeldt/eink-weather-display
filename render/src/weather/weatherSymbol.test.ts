@@ -1,6 +1,6 @@
 import * as fs from 'fs'
-import * as path from 'path'
 import { WeatherSymbolNumber } from 'src/types'
+import { getProjectPath } from 'src/utils/utils'
 import {
   weatherSymbolDescriptions,
   weatherSymbolIcons,
@@ -22,7 +22,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          path.join(__dirname, '../templates/weather-icons/', `${icon}.svg`)
+          getProjectPath('render/src/templates/weather-icons', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
@@ -33,7 +33,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          path.join(__dirname, '../templates/weather-icons/', `${icon}.svg`)
+          getProjectPath('render/src/templates/weather-icons', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)

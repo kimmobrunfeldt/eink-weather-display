@@ -1,8 +1,8 @@
 import fs from 'fs'
 import _ from 'lodash'
 import mimeTypes from 'mime-types'
-import path from 'path'
 import { Node } from 'posthtml'
+import { getProjectPath } from 'src/utils/utils'
 
 const posthtmlInlineStyleCssImports = () => {
   return (tree: Node): Node => {
@@ -18,7 +18,7 @@ const posthtmlInlineStyleCssImports = () => {
         (match, contents) => {
           const dataMime = `data:${mimeTypes.lookup(contents)}`
           const fileContent = fs.readFileSync(
-            path.join(__dirname, 'templates/', contents)
+            getProjectPath('render/src/templates/', contents)
           )
           return `url(${dataMime};base64,${fileContent.toString('base64')})`
         }
