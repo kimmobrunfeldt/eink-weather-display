@@ -3,6 +3,9 @@
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
 
+render/src/templates/render.html
+render/src/templates/random.html
+
 .DS_Store
 # exclude everything
 output/*
