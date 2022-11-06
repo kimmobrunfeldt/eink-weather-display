@@ -8,7 +8,7 @@ Weather display for our home.
 * Looks like a "real product". The housing should look professional.
 * Fully battery-powered. We didn't want a visible cable, and drilling the cable inside wall wasn't an option.
 * Always visible and doesn't light up the hallway during evening / night -> e-Ink display
-* Supports custom location and timezone (some [tests](src/utils/utils.test.ts) too)
+* Supports custom location and timezone (some [tests](render/src/utils/utils.test.ts) too)
 
 ## Hardware
 
