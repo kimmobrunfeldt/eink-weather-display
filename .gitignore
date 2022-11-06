@@ -5,9 +5,9 @@ gha-creds-*.json
 
 .DS_Store
 # exclude everything
-logs/*
+output/*
 # exception to the rule
-!logs/.gitkeep
+!output/.gitkeep
 
 *.log
 npm-debug.log*

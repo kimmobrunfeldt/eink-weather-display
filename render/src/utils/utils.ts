@@ -5,7 +5,7 @@ import * as fs from 'fs'
 import _ from 'lodash'
 import * as path from 'path'
 import { environment } from 'src/environment'
-import { Coordinate } from 'src/weather'
+import { Coordinate } from 'src/types'
 import { getSunrise, getSunset } from 'sunrise-sunset-js'
 
 export const secondsToHoursAndMinutes = (s: number) => {
@@ -61,7 +61,7 @@ export async function saveDebugFileToBucket(name: string, data: any) {
 }
 
 export function writeLocalDebugFile(name: string, data: any) {
-  const filePath = path.join(__dirname, '../../logs/', name)
+  const filePath = path.join(__dirname, '../../../output/', name)
   const { encoding, content } = getFileContent(data)
   fs.writeFileSync(filePath, content, {
     encoding,

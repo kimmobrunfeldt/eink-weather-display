@@ -5,9 +5,9 @@ import {
   DEFAULT_IMAGE_HEIGHT,
   DEFAULT_IMAGE_WIDTH,
   generatePng,
-} from 'src/core'
-import { logger } from 'src/logger'
-import { writeDebugFile } from 'src/utils'
+} from 'src/rendering/core'
+import { logger } from 'src/utils/logger'
+import { writeDebugFile } from 'src/utils/utils'
 import yargs from 'yargs'
 
 const argv = yargs(process.argv.slice(2))

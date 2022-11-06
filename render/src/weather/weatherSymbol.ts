@@ -1,4 +1,4 @@
-export type WeatherSymbolNumber = keyof typeof weatherSymbolIcons['light']
+import { MeteoWeatherCode, WeatherSymbolNumber } from 'src/types'
 
 export function getSymbolIcon(
   symbol: WeatherSymbolNumber,
@@ -119,7 +119,7 @@ export const weatherSymbolDescriptions = {
   92: 'Fog',
 } as const
 
-const meteoCodesToFmi = {
+export const meteoCodesToFmi = {
   0: 1, // Clear sky (the comment refers to the the key, which is the meteo code)
   1: 2, // Mainly clear
   2: 2, // Partly cloudy
@@ -149,5 +149,3 @@ const meteoCodesToFmi = {
   96: 63, // Thunderstorm with slight hail
   99: 63, // Thunderstorm with heavy hail
 } as const
-
-export type MeteoWeatherCode = keyof typeof meteoCodesToFmi

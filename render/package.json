@@ -2,7 +2,7 @@
   "name": "render",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "entrypoints/cloudFunction.js",
   "scripts": {
     "test": "jest",
     "start": "http-server src/templates/ -c-1",

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import _ from 'lodash'
-import { generatePng } from 'src/core'
 import { environment } from 'src/environment'
-import { HttpError } from 'src/HttpError'
-import { logger } from 'src/logger'
-import { writeDebugFile } from 'src/utils'
+import { generatePng } from 'src/rendering/core'
+import { HttpError } from 'src/utils/HttpError'
+import { logger } from 'src/utils/logger'
+import { writeDebugFile } from 'src/utils/utils'
 
 type ExpressHandler = (request: Request, response: Response) => void
 type WebhookHandler = (request: Request, response: Response) => Promise<any>

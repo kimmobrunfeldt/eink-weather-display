@@ -1,15 +1,14 @@
 import * as dateFns from 'date-fns'
 import _ from 'lodash'
-import { GenerateOptions } from 'src/core'
+import { GenerateOptions } from 'src/rendering/core'
 import {
   LocalWeather,
   LongTermWeatherDataPoint,
   ShortTermWeatherDataPoint,
-} from 'src/weather'
-import {
-  weatherSymbolDescriptions,
   WeatherSymbolNumber,
-} from 'src/weatherSymbol'
+} from 'src/types'
+
+import { weatherSymbolDescriptions } from 'src/weather/weatherSymbol'
 
 export async function generateRandomLocalWeatherData(
   opts: GenerateOptions

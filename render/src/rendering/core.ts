@@ -4,10 +4,10 @@ import fs from 'fs'
 import path from 'path'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
-import posthtmlInlineStyleCssImports from 'src/posthtmlInlineStyleCssImports'
-import posthtmlReplace, { Replacement } from 'src/posthtmlReplace'
-import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
-import { generateRandomLocalWeatherData } from 'src/random'
+import posthtmlInlineStyleCssImports from 'src/rendering/posthtmlInlineStyleCssImports'
+import posthtmlReplace, { Replacement } from 'src/rendering/posthtmlReplace'
+import { createPuppeteer, takeScreenshot } from 'src/rendering/puppeteer'
+import { Coordinate, LocalWeather } from 'src/types'
 import {
   formatNumber,
   formatWindSpeed,
@@ -16,9 +16,10 @@ import {
   isDark,
   secondsToHoursAndMinutes,
   writeDebugFile,
-} from 'src/utils'
-import { Coordinate, getLocalWeatherData, LocalWeather } from 'src/weather'
-import { getSymbolIcon } from 'src/weatherSymbol'
+} from 'src/utils/utils'
+import { generateRandomLocalWeatherData } from 'src/weather/random'
+import { getLocalWeatherData } from 'src/weather/weather'
+import { getSymbolIcon } from 'src/weather/weatherSymbol'
 
 export type GenerateOptions = {
   location: Coordinate

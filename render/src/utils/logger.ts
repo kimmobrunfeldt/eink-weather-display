@@ -1,13 +1,17 @@
 import { environment } from 'src/environment'
 
-// Use error in case output is piped to a file
-const devLog = (_level: string, message: string, extra: any = {}) =>
-  console.error(message, extra)
+const devLog = (_level: string, message: string, extra: any = {}) => {
+  // Use error in case output is piped to a file
+  const loggerFn = environment.NODE_ENV === 'test' ? console.log : console.error
+  loggerFn(message, extra)
+}
 
 const prodLog = (level: string, message: string, extra: any = {}) =>
   console.log(JSON.stringify({ message, extra, severity: level }))
 
-const log = environment.NODE_ENV === 'development' ? devLog : prodLog
+const log = ['test', 'development'].includes(environment.NODE_ENV)
+  ? devLog
+  : prodLog
 
 // https://cloud.google.com/logging/docs/reference/v2/rest/v2/LogEntry#LogSeverity
 export const logger = {

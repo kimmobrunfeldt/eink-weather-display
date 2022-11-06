@@ -1,10 +1,10 @@
 import * as fs from 'fs'
 import * as path from 'path'
+import { WeatherSymbolNumber } from 'src/types'
 import {
   weatherSymbolDescriptions,
   weatherSymbolIcons,
-  WeatherSymbolNumber,
-} from 'src/weatherSymbol'
+} from 'src/weather/weatherSymbol'
 
 describe('weatherSymbol', () => {
   // Copy pasted from real code file, not using jest expects here
@@ -22,7 +22,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
+          path.join(__dirname, '../templates/weather-icons/', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
@@ -33,7 +33,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          path.join(__dirname, 'templates/weather-icons/', `${icon}.svg`)
+          path.join(__dirname, '../templates/weather-icons/', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)

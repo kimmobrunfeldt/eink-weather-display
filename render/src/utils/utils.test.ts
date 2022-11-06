@@ -1,4 +1,4 @@
-import * as utils from 'src/utils'
+import * as utils from 'src/utils/utils'
 
 describe('getNextHourDates', () => {
   test('8:59AM Europe/Helsinki (winter time, UTC+2)', () => {
