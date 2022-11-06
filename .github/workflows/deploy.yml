@@ -36,7 +36,7 @@ jobs:
     env:
       GITHUB_SHA: ${{ github.sha }}
       GCP_REGION: europe-west3
-      GCP_PROJECT: weather-display
+      GCP_PROJECT: weather-display-367406
       GCP_BUCKET: weather-display-deployment
     steps:
       - name: Checkout
@@ -82,7 +82,7 @@ jobs:
     env:
       FILE_URL: gs://weather-display-deployment/${{ needs.build.outputs.file-name }}
       GCP_REGION: europe-west3
-      GCP_PROJECT: weather-display
+      GCP_PROJECT: weather-display-367406
     steps:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v0.8.3
@@ -98,4 +98,4 @@ jobs:
       - name: 'Test rendering'
         env:
           WEATHER_DISPLAY_API_KEY: ${{ secrets.WEATHER_DISPLAY_API_KEY }}
-        run: curl --fail "$(gcloud functions describe weather-display --region $GCP_REGION --project $GCP_PROJECT --format=\"value\(httpsTrigger.url\)\")?lat=60.222&lon=24.83&locationName=Espoo&batteryLevel=100&timezone=Europe/Helsinki&apiKey=$WEATHER_DISPLAY_API_KEY"
+        run: curl --fail "$(gcloud functions describe weather-display --region $GCP_REGION --project $GCP_PROJECT --format=json | jq -r .httpsTrigger.url)?lat=60.222&lon=24.83&locationName=Espoo&batteryLevel=100&timezone=Europe/Helsinki&apiKey=$WEATHER_DISPLAY_API_KEY"
