@@ -1,0 +1,1597 @@
+[
+  {
+    "Temperature": 8.6,
+    "WindSpeedMS": null,
+    "Pressure": 1007.4,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-07T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1007.3,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-07T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.8,
+    "WindSpeedMS": null,
+    "Pressure": 1007.2,
+    "Precipitation1h": 0.6,
+    "time": "2022-11-07T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1007,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-07T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1006.8,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-07T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1006.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-07T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1006.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-07T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8,
+    "WindSpeedMS": null,
+    "Pressure": 1005.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-07T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.7,
+    "WindSpeedMS": null,
+    "Pressure": 1005.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-07T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1004.7,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-07T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "WindSpeedMS": null,
+    "Pressure": 1004.1,
+    "Precipitation1h": 0.6,
+    "time": "2022-11-07T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "WindSpeedMS": null,
+    "Pressure": 1003.6,
+    "Precipitation1h": 0.9,
+    "time": "2022-11-07T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1002.9,
+    "Precipitation1h": 0.7,
+    "time": "2022-11-07T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1002.2,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-07T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.7,
+    "WindSpeedMS": null,
+    "Pressure": 1001.6,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-07T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.9,
+    "WindSpeedMS": null,
+    "Pressure": 1001,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-07T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.1,
+    "WindSpeedMS": null,
+    "Pressure": 1000.4,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-07T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 999.9,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-08T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 999.5,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-08T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 999.2,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-08T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.4,
+    "WindSpeedMS": null,
+    "Pressure": 998.9,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-08T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 999.2,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-08T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 999.5,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-08T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 999.8,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-08T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 1000.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1000.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1001.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 1001.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 1002.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.1,
+    "WindSpeedMS": null,
+    "Pressure": 1003,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1003.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.1,
+    "WindSpeedMS": null,
+    "Pressure": 1004.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.6,
+    "WindSpeedMS": null,
+    "Pressure": 1005,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.3,
+    "WindSpeedMS": null,
+    "Pressure": 1005.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.1,
+    "WindSpeedMS": null,
+    "Pressure": 1006.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.8,
+    "WindSpeedMS": null,
+    "Pressure": 1006.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.4,
+    "WindSpeedMS": null,
+    "Pressure": 1007.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5,
+    "WindSpeedMS": null,
+    "Pressure": 1007.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.5,
+    "WindSpeedMS": null,
+    "Pressure": 1008,
+    "Precipitation1h": 0,
+    "time": "2022-11-08T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.4,
+    "WindSpeedMS": null,
+    "Pressure": 1008.2,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-08T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.2,
+    "WindSpeedMS": null,
+    "Pressure": 1008.3,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-08T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4,
+    "WindSpeedMS": null,
+    "Pressure": 1008.4,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4,
+    "WindSpeedMS": null,
+    "Pressure": 1008.3,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.9,
+    "WindSpeedMS": null,
+    "Pressure": 1008.2,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-09T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.9,
+    "WindSpeedMS": null,
+    "Pressure": 1008.1,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-09T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.8,
+    "WindSpeedMS": null,
+    "Pressure": 1008,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-09T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.8,
+    "WindSpeedMS": null,
+    "Pressure": 1007.8,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.8,
+    "WindSpeedMS": null,
+    "Pressure": 1007.6,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.1,
+    "WindSpeedMS": null,
+    "Pressure": 1007.4,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-09T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.3,
+    "WindSpeedMS": null,
+    "Pressure": 1007.3,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-09T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.6,
+    "WindSpeedMS": null,
+    "Pressure": 1007.1,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-09T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.1,
+    "WindSpeedMS": null,
+    "Pressure": 1006.6,
+    "Precipitation1h": 0.5,
+    "time": "2022-11-09T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.6,
+    "WindSpeedMS": null,
+    "Pressure": 1006.2,
+    "Precipitation1h": 0.6,
+    "time": "2022-11-09T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.2,
+    "WindSpeedMS": null,
+    "Pressure": 1005.7,
+    "Precipitation1h": 0.6,
+    "time": "2022-11-09T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.5,
+    "WindSpeedMS": null,
+    "Pressure": 1005.6,
+    "Precipitation1h": 0.4,
+    "time": "2022-11-09T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.8,
+    "WindSpeedMS": null,
+    "Pressure": 1005.5,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.1,
+    "WindSpeedMS": null,
+    "Pressure": 1005.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-09T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "WindSpeedMS": null,
+    "Pressure": 1005.5,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-09T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.8,
+    "WindSpeedMS": null,
+    "Pressure": 1005.6,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.1,
+    "WindSpeedMS": null,
+    "Pressure": 1005.6,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1005.8,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-09T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.5,
+    "WindSpeedMS": null,
+    "Pressure": 1005.9,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-09T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1006,
+    "Precipitation1h": 0.3,
+    "time": "2022-11-09T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.8,
+    "WindSpeedMS": null,
+    "Pressure": 1006.3,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.9,
+    "WindSpeedMS": null,
+    "Pressure": 1006.5,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-09T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1006.7,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1006.9,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1007.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1007.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1007.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1007.9,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1008.3,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.1,
+    "WindSpeedMS": null,
+    "Pressure": 1008.7,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.3,
+    "WindSpeedMS": null,
+    "Pressure": 1009.1,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-10T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.4,
+    "WindSpeedMS": null,
+    "Pressure": 1009.5,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-10T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.5,
+    "WindSpeedMS": null,
+    "Pressure": 1010,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-10T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.6,
+    "WindSpeedMS": null,
+    "Pressure": 1010.4,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-10T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.6,
+    "WindSpeedMS": null,
+    "Pressure": 1010.8,
+    "Precipitation1h": 0.2,
+    "time": "2022-11-10T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.3,
+    "WindSpeedMS": null,
+    "Pressure": 1011.3,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1011.8,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-10T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.8,
+    "WindSpeedMS": null,
+    "Pressure": 1012.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1012.9,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.6,
+    "WindSpeedMS": null,
+    "Pressure": 1013.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.5,
+    "WindSpeedMS": null,
+    "Pressure": 1014,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.4,
+    "WindSpeedMS": null,
+    "Pressure": 1014.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.4,
+    "WindSpeedMS": null,
+    "Pressure": 1015.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1015.9,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 1016.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8,
+    "WindSpeedMS": null,
+    "Pressure": 1017.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-10T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.9,
+    "WindSpeedMS": null,
+    "Pressure": 1017.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.7,
+    "WindSpeedMS": null,
+    "Pressure": 1018.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1018.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.4,
+    "WindSpeedMS": null,
+    "Pressure": 1019,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.1,
+    "WindSpeedMS": null,
+    "Pressure": 1019.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.8,
+    "WindSpeedMS": null,
+    "Pressure": 1020.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.6,
+    "WindSpeedMS": null,
+    "Pressure": 1021.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.4,
+    "WindSpeedMS": null,
+    "Pressure": 1022,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.2,
+    "WindSpeedMS": null,
+    "Pressure": 1022.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.1,
+    "WindSpeedMS": null,
+    "Pressure": 1023.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6,
+    "WindSpeedMS": null,
+    "Pressure": 1024.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.9,
+    "WindSpeedMS": null,
+    "Pressure": 1025,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.8,
+    "WindSpeedMS": null,
+    "Pressure": 1025.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.6,
+    "WindSpeedMS": null,
+    "Pressure": 1026.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.3,
+    "WindSpeedMS": null,
+    "Pressure": 1026.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5,
+    "WindSpeedMS": null,
+    "Pressure": 1027.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5,
+    "WindSpeedMS": null,
+    "Pressure": 1027.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.1,
+    "WindSpeedMS": null,
+    "Pressure": 1027.9,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.1,
+    "WindSpeedMS": null,
+    "Pressure": 1028.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.7,
+    "WindSpeedMS": null,
+    "Pressure": 1028.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.3,
+    "WindSpeedMS": null,
+    "Pressure": 1028.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7,
+    "WindSpeedMS": null,
+    "Pressure": 1028.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.4,
+    "WindSpeedMS": null,
+    "Pressure": 1028,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.8,
+    "WindSpeedMS": null,
+    "Pressure": 1027.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-11T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "WindSpeedMS": null,
+    "Pressure": 1027.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.4,
+    "WindSpeedMS": null,
+    "Pressure": 1027.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "WindSpeedMS": null,
+    "Pressure": 1027.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.9,
+    "WindSpeedMS": null,
+    "Pressure": 1026.9,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.1,
+    "WindSpeedMS": null,
+    "Pressure": 1026.6,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-12T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.3,
+    "WindSpeedMS": null,
+    "Pressure": 1026.3,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-12T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.6,
+    "WindSpeedMS": null,
+    "Pressure": 1026,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-12T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.7,
+    "WindSpeedMS": null,
+    "Pressure": 1026.6,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-12T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.8,
+    "WindSpeedMS": null,
+    "Pressure": 1027.1,
+    "Precipitation1h": 0.1,
+    "time": "2022-11-12T08:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.9,
+    "WindSpeedMS": null,
+    "Pressure": 1027.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T09:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 10.1,
+    "WindSpeedMS": null,
+    "Pressure": 1028.2,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T10:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 10.2,
+    "WindSpeedMS": null,
+    "Pressure": 1028.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T11:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 10.3,
+    "WindSpeedMS": null,
+    "Pressure": 1029.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T12:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9.6,
+    "WindSpeedMS": null,
+    "Pressure": 1029.8,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T13:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 9,
+    "WindSpeedMS": null,
+    "Pressure": 1030.4,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T14:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "WindSpeedMS": null,
+    "Pressure": 1030.9,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T15:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7.6,
+    "WindSpeedMS": null,
+    "Pressure": 1031.5,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T16:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 7,
+    "WindSpeedMS": null,
+    "Pressure": 1032.1,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T17:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6.3,
+    "WindSpeedMS": null,
+    "Pressure": 1032.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T18:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 6,
+    "WindSpeedMS": null,
+    "Pressure": 1033,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T19:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.6,
+    "WindSpeedMS": null,
+    "Pressure": 1033.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T20:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 5.3,
+    "WindSpeedMS": null,
+    "Pressure": 1033.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T21:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.9,
+    "WindSpeedMS": null,
+    "Pressure": 1034,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T22:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.6,
+    "WindSpeedMS": null,
+    "Pressure": 1034.3,
+    "Precipitation1h": 0,
+    "time": "2022-11-12T23:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4.2,
+    "WindSpeedMS": null,
+    "Pressure": 1034.7,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T00:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 4,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T01:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.9,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T02:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.7,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T03:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.5,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T04:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.3,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T05:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.2,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T06:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  },
+  {
+    "Temperature": 3.8,
+    "WindSpeedMS": null,
+    "Pressure": 1034.6,
+    "Precipitation1h": 0,
+    "time": "2022-11-13T07:00:00.000Z",
+    "location": {
+      "lat": 2764063,
+      "lon": 8449330.5
+    }
+  }
+]

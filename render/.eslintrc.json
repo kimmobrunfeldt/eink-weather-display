@@ -32,5 +32,8 @@
     ],
     "no-loop-func": "off",
     "@typescript-eslint/no-explicit-any": "off"
-  }
+  },
+  "ignorePatterns": [
+    "**/*.js"
+  ]
 }

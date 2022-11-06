@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wfs:FeatureCollection timeStamp="2022-11-06T08:18:54Z" numberReturned="561" numberMatched="561"
+  xmlns:wfs="http://www.opengis.net/wfs/2.0"
+  xmlns:gml="http://www.opengis.net/gml/3.2"
+  xmlns:BsWfs="http://xml.fmi.fi/schema/wfs/2.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.opengis.net/wfs/2.0 http://schemas.opengis.net/wfs/2.0/wfs.xsd
+                        http://xml.fmi.fi/schema/wfs/2.0 https://xml.fmi.fi/schema/wfs/2.0/fmi_wfs_simplefeature.xsd">
+
+  <wfs:member>
+    <BsWfs:BsWfsElement gml:id="BsWfsElement.1.1.1">
+      <BsWfs:Location>
+        <gml:Point gml:id="BsWfsElementP.1.1.1" srsDimension="2" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>60.22200 24.83000 </gml:pos>
+        </gml:Point>
+      </BsWfs:Location>
+      <BsWfs:Time>2022-11-07T07:00:00Z</BsWfs:Time>
+      <BsWfs:ParameterName>Temperature</BsWfs:ParameterName>
+      <BsWfs:ParameterValue>8.0</BsWfs:ParameterValue>
+    </BsWfs:BsWfsElement>
+  </wfs:member>
+
+  <wfs:member>
+    <BsWfs:BsWfsElement gml:id="BsWfsElement.1.1.1">
+      <BsWfs:Location>
+        <gml:Point gml:id="BsWfsElementP.1.1.1" srsDimension="2" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>60.22200 24.83000 </gml:pos>
+        </gml:Point>
+      </BsWfs:Location>
+      <BsWfs:Time>2022-11-07T07:00:00Z</BsWfs:Time>
+      <BsWfs:ParameterName>Anything here</BsWfs:ParameterName>
+      <BsWfs:ParameterValue>100</BsWfs:ParameterValue>
+    </BsWfs:BsWfsElement>
+  </wfs:member>
+
+  <wfs:member>
+    <BsWfs:BsWfsElement gml:id="BsWfsElement.1.1.1">
+      <BsWfs:Location>
+        <gml:Point gml:id="BsWfsElementP.1.1.1" srsDimension="2" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>60.22200 24.83000 </gml:pos>
+        </gml:Point>
+      </BsWfs:Location>
+      <BsWfs:Time>2022-11-07T07:00:01Z</BsWfs:Time>
+      <BsWfs:ParameterName>Another</BsWfs:ParameterName>
+      <BsWfs:ParameterValue>NaN</BsWfs:ParameterValue>
+    </BsWfs:BsWfsElement>
+  </wfs:member>
+
+
+  <wfs:member>
+    <BsWfs:BsWfsElement gml:id="BsWfsElement.1.1.1">
+      <BsWfs:Location>
+        <gml:Point gml:id="BsWfsElementP.1.1.1" srsDimension="2" srsName="http://www.opengis.net/def/crs/EPSG/0/4326">
+          <gml:pos>60.22200 24.83000 </gml:pos>
+        </gml:Point>
+      </BsWfs:Location>
+      <BsWfs:Time>2022-11-07T07:00:01Z</BsWfs:Time>
+      <BsWfs:ParameterName>not_number</BsWfs:ParameterName>
+      <BsWfs:ParameterValue>Some description</BsWfs:ParameterValue>
+    </BsWfs:BsWfsElement>
+  </wfs:member>
+
+</wfs:FeatureCollection>

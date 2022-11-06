@@ -1,0 +1,920 @@
+[
+  {
+    "Temperature": 8,
+    "Humidity": 96,
+    "WindSpeedMS": 7.43,
+    "WindGust": 13.3,
+    "WindDirection": 206,
+    "Pressure": 1008,
+    "Visibility": 3217,
+    "PrecipitationAmount": 3.47,
+    "Precipitation1h": 0.3,
+    "DewPoint": 7.2,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T07:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "Humidity": 95.3,
+    "WindSpeedMS": 7.63,
+    "WindGust": 13.5,
+    "WindDirection": 211,
+    "Pressure": 1007.9,
+    "Visibility": 4646.7,
+    "PrecipitationAmount": 3.7,
+    "Precipitation1h": 0.2,
+    "DewPoint": 7.2,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T08:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "Humidity": 94.5,
+    "WindSpeedMS": 7.17,
+    "WindGust": 13.4,
+    "WindDirection": 214,
+    "Pressure": 1007.7,
+    "Visibility": 4952,
+    "PrecipitationAmount": 3.87,
+    "Precipitation1h": 0.1,
+    "DewPoint": 7.1,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T09:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "Humidity": 93.4,
+    "WindSpeedMS": 7.32,
+    "WindGust": 12.8,
+    "WindDirection": 216,
+    "Pressure": 1007.5,
+    "Visibility": 7222.2,
+    "PrecipitationAmount": 4.11,
+    "Precipitation1h": 0.3,
+    "DewPoint": 6.8,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T10:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.1,
+    "Humidity": 90.3,
+    "WindSpeedMS": 7.14,
+    "WindGust": 12.9,
+    "WindDirection": 213,
+    "Pressure": 1007.1,
+    "Visibility": 9025,
+    "PrecipitationAmount": 4.13,
+    "Precipitation1h": 0,
+    "DewPoint": 6.1,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T11:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.8,
+    "Humidity": 86.9,
+    "WindSpeedMS": 7.24,
+    "WindGust": 12.7,
+    "WindDirection": 213,
+    "Pressure": 1006.7,
+    "Visibility": 11159.2,
+    "PrecipitationAmount": 4.14,
+    "Precipitation1h": 0,
+    "DewPoint": 5,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T12:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "Humidity": 84.4,
+    "WindSpeedMS": 7.44,
+    "WindGust": 13,
+    "WindDirection": 216,
+    "Pressure": 1006.5,
+    "Visibility": 12667.1,
+    "PrecipitationAmount": 4.15,
+    "Precipitation1h": 0,
+    "DewPoint": 4.1,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T13:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.1,
+    "Humidity": 83.5,
+    "WindSpeedMS": 6.82,
+    "WindGust": 13,
+    "WindDirection": 211,
+    "Pressure": 1006,
+    "Visibility": 13204.1,
+    "PrecipitationAmount": 4.15,
+    "Precipitation1h": 0,
+    "DewPoint": 3.5,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T14:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7,
+    "Humidity": 84.2,
+    "WindSpeedMS": 6.85,
+    "WindGust": 11.9,
+    "WindDirection": 206,
+    "Pressure": 1005.3,
+    "Visibility": 12814,
+    "PrecipitationAmount": 4.15,
+    "Precipitation1h": 0,
+    "DewPoint": 3.5,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T15:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.9,
+    "Humidity": 84.3,
+    "WindSpeedMS": 6.9,
+    "WindGust": 12.3,
+    "WindDirection": 200,
+    "Pressure": 1004.5,
+    "Visibility": 12731.4,
+    "PrecipitationAmount": 4.15,
+    "Precipitation1h": 0,
+    "DewPoint": 3.6,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T16:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.8,
+    "Humidity": 84.9,
+    "WindSpeedMS": 7.44,
+    "WindGust": 13,
+    "WindDirection": 197,
+    "Pressure": 1003.9,
+    "Visibility": 12413,
+    "PrecipitationAmount": 4.15,
+    "Precipitation1h": 0,
+    "DewPoint": 3.5,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-07T17:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.6,
+    "Humidity": 88.3,
+    "WindSpeedMS": 7.07,
+    "WindGust": 13,
+    "WindDirection": 201,
+    "Pressure": 1003.5,
+    "Visibility": 10359.2,
+    "PrecipitationAmount": 4.23,
+    "Precipitation1h": 0.1,
+    "DewPoint": 4.1,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T18:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.5,
+    "Humidity": 91.5,
+    "WindSpeedMS": 7.04,
+    "WindGust": 12.5,
+    "WindDirection": 194,
+    "Pressure": 1002.5,
+    "Visibility": 25354.5,
+    "PrecipitationAmount": 4.35,
+    "Precipitation1h": 0.1,
+    "DewPoint": 4.7,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T19:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.5,
+    "Humidity": 93.7,
+    "WindSpeedMS": 7.38,
+    "WindGust": 12.8,
+    "WindDirection": 187,
+    "Pressure": 1001.8,
+    "Visibility": 7411.8,
+    "PrecipitationAmount": 5.46,
+    "Precipitation1h": 1,
+    "DewPoint": 5.2,
+    "WeatherSymbol3": 32,
+    "time": "2022-11-07T20:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.9,
+    "Humidity": 93.9,
+    "WindSpeedMS": 7.5,
+    "WindGust": 13.4,
+    "WindDirection": 195,
+    "Pressure": 1001,
+    "Visibility": 14512.7,
+    "PrecipitationAmount": 6.55,
+    "Precipitation1h": 1.2,
+    "DewPoint": 5.6,
+    "WeatherSymbol3": 32,
+    "time": "2022-11-07T21:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.3,
+    "Humidity": 95.6,
+    "WindSpeedMS": 7.98,
+    "WindGust": 14,
+    "WindDirection": 195,
+    "Pressure": 1000.2,
+    "Visibility": 3911.1,
+    "PrecipitationAmount": 6.74,
+    "Precipitation1h": 0.2,
+    "DewPoint": 6.4,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T22:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "Humidity": 97.1,
+    "WindSpeedMS": 8,
+    "WindGust": 14,
+    "WindDirection": 192,
+    "Pressure": 999.4,
+    "Visibility": 2492.7,
+    "PrecipitationAmount": 6.97,
+    "Precipitation1h": 0.2,
+    "DewPoint": 6.9,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-07T23:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.5,
+    "Humidity": 97.9,
+    "WindSpeedMS": 7.93,
+    "WindGust": 14.4,
+    "WindDirection": 192,
+    "Pressure": 998.7,
+    "Visibility": 2358.5,
+    "PrecipitationAmount": 7.58,
+    "Precipitation1h": 0.6,
+    "DewPoint": 7.1,
+    "WeatherSymbol3": 32,
+    "time": "2022-11-08T00:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.7,
+    "Humidity": 96.4,
+    "WindSpeedMS": 6.16,
+    "WindGust": 14.3,
+    "WindDirection": 212,
+    "Pressure": 998.2,
+    "Visibility": 2614.7,
+    "PrecipitationAmount": 8.28,
+    "Precipitation1h": 0.7,
+    "DewPoint": 8,
+    "WeatherSymbol3": 32,
+    "time": "2022-11-08T01:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.8,
+    "Humidity": 95.1,
+    "WindSpeedMS": 4.16,
+    "WindGust": 10.6,
+    "WindDirection": 241,
+    "Pressure": 998.1,
+    "Visibility": 4968.9,
+    "PrecipitationAmount": 8.71,
+    "Precipitation1h": 0.5,
+    "DewPoint": 7.8,
+    "WeatherSymbol3": 32,
+    "time": "2022-11-08T02:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.5,
+    "Humidity": 96.1,
+    "WindSpeedMS": 3.31,
+    "WindGust": 7.3,
+    "WindDirection": 236,
+    "Pressure": 997.9,
+    "Visibility": 3518.3,
+    "PrecipitationAmount": 8.92,
+    "Precipitation1h": 0.2,
+    "DewPoint": 7.7,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-08T03:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.4,
+    "Humidity": 96.2,
+    "WindSpeedMS": 3.57,
+    "WindGust": 6.2,
+    "WindDirection": 245,
+    "Pressure": 998,
+    "Visibility": 3423.3,
+    "PrecipitationAmount": 8.99,
+    "Precipitation1h": 0.1,
+    "DewPoint": 7.6,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-08T04:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.5,
+    "Humidity": 95.7,
+    "WindSpeedMS": 3.75,
+    "WindGust": 7,
+    "WindDirection": 258,
+    "Pressure": 998.4,
+    "Visibility": 3833.9,
+    "PrecipitationAmount": 9.21,
+    "Precipitation1h": 0.2,
+    "DewPoint": 7.6,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-08T05:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "Humidity": 93,
+    "WindSpeedMS": 4.11,
+    "WindGust": 7.5,
+    "WindDirection": 271,
+    "Pressure": 999.1,
+    "Visibility": 7228.2,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0.1,
+    "DewPoint": 6.7,
+    "WeatherSymbol3": 31,
+    "time": "2022-11-08T06:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.2,
+    "Humidity": 89.7,
+    "WindSpeedMS": 5.4,
+    "WindGust": 9.6,
+    "WindDirection": 281,
+    "Pressure": 1000.2,
+    "Visibility": 9417.4,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0,
+    "DewPoint": 6,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T07:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "Humidity": 88.9,
+    "WindSpeedMS": 4.31,
+    "WindGust": 9.6,
+    "WindDirection": 272,
+    "Pressure": 1001.2,
+    "Visibility": 9972.4,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0,
+    "DewPoint": 5.9,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T08:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.6,
+    "Humidity": 88.6,
+    "WindSpeedMS": 3.64,
+    "WindGust": 7.7,
+    "WindDirection": 258,
+    "Pressure": 1001.9,
+    "Visibility": 10139.3,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0,
+    "DewPoint": 6.1,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T09:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.6,
+    "Humidity": 87,
+    "WindSpeedMS": 5.38,
+    "WindGust": 9.6,
+    "WindDirection": 264,
+    "Pressure": 1002.7,
+    "Visibility": 11124.8,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0,
+    "DewPoint": 5.8,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T10:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 8.3,
+    "Humidity": 83.5,
+    "WindSpeedMS": 5.26,
+    "WindGust": 10,
+    "WindDirection": 282,
+    "Pressure": 1003.5,
+    "Visibility": 13229.6,
+    "PrecipitationAmount": 9.3,
+    "Precipitation1h": 0,
+    "DewPoint": 4.6,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T11:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 7.2,
+    "Humidity": 79.9,
+    "WindSpeedMS": 5.68,
+    "WindGust": 11.2,
+    "WindDirection": 296,
+    "Pressure": 1004.6,
+    "Visibility": 15271.7,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 2.8,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T12:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 6.2,
+    "Humidity": 77.1,
+    "WindSpeedMS": 5.08,
+    "WindGust": 10.2,
+    "WindDirection": 300,
+    "Pressure": 1005.6,
+    "Visibility": 16841.4,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 1.1,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T13:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 5.5,
+    "Humidity": 77.8,
+    "WindSpeedMS": 4.12,
+    "WindGust": 9.1,
+    "WindDirection": 309,
+    "Pressure": 1006.2,
+    "Visibility": 16481,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0.6,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T14:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 4.9,
+    "Humidity": 78.2,
+    "WindSpeedMS": 3.6,
+    "WindGust": 7.3,
+    "WindDirection": 306,
+    "Pressure": 1006.9,
+    "Visibility": 16246.4,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0.1,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T15:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 4,
+    "Humidity": 81.5,
+    "WindSpeedMS": 2.36,
+    "WindGust": 6.4,
+    "WindDirection": 299,
+    "Pressure": 1007.6,
+    "Visibility": 14359,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0,
+    "WeatherSymbol3": 1,
+    "time": "2022-11-08T16:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 2.7,
+    "Humidity": 87.2,
+    "WindSpeedMS": 1.39,
+    "WindGust": 4,
+    "WindDirection": 303,
+    "Pressure": 1007.9,
+    "Visibility": 11015.4,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0,
+    "WeatherSymbol3": 1,
+    "time": "2022-11-08T17:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 1.9,
+    "Humidity": 89.7,
+    "WindSpeedMS": 0.79,
+    "WindGust": 2.2,
+    "WindDirection": 248,
+    "Pressure": 1008.3,
+    "Visibility": 9425.3,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": -0.2,
+    "WeatherSymbol3": 2,
+    "time": "2022-11-08T18:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 2.2,
+    "Humidity": 89.8,
+    "WindSpeedMS": 1.12,
+    "WindGust": 2,
+    "WindDirection": 242,
+    "Pressure": 1008.7,
+    "Visibility": 9342.8,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0.2,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T19:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 2.7,
+    "Humidity": 88.5,
+    "WindSpeedMS": 0.41,
+    "WindGust": 1.8,
+    "WindDirection": 306,
+    "Pressure": 1008.7,
+    "Visibility": 10195.6,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0.3,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T20:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": 3.1,
+    "Humidity": 87.1,
+    "WindSpeedMS": 0.59,
+    "WindGust": 1,
+    "WindDirection": 25,
+    "Pressure": 1008.8,
+    "Visibility": 11072.3,
+    "PrecipitationAmount": 9.31,
+    "Precipitation1h": 0,
+    "DewPoint": 0.4,
+    "WeatherSymbol3": 3,
+    "time": "2022-11-08T21:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-08T22:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-08T23:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T00:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T01:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T02:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T03:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T04:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T05:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T06:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T07:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T08:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  },
+  {
+    "Temperature": null,
+    "Humidity": null,
+    "WindSpeedMS": null,
+    "WindGust": null,
+    "WindDirection": null,
+    "Pressure": null,
+    "Visibility": null,
+    "PrecipitationAmount": null,
+    "Precipitation1h": null,
+    "DewPoint": null,
+    "WeatherSymbol3": null,
+    "time": "2022-11-09T09:00:00.000Z",
+    "location": {
+      "lat": 60.222,
+      "lon": 24.83
+    }
+  }
+]

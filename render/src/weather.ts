@@ -150,7 +150,7 @@ async function fetchFmiHarmonieData(
     params: getFmiHarmonieParameters(opts),
   })
   await writeDebugFile('fmi-harmonie-response.xml', res.data)
-  const data = parseWeatherTodayXmlResponse<FmiHarmonieDataPoint>(res.data)
+  const data = parseFmiXmlResponse<FmiHarmonieDataPoint>(res.data)
   await writeDebugFile('fmi-harmonie-parsed-data.json', data)
   return data
 }
@@ -162,7 +162,7 @@ async function fetchFmiEcmwfData(
     params: getFmiECMWFParameters(opts),
   })
   await writeDebugFile('fmi-ecmwf-response.xml', res.data)
-  const data = parseWeatherTodayXmlResponse<FmiEcmwfDataPoint>(res.data)
+  const data = parseFmiXmlResponse<FmiEcmwfDataPoint>(res.data)
   await writeDebugFile('fmi-ecmwf-parsed-data.json', data)
   return data
 }
@@ -374,7 +374,7 @@ function calculateLongTermForecast(
   })
 }
 
-function calculateTodaySummary(
+export function calculateTodaySummary(
   fmiData: FmiHarmonieDataPoint[],
   { location, startForecastAtHour, timezone }: GenerateOptions
 ) {
@@ -383,10 +383,8 @@ function calculateTodaySummary(
     startOfLocalDayInUtc,
     endOfLocalDayInUtc,
   } = getNextHourDates(startForecastAtHour, timezone)
-  const today = fmiData.filter(
-    (d) =>
-      dateFns.isAfter(d.time, startOfLocalDayInUtc) &&
-      dateFns.isBefore(d.time, endOfLocalDayInUtc)
+  const today = fmiData.filter((d) =>
+    isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
   )
   const avgWindSpeedMs = _.mean(today.map((d) => d.WindSpeedMS))
   const maxWindSpeedMs = Math.max(...today.map((d) => d.WindSpeedMS))
@@ -436,10 +434,8 @@ function findHighestUVIndex(
       time: new Date(time),
       uvIndex: forecast.hourly.uv_index[index],
     }))
-    .filter(
-      ({ time }) =>
-        dateFns.isAfter(time, startOfLocalDayInUtc) &&
-        dateFns.isBefore(time, endOfLocalDayInUtc)
+    .filter(({ time }) =>
+      isBetweenInclusive(time, startOfLocalDayInUtc, endOfLocalDayInUtc)
     )
 
   logger.debug('findHighestUVIndex: uv index and hours', hoursToday)
@@ -545,7 +541,7 @@ function getFmiHarmonieParameters({
   }
 }
 
-function parseWeatherTodayXmlResponse<
+export function parseFmiXmlResponse<
   T extends FmiHarmonieDataPoint | FmiEcmwfDataPoint
 >(xmlString: string): T[] {
   const parser = new XMLParser()
@@ -601,4 +597,11 @@ function parseMember(member: Record<string, any>): {
     name: values['BsWfs:ParameterName'],
     value: values['BsWfs:ParameterValue'],
   }
+}
+
+function isBetweenInclusive(time: Date, start: Date, end: Date): boolean {
+  return (
+    (dateFns.isAfter(time, start) || dateFns.isEqual(time, start)) &&
+    (dateFns.isBefore(time, end) || dateFns.isEqual(time, end))
+  )
 }
