@@ -401,7 +401,7 @@ export function calculateTodaySummary(
   const { key: topSymbol } = _.maxBy(symbolCountsArr, ({ value }) => value)!
   const symbol = Number(topSymbol) as WeatherSymbolNumber
 
-  const precipitationAmount = sumByOrNull(today, (d) => d.PrecipitationAmount)
+  const precipitationAmount = sumByOrNull(today, (d) => d.Precipitation1h)
   const sunrise = getSunrise(location.lat, location.lon, nextH)
   const sunset = getSunset(location.lat, location.lon, nextH)
 
@@ -479,7 +479,7 @@ function getFmiECMWFParameters({
   const { hourInUtc } = getNextHourDates(startForecastAtHour, timezone)
   const startDate = hourInUtc
   const endDate = dateFns.addDays(startDate, 6)
-  const timeStepMin = 60
+  const timeStepMin = 60 // if changing, update precipitation summing
 
   return {
     service: 'WFS',
@@ -512,7 +512,7 @@ function getFmiHarmonieParameters({
     timezone
   )
   const endDate = dateFns.addHours(startDate, 50)
-  const timeStepMin = 60
+  const timeStepMin = 60 // if changing, update precipitation summing
 
   return {
     service: 'WFS',

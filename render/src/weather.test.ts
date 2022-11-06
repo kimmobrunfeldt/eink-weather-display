@@ -30,7 +30,7 @@ describe('calculateTodaySummary', () => {
       // Start of day in Europe/Helsinki time
       startOfLocalDayInUtc: new Date('2022-11-01T22:00:00.000Z'),
       // End of day in Europe/Helsinki time
-      endOfLocalDayInUtc: new Date('2022-11-02T22:00:00.000Z'),
+      endOfLocalDayInUtc: new Date('2022-11-02T21:59:59.999Z'),
     }
 
     jest.spyOn(utils, 'getNextHourDates').mockImplementation(() => mockHour)
@@ -70,7 +70,28 @@ describe('calculateTodaySummary', () => {
         Pressure: 1000,
         Visibility: 10000,
         PrecipitationAmount: 5,
-        Precipitation1h: 1,
+        Precipitation1h: 10,
+        DewPoint: 8.5,
+        WeatherSymbol3: 1,
+        time: mockHour.startOfLocalDayInUtc,
+        // Location doesn't matter
+        location: {
+          lat: 0,
+          lon: 0,
+        },
+      },
+
+      // Middle of day
+      {
+        Temperature: 10,
+        Humidity: 50,
+        WindSpeedMS: 5,
+        WindGust: 15,
+        WindDirection: 200,
+        Pressure: 1000,
+        Visibility: 10000,
+        PrecipitationAmount: 0,
+        Precipitation1h: 0,
         DewPoint: 8.5,
         WeatherSymbol3: 31,
         time: mockHour.startOfLocalDayInUtc,
@@ -91,7 +112,7 @@ describe('calculateTodaySummary', () => {
         Pressure: 1000,
         Visibility: 10000,
         PrecipitationAmount: 5,
-        Precipitation1h: 1,
+        Precipitation1h: 30,
         DewPoint: 8.5,
         WeatherSymbol3: 31,
         time: mockHour.endOfLocalDayInUtc,
@@ -133,8 +154,10 @@ describe('calculateTodaySummary', () => {
         maxWindSpeedMs: 5,
         minTemperature: 11,
         minWindSpeedMs: 5,
-        precipitationAmount: 10,
-        symbol: 31,
+        // 1h counts summed (10 + 30)
+        // using 1h counts seemed more reliable from FMI
+        precipitationAmount: 40,
+        symbol: 31, // from 1, 31, 31 datapoints -> by max count is 31
       })
     )
   })
