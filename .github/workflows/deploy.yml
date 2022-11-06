@@ -98,4 +98,4 @@ jobs:
       - name: 'Test rendering'
         env:
           WEATHER_DISPLAY_API_KEY: ${{ secrets.WEATHER_DISPLAY_API_KEY }}
-        run: curl --fail "$(gcloud functions describe weather-display --format=\"value\(httpsTrigger.url\)\")?lat=60.222&lon=24.83&locationName=Espoo&batteryLevel=100&timezone=Europe/Helsinki&apiKey=$WEATHER_DISPLAY_API_KEY"
+        run: curl --fail "$(gcloud functions describe weather-display --region $GCP_REGION --project $GCP_PROJECT --format=\"value\(httpsTrigger.url\)\")?lat=60.222&lon=24.83&locationName=Espoo&batteryLevel=100&timezone=Europe/Helsinki&apiKey=$WEATHER_DISPLAY_API_KEY"
