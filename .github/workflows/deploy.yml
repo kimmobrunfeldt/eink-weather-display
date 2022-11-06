@@ -88,9 +88,14 @@ jobs:
         uses: google-github-actions/auth@v0.8.3
         with:
           credentials_json:  ${{ secrets.GCP_SERVICE_ACCOUNT_KEY }}
+
       - name: Set up Cloud SDK
         uses: google-github-actions/setup-gcloud@v0.6.2
         with:
           version: '408.0.0'
       # https://cloud.google.com/sdk/gcloud/reference/functions/deploy
       - run: gcloud functions deploy weather-display --entry-point render --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
+      - name: 'Test rendering'
+        env:
+          WEATHER_DISPLAY_API_KEY: ${{ secrets.WEATHER_DISPLAY_API_KEY }}
+        run: curl --fail "$(gcloud functions describe weather-display --format=\"value(httpsTrigger.url)\")?lat=60.222&lon=24.83&locationName=Espoo&batteryLevel=100&timezone=Europe/Helsinki&apiKey=$WEATHER_DISPLAY_API_KEY"
