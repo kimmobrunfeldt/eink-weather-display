@@ -32,7 +32,10 @@ export function formatWindSpeed(n: number): string {
   return str
 }
 
-export function getBatteryIcon(level: number): string {
+export function getBatteryIcon(level: number, charging?: boolean): string {
+  if (charging) {
+    return 'battery_charging.svg'
+  }
   const closest = _.minBy([0, 25, 50, 75, 100], (n) => Math.abs(n - level))
   return `battery_${closest}.svg`
 }

@@ -41,6 +41,8 @@ Note! Since the display updates only once or twice a day, everything has been de
 
 ### Calling cloud function
 
+The cloud function and CLI support basic image operations to offload that work from Raspberry: `rotate`, `flip`, `flip`, `padding(Top|Right|Bottom|Left)`, `resizeToWidth`, `resizeToHeight`. See [sharp](https://sharp.pixelplumbing.com/) for their docs. For example `--flip` with CLI or `?flip=true` with CF.
+
 ```sh
 LAT="60.222"
 LON="24.83"
@@ -170,9 +172,86 @@ The model can return data up to 10 days from now.
 }
 ```
 
+## Raspberry PI setup
+
+* Download correct image from here: https://www.raspberrypi.com/software/operating-systems/b
+* Flash it to an SD card with balenaEtcher https://www.balena.io/etcher/ (or use RPIs own flasher)
+* Boot the raspberry, and do initial setup
+* `sudo raspi-config`
+    * Setup Wifi SSID and password (System options)
+    * Update locales, timezones, etc (Localisation options)
+    * Enable SSH server (Interface options)
+    * Enable overlayfs (Performance options) to make the FS read-only.
+* In your router, make sure to assign a static local IP address for the device
+* Install display updating code
+
+    Download zip
+
+    ```sh
+    curl -H "Authorization: token <token>" -L https://api.github.com/repos/kimmobrunfeldt/eink-weather-display/zipball/main > main.zip
+    ```
+
+    or `sudo apt install git` and
+
+    ```sh
+    git clone https://<user>:<personal_access_token>@github.com/kimmobrunfeldt/eink-weather-display.git
+    ```
+
+* `sudo apt install python3-pip`
+* `pip install pipenv`
+* `cd eink-weather-display && pipenv --site-packages && pipenv install`
+
+    Had initial issues with Pipfile.lock matching (https://github.com/pypa/pipenv/issues/2731), solved by `rm Pipfile.lock` and manual removal of non pywheels source from Pipfile.
+
+    `--site-packages` is important to get `import pijuice` working.
+
+* Follow installation guide from https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
+* After install, test that the demo software (in C) works
+* `sudo apt install pijuice-base`
+* Enable I2C interface
+
+    More debugging info:
+
+    * https://github.com/PiSupply/PiJuice/issues/175
+    * https://github.com/PiSupply/PiJuice/issues/268
+* To allow PIJuice to turn on without a battery, go to general settings and enable "Turn on without battery" or similar option
+* Make sure to use correct PIJuice battery profile (PJLIPO_12000 for me)
+
+    If using `pijuice_cli`, **remember to apply changes!** It was quite hidden down below.
+
+* Test that the PIJuice works with battery too
+* `cd rasp/IT8951` and follow install instructions (inside virtualenv if using one)
+* Install Python deps
+
+    ```
+    pip install Pillow==9.3.0 google-cloud-logging requests
+    ```
+
+* Pijuice setup using `pijuice_cli`
+
+    * System events
+        * Low charge, Low battery voltage and No power: SYS_FUNC_HALT_POW_OFF (docs: https://github.com/PiSupply/PiJuice/blob/master/Software/README.md#user-functions)
+
+
+
+* Setup crontab. Run refresh on boot, and shutdown device if on battery.
+
+    ```
+    @reboot cd /home/pi/eink-weather-display/rasp && python main.py
+
+    # Every minute
+    * * * * * cd /home/pi/eink-weather-display/rasp && python main.py --shutdown-if-on-battery
+    ```
+
+Detour: use usb interface instead of gpio due to physical build constraints
+
+* Install https://git.sr.ht/~martijnbraam/it8951 and build it in Raspberry
+  * Find which /dev/sdX your usb device is
+* `sudo apt install imagemagick`
 
 ## Credits
 
 * Refresh icon: Created by andriwidodo from The Noun Project
+* Error by Mello from <a href="https://thenounproject.com/browse/icons/term/error/" target="_blank" title="Error Icons">Noun Project</a>
 * Severi Salminen for inspiration and assets https://github.com/sevesalm/eInk-weather-display
 * https://raspberrypi-guide.github.io/other/boot-automation-pijuice

@@ -1,13 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
-<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-  viewBox="0 0 100 100" style="background-color: white" stroke="black" fill="white"
-  stroke-width="6" stroke-linecap="round">
-  <rect width="84" height="46" x="7" y="27" rx="2" fill="black" stroke-width="0" />
-  <rect width="12" height="20" x="87" y="40" rx="3" fill="black" stroke-width="0" />
-  <rect width="2" height="20" x="91" y="40" stroke-width="0" />
-
-  <rect width="76" height="38" x="11" y="31" rx="1" fill="white" stroke-width="0" />
-  <path id="lightning" d="M 21 54 l 30 -12.5 0 10 25 -5 -30 12.5 0 -10  z" stroke-width="2" stroke-linejoin="round"
-    fill="black" />
-
+<svg width="100" height="100" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="100" height="100" fill="white"/>
+<path d="M89 27H9C7.89543 27 7 27.8954 7 29V71C7 72.1046 7.89543 73 9 73H89C90.1046 73 91 72.1046 91 71V29C91 27.8954 90.1046 27 89 27Z" fill="black"/>
+<path d="M96 40H90C88.3431 40 87 41.3431 87 43V57C87 58.6569 88.3431 60 90 60H96C97.6569 60 99 58.6569 99 57V43C99 41.3431 97.6569 40 96 40Z" fill="black"/>
+<path d="M93 40H91V60H93V40Z" fill="white"/>
+<path d="M86 31H12C11.4477 31 11 31.4477 11 32V68C11 68.5523 11.4477 69 12 69H86C86.5523 69 87 68.5523 87 68V32C87 31.4477 86.5523 31 86 31Z" fill="white"/>
+<path d="M21 35H15V65H21V35Z" fill="#BDBDBD"/>
 </svg>

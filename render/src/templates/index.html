@@ -201,14 +201,20 @@
     .SystemInfo {
       display: flex;
       align-items: center;
+      height: 1.2rem;
     }
 
     .SystemInfo-refresh-time {
       display: flex;
       align-items: center;
-      margin-right: var(--space-2);
+      margin-right: var(--space-3);
     }
 
+    .SystemInfo-battery-value {
+      margin-left: var(--space-1);
+    }
+
+    .SystemInfo-battery-value,
     .SystemInfo-refresh-time-value {
       margin-top: 0.12rem;
     }
@@ -447,6 +453,7 @@
         <span class="SystemInfo-refresh-time"><img class="SystemInfo-refresh-time-icon" src="refresh.svg" /> <span
             class="SystemInfo-refresh-time-value" id="refresh-timestamp">06:12</span></span>
         <img id="battery-icon" class="SystemInfo-battery-icon" src="battery_75.svg" />
+        <span class="SystemInfo-battery-value" id="battery-value">17%</span>
       </div>
     </div>
 

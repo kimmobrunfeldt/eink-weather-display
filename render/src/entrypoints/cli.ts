@@ -17,8 +17,31 @@ const argv = yargs(process.argv.slice(2))
     locationName: { type: 'string', demandOption: true },
     timezone: { type: 'string', demandOption: true },
     batteryLevel: { type: 'number', demandOption: true },
+    batteryCharging: {
+      type: 'boolean',
+      demandOption: false,
+    },
+    showBatteryPercentage: {
+      type: 'boolean',
+      demandOption: false,
+    },
     width: { type: 'number', demandOption: false },
     height: { type: 'number', demandOption: false },
+    resizeToWidth: { type: 'number', demandOption: false },
+    resizeToHeight: { type: 'number', demandOption: false },
+    paddingTop: { type: 'number', demandOption: false },
+    paddingRight: { type: 'number', demandOption: false },
+    paddingBottom: { type: 'number', demandOption: false },
+    paddingLeft: { type: 'number', demandOption: false },
+    rotation: { type: 'number', demandOption: false },
+    flip: {
+      type: 'boolean',
+      demandOption: false,
+    },
+    flop: {
+      type: 'boolean',
+      demandOption: false,
+    },
     random: {
       type: 'boolean',
       demandOption: false,

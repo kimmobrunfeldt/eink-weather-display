@@ -49,7 +49,7 @@ typedef struct IT8951_Load_Img_Info
     UWORD    Endian_Type;         //little or Big Endian
     UWORD    Pixel_Format;        //bpp
     UWORD    Rotate;              //Rotate mode
-    UDOUBLE  Source_Buffer_Addr;  //Start address of source Frame buffer
+    UBYTE*  Source_Buffer_Addr;  //Start address of source Frame buffer
     UDOUBLE  Target_Memory_Addr;  //Base address of target image buffer
 }IT8951_Load_Img_Info;
 

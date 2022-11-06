@@ -81,7 +81,23 @@ function getGivenApiKey(req: Request): string {
   return String(req.headers['x-api-key'])
 }
 
+const OPTIONAL_NUMBERS = [
+  'height',
+  'width',
+  'resizeToWidth',
+  'resizeToHeight',
+  'rotate',
+  'paddingTop',
+  'paddingRight',
+  'paddingBottom',
+  'paddingLeft',
+] as const
+
 async function renderHandler(req: Request, res: Response) {
+  if (req.query.ping === 'true') {
+    return res.sendStatus(200)
+  }
+
   if (
     environment.NODE_ENV !== 'development' &&
     environment.API_KEY &&
@@ -95,9 +111,35 @@ async function renderHandler(req: Request, res: Response) {
     locationName: String(req.query.locationName),
     timezone: String(req.query.timezone),
     batteryLevel: Number(req.query.batteryLevel),
+    batteryCharging: req.query.batteryCharging
+      ? req.query.batteryCharging === 'true'
+      : undefined,
+    showBatteryPercentage: req.query.showBatteryPercentage
+      ? req.query.showBatteryPercentage === 'true'
+      : undefined,
 
     width: req.query.width ? Number(req.query.width) : undefined,
     height: req.query.height ? Number(req.query.height) : undefined,
+
+    resizeToWidth: req.query.resizeToWidth
+      ? Number(req.query.resizeToWidth)
+      : undefined,
+    resizeToHeight: req.query.resizeToHeight
+      ? Number(req.query.resizeToHeight)
+      : undefined,
+    paddingTop: req.query.paddingTop ? Number(req.query.paddingTop) : undefined,
+    paddingRight: req.query.paddingRight
+      ? Number(req.query.paddingRight)
+      : undefined,
+    paddingBottom: req.query.paddingBottom
+      ? Number(req.query.paddingBottom)
+      : undefined,
+    paddingLeft: req.query.paddingLeft
+      ? Number(req.query.paddingLeft)
+      : undefined,
+    rotate: req.query.rotate ? Number(req.query.rotate) : undefined,
+    flip: req.query.flip ? req.query.flip === 'true' : undefined,
+    flop: req.query.flop ? req.query.flop === 'true' : undefined,
   }
 
   if (!_.isFinite(opts.location.lat)) {
@@ -134,6 +176,7 @@ async function renderHandler(req: Request, res: Response) {
       `Invalid 'height' query parameter: must be a number`
     )
   }
+  OPTIONAL_NUMBERS.forEach((attr) => checkOptionalNumber(opts[attr]))
 
   const { png, html } = await generatePng({ ...opts, startForecastAtHour: 9 })
   await writeDebugFile('render.html', html)
@@ -141,6 +184,15 @@ async function renderHandler(req: Request, res: Response) {
 
   res.set('content-type', 'image/png')
   res.status(200).end(png)
+}
+
+const checkOptionalNumber = (val?: number) => {
+  if (!_.isUndefined(val) && !_.isFinite(val)) {
+    throw new HttpError(
+      400,
+      `Invalid 'height' query parameter: must be a number`
+    )
+  }
 }
 
 // Expose as Cloud Function path /render

@@ -3,6 +3,7 @@ import * as dateFnsTz from 'date-fns-tz'
 import fs from 'fs'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
+import sharp from 'sharp'
 import posthtmlInlineStyleCssImports from 'src/rendering/posthtmlInlineStyleCssImports'
 import posthtmlReplace, { Replacement } from 'src/rendering/posthtmlReplace'
 import { createPuppeteer, takeScreenshot } from 'src/rendering/puppeteer'
@@ -15,7 +16,7 @@ import {
   getPathWithinSrc,
   isDark,
   secondsToHoursAndMinutes,
-  writeDebugFile
+  writeDebugFile,
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import { getLocalWeatherData } from 'src/weather/weather'
@@ -26,10 +27,30 @@ export type GenerateOptions = {
   locationName: string
   timezone: string
   batteryLevel: number // 0-100
+  showBatteryPercentage?: boolean
+  batteryCharging?: boolean
   startForecastAtHour: number
+  // Viewport width in headless Chrome
   width?: number
+  // Viewport height in headless Chrome
   height?: number
+  // Enable random generation mode?
   random?: boolean
+  // Resize browser-generated image to this width
+  resizeToWidth?: number
+  // Resize browser-generated image to this height
+  resizeToHeight?: number
+  // Amount of white padding to add to left in px
+  paddingLeft?: number
+  // Amount of white padding to add to top in px
+  paddingTop?: number
+  // Amount of white padding to add to right in px
+  paddingRight?: number
+  // Amount of white padding to add to bottom in px
+  paddingBottom?: number
+  flip?: boolean
+  flop?: boolean
+  rotate?: number
 }
 
 // 10.3" Waveshare e-ink display resolution
@@ -68,7 +89,60 @@ export async function generatePng(
   const html = await generateHtml(opts)
   const png = await takeScreenshot(page, html)
   await browser.close()
-  return { html, png }
+  const resizedPng = await resize(png, { ...opts, width, height })
+  return { html, png: resizedPng }
+}
+
+type ResizeOptions = Pick<
+  GenerateOptions,
+  | 'resizeToWidth'
+  | 'resizeToHeight'
+  | 'paddingLeft'
+  | 'paddingTop'
+  | 'paddingBottom'
+  | 'paddingRight'
+  | 'flip'
+  | 'flop'
+  | 'rotate'
+> &
+  Required<Pick<GenerateOptions, 'width' | 'height'>>
+async function resize(png: Buffer, opts: ResizeOptions): Promise<Buffer> {
+  const toDimensions = getResizeDimensions(opts)
+  const image = sharp(png)
+
+  if (opts.flip) image.flip()
+  if (opts.flop) image.flop()
+  if (opts.rotate) image.rotate(opts.rotate)
+
+  image.resize(toDimensions.width, toDimensions.height).extend({
+    ...(opts.paddingTop ? { top: opts.paddingTop } : {}),
+    ...(opts.paddingRight ? { right: opts.paddingRight } : {}),
+    ...(opts.paddingBottom ? { bottom: opts.paddingBottom } : {}),
+    ...(opts.paddingLeft ? { left: opts.paddingLeft } : {}),
+    background: { r: 255, g: 255, b: 255, alpha: 1 },
+  })
+
+  return image.png().toBuffer()
+}
+
+function getResizeDimensions(opts: ResizeOptions): {
+  width: number | null
+  height: number | null // null means: only resize to the other constraint
+} {
+  if (!opts.resizeToHeight && !opts.resizeToWidth) {
+    return { width: opts.width, height: opts.height }
+  } else if (opts.resizeToWidth && opts.resizeToHeight) {
+    return {
+      width: opts.resizeToWidth,
+      height: opts.resizeToHeight,
+    }
+  } else if (opts.resizeToWidth) {
+    return { width: opts.resizeToWidth, height: null }
+  } else if (opts.resizeToHeight) {
+    return { width: null, height: opts.resizeToHeight }
+  }
+
+  throw new Error(`Unexpected options: ${opts}`)
 }
 
 function getHtmlReplacements(
@@ -98,8 +172,17 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          src: getBatteryIcon(opts.batteryLevel),
+          src: getBatteryIcon(opts.batteryLevel, opts.batteryCharging),
         }),
+    },
+    {
+      match: { attrs: { id: 'battery-value' } },
+      modifier: (node) => {
+        node.content = [`${Math.round(opts.batteryLevel)}%`]
+        if (!opts.showBatteryPercentage) {
+          node.attrs = { ...node.attrs, display: 'none', visiblity: 'hidden' }
+        }
+      },
     },
     {
       match: { attrs: { id: 'current-weather-icon' } },

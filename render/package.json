@@ -30,6 +30,7 @@
     "posthtml-inline-assets": "^3.1.0",
     "puppeteer": "^18.2.1",
     "puppeteer-core": "^18.2.1",
+    "sharp": "^0.31.2",
     "sunrise-sunset-js": "^2.2.1",
     "typescript": "^4.8.4",
     "yargs": "^17.6.0"
@@ -52,7 +53,6 @@
     "eslint-plugin-prettier": "^4.2.1",
     "http-server": "^14.1.1",
     "jest": "^29.2.2",
-    "sharp": "^0.31.2",
     "ts-jest": "^29.0.3",
     "ts-node": "^10.9.1",
     "ttypescript": "^1.5.13"
