@@ -1,9 +1,9 @@
 import * as fs from 'fs'
 import { WeatherSymbolNumber } from 'src/types'
-import { getProjectPath } from 'src/utils/utils'
+import { getPathWithinSrc } from 'src/utils/utils'
 import {
   weatherSymbolDescriptions,
-  weatherSymbolIcons,
+  weatherSymbolIcons
 } from 'src/weather/weatherSymbol'
 
 describe('weatherSymbol', () => {
@@ -21,7 +21,7 @@ describe('weatherSymbol', () => {
     Object.keys(weatherSymbolIcons['light']).forEach((symbol: any) => {
       const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
       if (
-        !fs.existsSync(getProjectPath('templates/weather-icons', `${icon}.svg`))
+        !fs.existsSync(getPathWithinSrc('templates/weather-icons', `${icon}.svg`))
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
       }
@@ -30,7 +30,7 @@ describe('weatherSymbol', () => {
     Object.keys(weatherSymbolIcons['dark']).forEach((symbol: any) => {
       const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
       if (
-        !fs.existsSync(getProjectPath('templates/weather-icons', `${icon}.svg`))
+        !fs.existsSync(getPathWithinSrc('templates/weather-icons', `${icon}.svg`))
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
       }

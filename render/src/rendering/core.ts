@@ -12,10 +12,10 @@ import {
   formatWindSpeed,
   getBatteryIcon,
   getNextHourDates,
-  getProjectPath,
+  getPathWithinSrc,
   isDark,
   secondsToHoursAndMinutes,
-  writeDebugFile,
+  writeDebugFile
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import { getLocalWeatherData } from 'src/weather/weather'
@@ -42,7 +42,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     : await getLocalWeatherData(opts)
   await writeDebugFile('weather.json', weather)
 
-  const html = await fs.readFileSync(getProjectPath('templates/index.html'), {
+  const html = await fs.readFileSync(getPathWithinSrc('templates/index.html'), {
     encoding: 'utf8',
   })
 
@@ -50,7 +50,7 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
     posthtmlReplace(getHtmlReplacements(opts, weather)),
     posthtmlInlineStyleCssImports(),
     posthtmlInlineAssets({
-      cwd: getProjectPath('templates/'),
+      cwd: getPathWithinSrc('templates/'),
       errors: 'throw',
     }),
   ]).process(html)

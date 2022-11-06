@@ -8,8 +8,8 @@
     "start": "http-server src/templates/ -c-1",
     "clean": "rm -r dist/",
     "build": "ttsc && cp -r src/templates dist/templates && cp package.json package-lock.json tsconfig.json dist/",
-    "render": "./src/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html",
-    "random": "./src/cli.ts --random --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100"
+    "render": "./src/entrypoints/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html",
+    "random": "./src/entrypoints/cli.ts --random --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100"
   },
   "author": "",
   "license": "ISC",

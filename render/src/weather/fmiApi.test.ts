@@ -1,10 +1,10 @@
 import fs from 'fs'
 import _ from 'lodash'
-import { getProjectPath } from 'src/utils/utils'
+import { getPathWithinSrc } from 'src/utils/utils'
 import { parseFmiXmlResponse } from 'src/weather/fmiApi'
 
 const fixture = (name: string) =>
-  fs.readFileSync(getProjectPath('../fixtures/', name), {
+  fs.readFileSync(getPathWithinSrc('../fixtures/', name), {
     encoding: 'utf8',
   })
 
