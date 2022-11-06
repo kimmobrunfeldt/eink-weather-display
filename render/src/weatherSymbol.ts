@@ -90,7 +90,7 @@ export const weatherSymbolIcons = {
     91: 'wi-dust', // 'Mist',
     92: 'wi-fog', // 'Fog',
   },
-}
+} as const
 
 export const weatherSymbolDescriptions = {
   1: 'Clear',
@@ -120,7 +120,7 @@ export const weatherSymbolDescriptions = {
   83: 'Heavy sleet',
   91: 'Mist',
   92: 'Fog',
-}
+} as const
 
 const meteoCodesToFmi = {
   0: 1, // Clear sky (the comment refers to the the key, which is the meteo code)

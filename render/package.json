@@ -8,7 +8,8 @@
     "start": "http-server src/templates/ -c-1",
     "clean": "rm -r dist/",
     "build": "ttsc && cp -r src/templates dist/templates && cp package.json package-lock.json tsconfig.json dist/",
-    "render": "./src/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html"
+    "render": "./src/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html",
+    "random": "./src/cli.ts --random --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100"
   },
   "author": "",
   "license": "ISC",
@@ -40,6 +41,7 @@
     "@types/mime-types": "^2.1.1",
     "@types/node": "^18.11.8",
     "@types/postcss-url": "^10.0.0",
+    "@types/sharp": "^0.31.0",
     "@types/yargs": "^17.0.13",
     "@typescript-eslint/eslint-plugin": "^5.41.0",
     "@zerollup/ts-transform-paths": "^1.7.18",
@@ -48,6 +50,7 @@
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-prettier": "^4.2.1",
     "http-server": "^14.1.1",
+    "sharp": "^0.31.2",
     "ts-node": "^10.9.1",
     "ttypescript": "^1.5.13"
   }

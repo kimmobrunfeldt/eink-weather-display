@@ -7,6 +7,7 @@ import posthtmlInlineAssets from 'posthtml-inline-assets'
 import posthtmlInlineStyleCssImports from 'src/posthtmlInlineStyleCssImports'
 import posthtmlReplace, { Replacement } from 'src/posthtmlReplace'
 import { createPuppeteer, takeScreenshot } from 'src/puppeteer'
+import { generateRandomLocalWeatherData } from 'src/random'
 import {
   formatNumber,
   formatWindSpeed,
@@ -27,10 +28,17 @@ export type GenerateOptions = {
   startForecastAtHour: number
   width?: number
   height?: number
+  random?: boolean
 }
 
+// 10.3" Waveshare e-ink display resolution
+export const DEFAULT_IMAGE_WIDTH = 1872
+export const DEFAULT_IMAGE_HEIGHT = 1404
+
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
-  const weather = await getLocalWeatherData(opts)
+  const weather = opts.random
+    ? await generateRandomLocalWeatherData(opts)
+    : await getLocalWeatherData(opts)
   await writeDebugFile('weather.json', weather)
 
   const html = await fs.readFileSync(
@@ -52,9 +60,10 @@ export async function generateHtml(opts: GenerateOptions): Promise<string> {
 export async function generatePng(
   opts: GenerateOptions
 ): Promise<{ png: Buffer; html: string }> {
+  const { width = DEFAULT_IMAGE_WIDTH, height = DEFAULT_IMAGE_HEIGHT } = opts
   const { page, browser } = await createPuppeteer({
-    width: opts.width,
-    height: opts.height,
+    width,
+    height,
   })
   const html = await generateHtml(opts)
   const png = await takeScreenshot(page, html)

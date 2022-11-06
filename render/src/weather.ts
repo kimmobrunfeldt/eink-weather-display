@@ -24,7 +24,7 @@ type MaxUvIndex = {
   time: Date
 }
 
-type WeatherTodaySummary = {
+export type WeatherTodaySummary = {
   avgTemperature: number
   minTemperature: number
   maxTemperature: number
@@ -42,7 +42,7 @@ type WeatherTodaySummary = {
 
 // All numbers should be nullable to treat NaN returned by FMI API in type-safe manner...
 // ...but that's a bit more work.
-type ShortTermWeatherDataPoint = {
+export type ShortTermWeatherDataPoint = {
   time: Date
   temperature: number
   windSpeedMs: number
@@ -54,7 +54,7 @@ type ShortTermWeatherDataPoint = {
   symbol: WeatherSymbolNumber
 }
 
-type LongTermWeatherDataPoint = {
+export type LongTermWeatherDataPoint = {
   time: Date
   avgTemperature: number
   minTemperature: number
