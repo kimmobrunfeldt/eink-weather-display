@@ -137,7 +137,7 @@ export function calculateShortTermForecast(
  *
  * @see `calculateShortTermForecast` function for more explanation of returned data.
  */
-function calculateLongTermForecast(
+export function calculateLongTermForecast(
   fmiData: FmiEcmwfDataPoint[],
   { startForecastAtHour, timezone }: GenerateOptions,
   forecastItemsInput?: Date[]
@@ -171,6 +171,7 @@ function calculateLongTermForecast(
         dateFns.isEqual(f.time, time) ||
         (dateFns.isAfter(f.time, time) && dateFns.isBefore(f.time, nextTime))
     )
+
     const avgWindSpeedMs = _.mean(fmiDataBetweenNext.map((d) => d.WindSpeedMS))
     const maxWindSpeedMs = Math.max(
       ...fmiDataBetweenNext.map((d) => d.WindSpeedMS)
@@ -182,7 +183,7 @@ function calculateLongTermForecast(
     const maxTemperature = Math.max(
       ...fmiDataBetweenNext.map((d) => d.Temperature)
     )
-    const minTemperature = Math.max(
+    const minTemperature = Math.min(
       ...fmiDataBetweenNext.map((d) => d.Temperature)
     )
 
@@ -220,7 +221,7 @@ export function calculateTodaySummaryFromFmiData(
   const minWindSpeedMs = Math.min(...today.map((d) => d.WindSpeedMS))
   const avgTemperature = _.mean(today.map((d) => d.Temperature))
   const maxTemperature = Math.max(...today.map((d) => d.Temperature))
-  const minTemperature = Math.max(...today.map((d) => d.Temperature))
+  const minTemperature = Math.min(...today.map((d) => d.Temperature))
   const symbolCounts = _.countBy(today, (d) => d.WeatherSymbol3)
   const symbolCountsArr = Object.keys(symbolCounts).map((key) => ({
     key,
