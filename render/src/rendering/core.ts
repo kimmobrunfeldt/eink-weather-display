@@ -270,7 +270,7 @@ function getHtmlReplacements(
             newContent: dateFnsTz.formatInTimeZone(
               item.time,
               opts.timezone,
-              'H:mm'
+              'HH'
             ),
           },
           {
