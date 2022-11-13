@@ -1,60 +1,104 @@
 # eink-weather-display
 
-Weather display for our home.
+Battery-powered E-Ink weather display for our home. The device wakes up early in the morning, fetches latest weather forecast information, updates the info to the E-Ink display, and goes back to deep sleep until tomorrow.
+
+![Picture of the display](docs/closeup.jpg)
+
 
 **Goals:**
 
 * Easily glanceable weather forecast at the heart of our home. Ideally eliminates one more reason to pick up the phone.
 * Looks like a "real product". The housing should look professional.
 * Fully battery-powered. We didn't want a visible cable, and drilling the cable inside wall wasn't an option.
-* Always visible and doesn't light up the hallway during evening / night -> e-Ink display
-* Supports custom location and timezone (some [tests](render/src/utils/utils.test.ts) too)
+* Always visible and doesn't light up the hallway during evening / night -> e-Ink display.
+* Primarily for our use case, but with reusability in mind. For example custom location and timezone (some [tests](render/src/utils/utils.test.ts) too).
+
+**Challenges:**
+
+* Battery life.
+    * PiJuice [GitHub isses mention](https://github.com/PiSupply/PiJuice/issues/815) that the deep sleep consumtion should be ~1mA, which theoretically means 12000 hours of idle time with the [12000mAh battery](https://uk.pi-supply.com/products/pijuice-12000mah-battery). It remains to be seen how long it will actually last.
+* And due to battery constraints: low refresh speed. 1-2x per day is an interesting design challenge. How do you indicate that this data is not real time? What should we show as the day's temperature, average or maximum for the day?
+* Physical constraints by the frame. Ideally it would be flush to the wall behind.
 
 ## Hardware
 
 * Raspberry PI Zero W
 * [PiJuice Zero](https://uk.pi-supply.com/products/pijuice-zero)
 * [PiJuice 12000mAh battery](https://uk.pi-supply.com/products/pijuice-12000mah-battery). As large as possible to avoid having to charge the device often.
-
 * [Waveshare 10.3" 1872x1404 e-Ink display with Raspberry PI HAT](https://www.waveshare.com/10.3inch-e-paper-hat.htm). Supports 16 shades of black and white.
+* [Geekworm Raspberry Pi Installation Tool 132 Pcs](https://www.amazon.de/-/en/gp/product/B07MN2GY6Y/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). For a set of spacers and screws that fit Raspberry PI projects nicely.
+* Micro-usb to USB adapter
+* USB to micro-usb cable
+* [IKEA Hovsta Frame](https://www.ikea.com/fi/fi/p/hovsta-kehys-ja-kehyskartonki-koivukuvio-40365762/)
+* Misc building items: hot glue, hair band to hold the battery, wall mounting hooks, small plastic box cut to pieces to support the battery from below, and of course duct tape.
+
+Hardware bought but not needed in the end:
 
 * [GeeekPi Micro Connectors Raspberry Pi 40-pin GPIO 1 to 2 Expansion Board](https://www.amazon.de/-/en/gp/product/B08C4S8NPH/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). To connect PiJuice and e-Ink display nicely.
-
 * [GPIO Cable for Raspberry Pi 40 Pin](https://www.amazon.de/-/en/gp/product/B08VRJ51T4/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). To allow a bit more flexibility inside the build.
 
-* [Geekworm Raspberry Pi Installation Tool 132 Pcs](https://www.amazon.de/-/en/gp/product/B07MN2GY6Y/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). For a set of spacers and screws that fit Raspberry PI projects nicely.
+## Build process
 
-## Get started
+First I designed the weather UI in Figma. This took around 2 days (i.e. evenings after work).
 
-Note! Since the display updates only once or twice a day, everything has been designed that in mind. The forecast always starts 9AM, and doesn't show any real observations during the day.
+![Figma board](docs/figma.png)
 
-### Developing with placeholder data
+It was design to the [Waveshare 7.5" E-Ink display](https://www.waveshare.com/7.5inch-e-paper-hat.htm). After ordering one, I started looking into good fonts to display in 1-bit (BW) screen. It was surprisingly hard to find real 1-bit-screen fonts. I tested a few sample renders using regular web fonts with and without post-processing:
 
-* `npm i`
-* `npm start`
-* Open http://127.0.0.1:8080/ to tune visuals with placeholder values hardcoded within [src/templates/index.html](src/templates/index.html)
+![](docs/test-anti-alias-disabled.png)
+![](docs/test-post-process-all-pixels-black.png)
+![](docs/test-post-process-threshold-pixels-black.png)
 
-### Rendering real values
+I wasn't super satisfied.. this product would be in a very central location of our apartment, so it should look nice.
 
-* Open http://127.0.0.1:8080/render.html
-* `npm run render` to run the CLI tool that renders HTML to `src/templates/render.html`
+So... after thinking a bit, I ordered the 16-bit screen 10.3" screen in addition, since regular anti-aliasing looks way smoother. It would've been possible to just live with the 1-bit display constraint, but I decided to use that screen for something else in the future.
 
-### Calling cloud function
+After Figma designs, I started creating the html page which is used to render the UI. This part took rougly 1-2 weeks coding in the evenings and weekends (having a flu delayed the build a bit).
 
-The cloud function and CLI support basic image operations to offload that work from Raspberry: `rotate`, `flip`, `flip`, `padding(Top|Right|Bottom|Left)`, `resizeToWidth`, `resizeToHeight`. See [sharp](https://sharp.pixelplumbing.com/) for their docs. For example `--flip` with CLI or `?flip=true` with CF.
+![](docs/web-app-dev.jpg)
 
-```sh
-LAT="60.222"
-LON="24.83"
-LOCATION="Espoo"
-BATTERY="100"
-TIMEZONE="Europe/Helsinki"
+The timing was almost perfect. I fine-tuned the UI as well as I could while the hardware was being shipped to Finland.
 
-curl -vv -o weather.png \
-  -H "x-api-key: $API_KEY" \
-  "https://europe-west3-weather-display-367406.cloudfunctions.net/weather-display?lat=$LAT&lon=$LON&locationName=$LOCATION&batteryLevel=$BATTERY&timezone=$TIMEZONE"
-```
+Finally the hardware arrived and I could test everything at the real display. The Raspberry PI installation took quite some time, but it paid off. It was absolutely amazing to see the UI appear the first time in the E-Ink display.
 
+![](docs/first-display.jpg)
+
+Everything was surprisingly smooth sailing to this point. I assembled all the parts together, and realized how small the frame actually is.
+
+![](docs/gpio-too-tall.jpg)
+
+I didn't want to build a larger visible casing to the back, so back to the drawing board. I tried to fit everything in the frame by testing all kinds of combinations. This monstrous GPIO cable + 1-to-2 adapter setup almost did the job:
+
+![](docs/gpio-cable.jpg)
+
+But even with all that, it wasn't possible to mount the frame flush to wall. Then I realised that the Waveshare demo page had USB connection mentioned. Their IT8951 controller supports micro-usb too!
+
+Fortunately for me, some great minds had already [thought the same](https://twitter.com/faassen/status/1375922965062238208?lang=en). I connected the controller with USB, built the C code in raspberry, and tried to clear the display as a test. It worked!
+
+
+Now that I was confident that the USB-strategy works, I needed to get rid of the GPIO header of the IT851 controller. The chip was still too tall for the frame. Fortunately, Helsinki has an amazing "library" where I could go and desolder the header _for free_.
+
+![](docs/oodi.jpg)
+
+The picture is from the library's electronics room which has cool gear such as laser cutter, 3D printer, and much more. It's mind-boggling how cool Oodi is architecturally but also functionally. Unfortunately, even after 1.5 hours of desoldering and googling how to desolder components, I wasn't able to rip the header off the chip.
+
+Next strategy was brute force. I took my side cutters and just chopped half of the header off. All I could hope for was that the chip would work after the rough handling.
+
+All the unknows in software had been solved, and the final assembly could be started. I mounted everything to the IKEA frame, using screws and hot glue. The display is super thin, so I avoided placing any screws to the display area of the back cover. The back cover bends slightly, so the screws could end up damaging the panel while moving the product for charging.
+
+![](docs/final-build-back.jpg)
+
+Tada! Finally, I tested a few error cases.
+
+![](docs/error-example.jpg)
+
+![](docs/battery-empty.jpg)
+
+It was time to mount the frame on our wall.
+
+![](docs/wide-shot.jpg)
+
+I really like the end result. The IKEA frame has a while border cardboard, which we ended up cutting to fit the screen. It was easier to mount everything with a litte extra space behind the frame.
 
 ## How it works
 
@@ -86,10 +130,135 @@ part doesn't know anything about weather, it just downloads a PNG from given URL
 
 #### Installation
 
-https://github.com/PiSupply/PiJuice/blob/master/Software/README.md
+*Note: this is a rough guide written from memory.*
 
 
-## Notes
+Most of the software lives in Google Cloud. This off-loads a lot of processing away from the Raspberry Pi device, mostly to optimize battery-life. Deployment is done via GH actions, but the initial setup was roughly:
+
+* Create new GCP Project
+* Create deployment service account with Cloud Function deployment role. Set the JSON key as `GCP_SERVICE_ACCOUNT_KEY` secret.
+* Create another service account for Raspberry PI device. Add Cloud Logging write rights. This way the logs can be sent to GCP for debugging, because the Raspberry PI doesn't have power while sleeping.
+* Create the Google Cloud Function, with initial hello world code. To the environvment variables, add `NODE_ENV=production` and `API_KEY=<new random key>`. The API key is just there to prevent random http calls to consume GCP quota. Headless Chrome rendering seems to work well with 1GB of memory.
+
+## Raspberry PI setup
+
+* Download correct image from here: https://www.raspberrypi.com/software/operating-systems/b
+* Flash it to an SD card with balenaEtcher https://www.balena.io/etcher/ (or use RPIs own flasher)
+* Boot the raspberry, and do initial setup
+* `sudo raspi-config`
+    * Setup Wifi SSID and password (System options)
+    * Update locales, timezones, etc (Localisation options)
+    * Enable SSH server (Interface options)
+    * Enable overlayfs (Performance options) to make the FS read-only.
+* In your router, make sure to assign a static local IP address for the device
+* Install display updating code
+
+    Download zip
+
+    ```sh
+    curl -H "Authorization: token <token>" -L https://api.github.com/repos/kimmobrunfeldt/eink-weather-display/zipball/main > main.zip
+    ```
+
+    or `sudo apt install git` and
+
+    ```sh
+    git clone https://<user>:<personal_access_token>@github.com/kimmobrunfeldt/eink-weather-display.git
+    ```
+
+    You can create a limited Github personal access token, which only can clone that repo. I found git to be the easiest, it was easy to just `git pull` any new changes.
+
+* `sudo apt install python3-pip`
+* ~`pip install pipenv`~  Edit: I wasn't able to get pipenv working due to pijuice being system-wide package. Ended up going with all-system-wide packages.
+* `cd eink-weather-display && pip install Pillow==9.3.0 google-cloud-logging requests python-dotenv` Install Python deps
+* Setup env variables: `cp .env.example .env` and fill in the details
+* Follow installation guide from https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT to get the E-Ink display working
+* After install, test that the demo software (in C) works
+* `sudo apt install pijuice-base`
+* Enable I2C interface
+
+    More debugging info:
+
+    * https://github.com/PiSupply/PiJuice/issues/175
+    * https://github.com/PiSupply/PiJuice/issues/268
+* To allow PIJuice to turn on without a battery, go to general settings and enable "Turn on without battery" or similar option.
+* Make sure to use correct PIJuice battery profile (PJLIPO_12000 for me)
+
+    If using `pijuice_cli`, **remember to apply changes!** It was quite hidden down below.
+
+* Test that the PIJuice works with battery too
+* `cd rasp/IT8951` and follow install instructions (inside virtualenv if using one)
+* Pijuice setup using `pijuice_cli`. Remember to save the changes inside each setup screen!
+
+    * System events
+        * ~Low charge, Low battery voltage and No power: SYS_FUNC_HALT_POW_OFF (docs: https://github.com/PiSupply/PiJuice/blob/master/Software/README.md#user-functions)~. Edit: these seemed to shutdown the device every once in a while. Everything worked more stable without setting any of these.
+    * Wake-up alarm: every day at 04:00 UTC (6AM Helsinki time in the winter, 7AM in the summer)
+* After that's done, you can test the PiJuice + E-Ink display together.
+* Setup crontab. Run refresh on boot, and shutdown device if on battery.
+
+    ```
+    @reboot cd /home/pi/eink-weather-display/rasp && python main.py
+
+    # Every minute
+    * * * * * cd /home/pi/eink-weather-display/rasp && python shutdown_if_on_battery.py
+    ```
+
+Side note: I did all the steps until here using Raspberry PI GPIO headers. However they ended up being too tall for the frame. Instead of soldering GPIO pins to make everything fit, I checked if the IT8951 controller was possible to use via its USB interface.
+
+And fortunately, it was!
+
+* Install https://git.sr.ht/~martijnbraam/it8951 at `/home/pi/usb-it8591` directory and build it in Raspberry
+  * Find which /dev/sdX your usb device is, and change all commands from `main.py` accordingly
+* `sudo apt install imagemagick`
+* Finally, edit main.py to have correct paddings. Due to the physical installation, not all pixels of the E-Ink display are visible.
+
+## Credits
+
+* Refresh icon: Created by andriwidodo from The Noun Project
+* Error by Mello from <a href="https://thenounproject.com/browse/icons/term/error/" target="_blank" title="Error Icons">Noun Project</a>
+* Severi Salminen for inspiration and assets https://github.com/sevesalm/eInk-weather-display
+
+
+
+## Licenses
+
+The following files are under Apache 2.0 license:
+
+* `render/**/*`
+* `rasp/*.py` (just top level python code, not IT8961 subdirs)
+
+## Development
+
+Note! Since the display updates only once or twice a day, everything has been designed that in mind. The forecast always starts 9AM, and doesn't show any real observations during the day.
+
+### Developing with placeholder data
+
+* `npm i`
+* `npm start`
+* Open http://127.0.0.1:8080/ to tune visuals with placeholder values hardcoded within [src/templates/index.html](src/templates/index.html)
+
+### Rendering real values
+
+* Open http://127.0.0.1:8080/render.html
+* `npm run render` to run the CLI tool that renders HTML to `src/templates/render.html`
+
+### Calling cloud function
+
+The cloud function and CLI support basic image operations to offload that work from Raspberry: `rotate`, `flip`, `flip`, `padding(Top|Right|Bottom|Left)`, `resizeToWidth`, `resizeToHeight`. See [sharp](https://sharp.pixelplumbing.com/) for their docs. For example `--flip` with CLI or `?flip=true` with CF.
+
+```sh
+LAT="60.222"
+LON="24.83"
+LOCATION="Espoo"
+BATTERY="100"
+TIMEZONE="Europe/Helsinki"
+
+curl -vv -o weather.png \
+  -H "x-api-key: $API_KEY" \
+  "https://europe-west3-weather-display-367406.cloudfunctions.net/weather-display?lat=$LAT&lon=$LON&locationName=$LOCATION&batteryLevel=$BATTERY&timezone=$TIMEZONE"
+```
+
+
+## Random notes
 
 **Links**
 
@@ -98,7 +267,7 @@ https://github.com/PiSupply/PiJuice/blob/master/Software/README.md
 * https://www.ilmatieteenlaitos.fi/tallennetut-kyselyt
 * https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
 * https://github.com/waveshare/IT8951-ePaper
-
+* https://raspberrypi-guide.github.io/other/boot-automation-pijuice
 ### All fields for `fmi::forecast::harmonie::surface::point::simple`
 
 The model can return data up to 50h from now.
@@ -171,87 +340,3 @@ The model can return data up to 10 days from now.
   }
 }
 ```
-
-## Raspberry PI setup
-
-* Download correct image from here: https://www.raspberrypi.com/software/operating-systems/b
-* Flash it to an SD card with balenaEtcher https://www.balena.io/etcher/ (or use RPIs own flasher)
-* Boot the raspberry, and do initial setup
-* `sudo raspi-config`
-    * Setup Wifi SSID and password (System options)
-    * Update locales, timezones, etc (Localisation options)
-    * Enable SSH server (Interface options)
-    * Enable overlayfs (Performance options) to make the FS read-only.
-* In your router, make sure to assign a static local IP address for the device
-* Install display updating code
-
-    Download zip
-
-    ```sh
-    curl -H "Authorization: token <token>" -L https://api.github.com/repos/kimmobrunfeldt/eink-weather-display/zipball/main > main.zip
-    ```
-
-    or `sudo apt install git` and
-
-    ```sh
-    git clone https://<user>:<personal_access_token>@github.com/kimmobrunfeldt/eink-weather-display.git
-    ```
-
-* `sudo apt install python3-pip`
-* `pip install pipenv`
-* `cd eink-weather-display && pipenv --site-packages && pipenv install`
-
-    Had initial issues with Pipfile.lock matching (https://github.com/pypa/pipenv/issues/2731), solved by `rm Pipfile.lock` and manual removal of non pywheels source from Pipfile.
-
-    `--site-packages` is important to get `import pijuice` working.
-
-* Follow installation guide from https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
-* After install, test that the demo software (in C) works
-* `sudo apt install pijuice-base`
-* Enable I2C interface
-
-    More debugging info:
-
-    * https://github.com/PiSupply/PiJuice/issues/175
-    * https://github.com/PiSupply/PiJuice/issues/268
-* To allow PIJuice to turn on without a battery, go to general settings and enable "Turn on without battery" or similar option
-* Make sure to use correct PIJuice battery profile (PJLIPO_12000 for me)
-
-    If using `pijuice_cli`, **remember to apply changes!** It was quite hidden down below.
-
-* Test that the PIJuice works with battery too
-* `cd rasp/IT8951` and follow install instructions (inside virtualenv if using one)
-* Install Python deps
-
-    ```
-    pip install Pillow==9.3.0 google-cloud-logging requests
-    ```
-
-* Pijuice setup using `pijuice_cli`
-
-    * System events
-        * Low charge, Low battery voltage and No power: SYS_FUNC_HALT_POW_OFF (docs: https://github.com/PiSupply/PiJuice/blob/master/Software/README.md#user-functions)
-
-
-
-* Setup crontab. Run refresh on boot, and shutdown device if on battery.
-
-    ```
-    @reboot cd /home/pi/eink-weather-display/rasp && python main.py
-
-    # Every minute
-    * * * * * cd /home/pi/eink-weather-display/rasp && python main.py --shutdown-if-on-battery
-    ```
-
-Detour: use usb interface instead of gpio due to physical build constraints
-
-* Install https://git.sr.ht/~martijnbraam/it8951 and build it in Raspberry
-  * Find which /dev/sdX your usb device is
-* `sudo apt install imagemagick`
-
-## Credits
-
-* Refresh icon: Created by andriwidodo from The Noun Project
-* Error by Mello from <a href="https://thenounproject.com/browse/icons/term/error/" target="_blank" title="Error Icons">Noun Project</a>
-* Severi Salminen for inspiration and assets https://github.com/sevesalm/eInk-weather-display
-* https://raspberrypi-guide.github.io/other/boot-automation-pijuice
