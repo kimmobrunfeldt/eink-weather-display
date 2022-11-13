@@ -68,6 +68,12 @@ def main(pj):
 
     charge_level = pj.status.GetChargeLevel()
     logging.info('Charge level: {}'.format(charge_level))
+    logging.debug('GetBatteryVoltage: {}'.format(
+        pj.status.GetBatteryVoltage()))
+    logging.debug('GetBatteryTemperature: {}'.format(
+        pj.status.GetBatteryTemperature()))
+    logging.debug('GetBatteryCurrent: {}'.format(
+        pj.status.GetBatteryCurrent()))
 
     is_on_battery = is_pijuice_on_battery(pj)
     if is_on_battery:
@@ -130,7 +136,7 @@ def shutdown(pj):
     logging.info('Shutting down ...')
     # Make sure power to the Raspberry PI is stopped to not discharge the battery
     pj.power.SetSystemPowerSwitch(0)
-    pj.power.SetPowerOff(30)
+    pj.power.SetPowerOff(15)
     os.system("sudo shutdown -h now")
 
 
@@ -142,17 +148,38 @@ def is_pijuice_on_battery(pj):
 
 def wait_until_internet_connection():
     logging.info('Waiting for internet connection ...')
-    for i in range(60):
+
+    # Try to check for internet connection
+    connection_found = loop_until_internet()
+
+    if connection_found:
+        return
+    else:
+        # If not found, restart networking
+        run_cmd('sudo ifconfig wlan0 down')
+        time.sleep(5)
+        run_cmd('sudo ifconfig wlan0 up')
+        time.sleep(5)
+
+    # Check for internet again
+    if loop_until_internet():
+        return
+
+    raise Exception('Timeout waiting for internet connection')
+
+
+def loop_until_internet(times=3):
+    for i in range(times):
         try:
             res = requests.get(config['RENDER_URL'], params={
-                               'ping': 'true'}, timeout=1)
+                'ping': 'true'}, timeout=8)
             if res.status_code == 200:
                 logging.info('Internet connection found!')
-                return
+                return True
         except:
             continue
 
-    raise Exception('Timeout waiting for internet connection')
+    return False
 
 
 def get_pijuice():
@@ -202,7 +229,7 @@ def display_clear():
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
-@contextmanager
+@ contextmanager
 def edp_display():
     try:
         yield None
