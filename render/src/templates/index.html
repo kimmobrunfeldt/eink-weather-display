@@ -112,7 +112,7 @@
        * This is large because we render the page as a PNG. The device has quite high DPI.
        * @see: https://dpi.lv/
        */
-      font-size: 32px;
+      font-size: 36px;
     }
 
     .Container {
@@ -288,6 +288,7 @@
       flex-direction: column;
       padding-left: 0.8rem;
       flex-basis: 40%;
+      margin-top: 1.2rem;
     }
 
     .CurrentWeather-details h2 {
@@ -390,6 +391,7 @@
     }
 
     .Forecast-item-time {
+      font-size: var(--text-size-m);
       margin-bottom: var(--space-1);
     }
 
@@ -418,6 +420,7 @@
 
     .Forecast-item-numbers>*:not(:first-child) {
       color: var(--color-4);
+      font-weight: normal;
     }
 
     .Forecast-item-unit {
@@ -434,6 +437,7 @@
 
     .Forecast-item-temperature .Forecast-item-value {
       margin-right: 2px;
+      font-size: var(--text-size-m);
     }
 
     .Forecast-item-temperature .Forecast-item-unit {
@@ -552,10 +556,6 @@
                 class="Forecast-item-unit">°C</span>
             </div>
             <div>
-              <span id="forecast-item-0-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
-            </div>
-            <div>
               <span id="forecast-item-0-precipitation" class="Forecast-item-value">2</span><span
                 class="Forecast-item-unit">mm</span>
             </div>
@@ -571,10 +571,6 @@
             <div class="Forecast-item-temperature">
               <span id="forecast-item-1-temperature" class="Forecast-item-value">5</span><span
                 class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-1-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
             </div>
             <div>
               <span id="forecast-item-1-precipitation" class="Forecast-item-value">2</span><span
@@ -594,10 +590,6 @@
                 class="Forecast-item-unit">°C</span>
             </div>
             <div>
-              <span id="forecast-item-2-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
-            </div>
-            <div>
               <span id="forecast-item-2-precipitation" class="Forecast-item-value">2</span><span
                 class="Forecast-item-unit">mm</span>
             </div>
@@ -615,10 +607,6 @@
                 class="Forecast-item-unit">°C</span>
             </div>
             <div>
-              <span id="forecast-item-3-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
-            </div>
-            <div>
               <span id="forecast-item-3-precipitation" class="Forecast-item-value">2</span><span
                 class="Forecast-item-unit">mm</span>
             </div>
@@ -634,10 +622,6 @@
             <div class="Forecast-item-temperature">
               <span id="forecast-item-4-temperature" class="Forecast-item-value">5</span><span
                 class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-4-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
             </div>
             <div>
               <span id="forecast-item-4-precipitation" class="Forecast-item-value">2</span><span
@@ -659,10 +643,6 @@
                 class="Forecast-item-unit">°C</span>
             </div>
             <div>
-              <span id="forecast-item-5-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
-            </div>
-            <div>
               <span id="forecast-item-5-precipitation" class="Forecast-item-value">2</span><span
                 class="Forecast-item-unit">mm</span>
             </div>
@@ -680,10 +660,6 @@
                 class="Forecast-item-unit">°C</span>
             </div>
             <div>
-              <span id="forecast-item-6-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
-            </div>
-            <div>
               <span id="forecast-item-6-precipitation" class="Forecast-item-value">2</span><span
                 class="Forecast-item-unit">mm</span>
             </div>
@@ -699,10 +675,6 @@
             <div class="Forecast-item-temperature">
               <span id="forecast-item-7-temperature" class="Forecast-item-value">5</span><span
                 class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-7-wind" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">m/s</span>
             </div>
             <div>
               <span id="forecast-item-7-precipitation" class="Forecast-item-value">2</span><span
