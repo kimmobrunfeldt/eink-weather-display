@@ -2,7 +2,11 @@
 
 Battery-powered E-Ink weather display for our home. The device wakes up early in the morning, fetches latest weather forecast information, updates the info to the E-Ink display, and goes back to deep sleep until tomorrow.
 
-![Picture of the display](docs/closeup.jpg)
+You can read more about the build in my [blog post](https://kimmo.blog/posts/7-building-eink-weather-display-for-our-home/).
+
+![Picture of the display](docs/scene.jpg)
+![](docs/sunset-product.jpg)
+![](docs/closeup.jpg)
 
 
 **Goals:**
@@ -36,69 +40,6 @@ Hardware bought but not needed in the end:
 
 * [GeeekPi Micro Connectors Raspberry Pi 40-pin GPIO 1 to 2 Expansion Board](https://www.amazon.de/-/en/gp/product/B08C4S8NPH/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). To connect PiJuice and e-Ink display nicely.
 * [GPIO Cable for Raspberry Pi 40 Pin](https://www.amazon.de/-/en/gp/product/B08VRJ51T4/ref=ppx_yo_dt_b_asin_title_o00_s00?ie=UTF8&psc=1). To allow a bit more flexibility inside the build.
-
-## Build process
-
-First I designed the weather UI in Figma. This took around 2 days (i.e. evenings after work).
-
-![Figma board](docs/figma.png)
-
-It was design to the [Waveshare 7.5" E-Ink display](https://www.waveshare.com/7.5inch-e-paper-hat.htm). After ordering one, I started looking into good fonts to display in 1-bit (BW) screen. It was surprisingly hard to find real 1-bit-screen fonts. I tested a few sample renders using regular web fonts with and without post-processing:
-
-![](docs/test-anti-alias-disabled.png)
-![](docs/test-post-process-all-pixels-black.png)
-![](docs/test-post-process-threshold-pixels-black.png)
-
-I wasn't super satisfied.. this product would be in a very central location of our apartment, so it should look nice.
-
-So... after thinking a bit, I ordered the 16-bit screen 10.3" screen in addition, since regular anti-aliasing looks way smoother. It would've been possible to just live with the 1-bit display constraint, but I decided to use that screen for something else in the future.
-
-After Figma designs, I started creating the html page which is used to render the UI. This part took rougly 1-2 weeks coding in the evenings and weekends (having a flu delayed the build a bit).
-
-![](docs/web-app-dev.jpg)
-
-The timing was almost perfect. I fine-tuned the UI as well as I could while the hardware was being shipped to Finland.
-
-Finally the hardware arrived and I could test everything at the real display. The Raspberry PI installation took quite some time, but it paid off. It was absolutely amazing to see the UI appear the first time in the E-Ink display.
-
-![](docs/first-display.jpg)
-
-Everything was surprisingly smooth sailing to this point. I assembled all the parts together, and realized how small the frame actually is.
-
-![](docs/gpio-too-tall.jpg)
-
-I didn't want to build a larger visible casing to the back, so back to the drawing board. I tried to fit everything in the frame by testing all kinds of combinations. This monstrous GPIO cable + 1-to-2 adapter setup almost did the job:
-
-![](docs/gpio-cable.jpg)
-
-But even with all that, it wasn't possible to mount the frame flush to wall. Then I realised that the Waveshare demo page had USB connection mentioned. Their IT8951 controller supports micro-usb too!
-
-Fortunately for me, some great minds had already [thought the same](https://twitter.com/faassen/status/1375922965062238208?lang=en). I connected the controller with USB, built the C code in raspberry, and tried to clear the display as a test. It worked!
-
-
-Now that I was confident that the USB-strategy works, I needed to get rid of the GPIO header of the IT851 controller. The chip was still too tall for the frame. Fortunately, Helsinki has an amazing "library" where I could go and desolder the header _for free_.
-
-![](docs/oodi.jpg)
-
-The picture is from the library's electronics room which has cool gear such as laser cutter, 3D printer, and much more. It's mind-boggling how cool Oodi is architecturally but also functionally. Unfortunately, even after 1.5 hours of desoldering and googling how to desolder components, I wasn't able to rip the header off the chip.
-
-Next strategy was brute force. I took my side cutters and just chopped half of the header off. All I could hope for was that the chip would work after the rough handling.
-
-All the unknows in software had been solved, and the final assembly could be started. I mounted everything to the IKEA frame, using screws and hot glue. The display is super thin, so I avoided placing any screws to the display area of the back cover. The back cover bends slightly, so the screws could end up damaging the panel while moving the product for charging.
-
-![](docs/final-build-back.jpg)
-
-Tada! Finally, I tested a few error cases.
-
-![](docs/error-example.jpg)
-
-![](docs/battery-empty.jpg)
-
-It was time to mount the frame on our wall.
-
-![](docs/wide-shot.jpg)
-
-I really like the end result. The IKEA frame has a while border cardboard, which we ended up cutting to fit the screen. It was easier to mount everything with a litte extra space behind the frame.
 
 ## How it works
 
