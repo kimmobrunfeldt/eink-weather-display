@@ -32,6 +32,9 @@ def main_wrapper():
     logging.info('Running main.py')
 
     pj = get_pijuice()
+    # Enable as early as possible in case an exception is raised during processing
+    enable_wakeups(pj)
+
     with edp_display():
         shutdown_already_handled = False
         try:
@@ -58,14 +61,6 @@ def main_wrapper():
 
 
 def main(pj):
-    logging.debug('pj.rtcAlarm.GetAlarm(): {}'.format(pj.rtcAlarm.GetAlarm()))
-    logging.debug('Enabling RTC wakeup alarm ...')
-    pj.rtcAlarm.SetWakeupEnabled(True)
-
-    logging.debug('Enabling wakeup on charge ({}) ...'.format(
-        WAKEUP_ON_CHARGE_BATTERY_LEVEL))
-    pj.power.SetWakeUpOnCharge(WAKEUP_ON_CHARGE_BATTERY_LEVEL)
-
     charge_level = pj.status.GetChargeLevel()
     logging.info('Charge level: {}'.format(charge_level))
     logging.debug('GetBatteryVoltage: {}'.format(
@@ -108,7 +103,9 @@ def main(pj):
         "locationName": config['RENDER_LOCATION_NAME'],
         "timezone": config['RENDER_TIMEZONE'],
         "apiKey": config['RENDER_API_KEY'],
+        # By default the image rendered is mirrored
         "flop": 'true',
+        # These values are highly dependent on the physical installation of the screen
         "width": DISPLAY_WIDTH - paddings['right'] - paddings['left'],
         "height": DISPLAY_HEIGHT - paddings['top'] - paddings['bottom'],
         "paddingTop": paddings['top'],
@@ -128,6 +125,20 @@ def main(pj):
     logging.info('Render image returned by the API...')
     display_render_image(file_path)
 
+    # Enable again just in case time syncronisation has unset the alarm
+    enable_wakeups(pj)
+
+
+def enable_wakeups(pj):
+    logging.debug('pj.rtcAlarm.GetAlarm(): {}'.format(pj.rtcAlarm.GetAlarm()))
+    # It looked like it's possible that time sync unsets the RTC alarm.
+    # https://github.com/PiSupply/PiJuice/issues/362
+    logging.debug('Enabling RTC wakeup alarm ...')
+    pj.rtcAlarm.SetWakeupEnabled(True)
+    logging.debug('Enabling wakeup on charge ({}) ...'.format(
+        WAKEUP_ON_CHARGE_BATTERY_LEVEL))
+    pj.power.SetWakeUpOnCharge(WAKEUP_ON_CHARGE_BATTERY_LEVEL)
+
 
 def shutdown(pj):
     logging.info('Flushing logs ...')
@@ -136,7 +147,7 @@ def shutdown(pj):
     logging.info('Shutting down ...')
     # Make sure power to the Raspberry PI is stopped to not discharge the battery
     pj.power.SetSystemPowerSwitch(0)
-    pj.power.SetPowerOff(15)
+    pj.power.SetPowerOff(15)  # Cut power after n seconds
     os.system("sudo shutdown -h now")
 
 
@@ -155,12 +166,15 @@ def wait_until_internet_connection():
     if connection_found:
         return
     else:
+        logging.info(
+            'Internet connection not yet found, restarting networking...')
         # If not found, restart networking
         run_cmd('sudo ifconfig wlan0 down')
         time.sleep(5)
         run_cmd('sudo ifconfig wlan0 up')
         time.sleep(5)
 
+    logging.info('Checking for internet again...')
     # Check for internet again
     if loop_until_internet():
         return

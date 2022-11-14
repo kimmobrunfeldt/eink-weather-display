@@ -14,8 +14,10 @@ import { getNextHourDates, sumByOrNull } from 'src/utils/utils'
 import {
   fetchFmiEcmwfData,
   fetchFmiHarmonieData,
+  fetchFmiObservationData,
   FmiEcmwfDataPoint,
   FmiHarmonieDataPoint,
+  FmiObservationDataPoint,
 } from 'src/weather/fmiApi'
 import {
   fetchMeteoAirQualityForecast,
@@ -39,6 +41,7 @@ export async function getLocalWeatherData(
 
   const fmiHarmonieData = await fetchFmiHarmonieData(opts)
   const fmiEcmwfData = await fetchFmiEcmwfData(opts)
+  const fmiObservationData = await fetchFmiObservationData(opts)
   const meteoForecastData = await fetchMeteoForecast(opts)
   const meteoAirQualityForecastData = await fetchMeteoAirQualityForecast(opts)
 
@@ -46,7 +49,11 @@ export async function getLocalWeatherData(
   const todaySummary = calculateTodaySummaryFromFmiData(fmiHarmonieData, opts)
   return {
     todaySummary: { ...todaySummary, maxUvIndex: maxUv },
-    forecastShortTerm: calculateShortTermForecast(fmiHarmonieData, opts),
+    forecastShortTerm: calculateShortTermForecast(
+      fmiHarmonieData,
+      fmiObservationData,
+      opts
+    ),
     forecastLongTerm: calculateLongTermForecast(fmiEcmwfData, opts).map(
       (data) => {
         return {
@@ -71,65 +78,116 @@ export async function getLocalWeatherData(
  * @param forecastTimesInput The date boundaries to calculate forecast sums from. Note! Last item is _only_ used for the boundary of last time range.
  */
 export function calculateShortTermForecast(
-  fmiData: FmiHarmonieDataPoint[],
+  forecastData: FmiHarmonieDataPoint[],
+  observationData: FmiObservationDataPoint[],
   { startForecastAtHour, timezone }: GenerateOptions,
   forecastTimesInput?: Date[]
 ): ShortTermWeatherDataPoint[] {
-  const { hourInUtc: start } = getNextHourDates(startForecastAtHour, timezone)
+  const isOverlap = isOverlappingTimes(
+    forecastData.map((i) => i.time),
+    observationData.map((i) => i.time)
+  )
+  if (isOverlap) {
+    throw new Error('Found overlapping dates from observations vs forecasts')
+  }
+
+  const { startOfLocalDayInUtc } = getNextHourDates(
+    startForecastAtHour,
+    timezone
+  )
   const forecastTimes = forecastTimesInput
     ? forecastTimesInput
     : [
-        0,
-        3,
-        6,
         9,
         12,
-        15, // end of day, when forecast starts at 9AM
-        15 + 9,
-        15 + 9 * 2,
+        15,
+        18,
+        21,
+        24, // end of day, when forecast starts at 9AM
+        24 + 9,
+        25 + 9 * 2,
         15 + 9 * 3, // to give end date range for the previous item
-      ].map((h) => dateFns.addHours(start, h))
+      ].map((h) => dateFns.addHours(startOfLocalDayInUtc, h))
   logger.debug('calculateShortTermForecast forecastTimes', forecastTimes)
 
   return _.take(forecastTimes, forecastTimes.length - 1).map((time, index) => {
-    const fmiIndex = fmiData.findIndex((d) => dateFns.isEqual(d.time, time))
-    const found = fmiData[fmiIndex]
-    if (!found) {
-      // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast data.
+    const foundForecast = forecastData.find(
+      (d) => dateFns.isEqual(d.time, time) && _.isFinite(d.Temperature)
+    )
+    const foundObs = observationData.find((d) => dateFns.isEqual(d.time, time))
+
+    if (!foundForecast && !foundObs) {
+      // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast/observation data.
       logger.error('Time:', time)
-      logger.error('FMI Data:', JSON.stringify(fmiData))
-      throw new Error(`Could not find FMI forecast data point for date ${time}`)
-    }
-    const symbol = found.WeatherSymbol3
-    if (!(symbol in weatherSymbolDescriptions)) {
-      logger.error('FMI Data:', JSON.stringify(fmiData))
-      logger.error('Found:', JSON.stringify(found))
-      throw new Error(`Unexpected WeatherSymbol3: ${symbol}`)
+      logger.error('FMI forecast:', JSON.stringify(forecastData))
+      logger.error('FMI observations:', JSON.stringify(observationData))
+      throw new Error(
+        `Could not find FMI forecast/observation data point for date ${time}`
+      )
     }
 
     const nextIndex = index + 1
     const nextTime = forecastTimes[nextIndex]
-    const fmiDataBetweenNext = fmiData.filter(
+    const fmiDataBetweenNext = [...forecastData, ...observationData].filter(
       (f) =>
         dateFns.isEqual(f.time, time) ||
         (dateFns.isAfter(f.time, time) && dateFns.isBefore(f.time, nextTime))
     )
-    return {
-      time,
-      temperature: _.mean(fmiDataBetweenNext.map((d) => d.Temperature)),
-      windSpeedMs: _.mean(fmiDataBetweenNext.map((d) => d.WindSpeedMS)),
-      windGustMs: _.mean(fmiDataBetweenNext.map((d) => d.WindGust)),
-      pressure: _.mean(fmiDataBetweenNext.map((d) => d.Pressure)),
-      // Note! Assumes 60min timesteps within forecast data
-      precipitationAmountFromNowToNext: sumByOrNull(
-        fmiDataBetweenNext,
-        (f) => f.Precipitation1h
-      ),
-      precipitation1h: found.Precipitation1h,
-      dewPoint: _.mean(fmiDataBetweenNext.map((d) => d.DewPoint)),
-      symbol: found.WeatherSymbol3 as WeatherSymbolNumber,
-    }
+    return calculateShortTermDataPoint(time, fmiDataBetweenNext)
   })
+}
+
+function isOverlappingTimes(dates1: Date[], dates2: Date[]): boolean {
+  return dates1.some((d1) => dates2.some((d2) => dateFns.isEqual(d1, d2)))
+}
+
+function calculateShortTermDataPoint(
+  time: Date,
+  data: (FmiHarmonieDataPoint | FmiObservationDataPoint)[]
+): ShortTermWeatherDataPoint {
+  const forecasts = data.filter(
+    (d): d is FmiHarmonieDataPoint => d.type === 'harmonie'
+  )
+
+  const exactMatch = data.find((f) => dateFns.isEqual(f.time, time))
+  if (!exactMatch) {
+    throw new Error(`Unexpected: exact match not found for time ${time}`)
+  }
+
+  const baseData = {
+    time,
+    temperature: _.mean(data.map((d) => d.Temperature)),
+    windSpeedMs: _.mean(data.map((d) => d.WindSpeedMS)),
+    precipitation1h: exactMatch.Precipitation1h,
+    // Note! Assumes 60min timesteps within forecast data
+    precipitationAmountFromNowToNext: sumByOrNull(
+      data,
+      (f) => f.Precipitation1h
+    ),
+  }
+  if (forecasts.length === 0) {
+    return {
+      ...baseData,
+      type: 'observation',
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const symbol = forecasts[0]!.WeatherSymbol3
+  if (!(symbol in weatherSymbolDescriptions)) {
+    throw new Error(`Unexpected WeatherSymbol3: ${symbol}`)
+  }
+
+  // When dealing with mixture of data, we return the whole data point still as forecast
+  // This way we get at least some weather symbol in the forecast
+  return {
+    ...baseData,
+    type: 'forecast',
+    windGustMs: _.mean(forecasts.map((d) => d.WindGust)),
+    pressure: _.mean(forecasts.map((d) => d.Pressure)),
+    dewPoint: _.mean(forecasts.map((d) => d.DewPoint)),
+    symbol: symbol as WeatherSymbolNumber,
+  }
 }
 
 /**

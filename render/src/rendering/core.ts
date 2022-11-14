@@ -293,10 +293,13 @@ function getHtmlReplacements(
             modifier: (node) =>
               (node.attrs = {
                 ...node.attrs,
-                src: getSymbolIcon(
-                  item.symbol,
-                  isDark(opts.location, item.time) ? 'dark' : 'light'
-                ),
+                src:
+                  item.type === 'forecast'
+                    ? getSymbolIcon(
+                        item.symbol,
+                        isDark(opts.location, item.time) ? 'dark' : 'light'
+                      )
+                    : '',
               }),
           },
         ]
