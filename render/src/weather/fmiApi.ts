@@ -66,7 +66,9 @@ export async function fetchFmiHarmonieData(
   await writeDebugFile('fmi-harmonie-response.xml', res.data)
   const data = parseFmiXmlResponse<FmiHarmonieDataPoint>(res.data)
   await writeDebugFile('fmi-harmonie-parsed-data.json', data)
-  return data.map((d) => ({ ...d, type: 'harmonie' }))
+  return data
+    .map((d) => ({ ...d, type: 'harmonie' as const }))
+    .filter((d) => _.isFinite(d.Temperature))
 }
 
 export async function fetchFmiEcmwfData(
@@ -78,7 +80,9 @@ export async function fetchFmiEcmwfData(
   await writeDebugFile('fmi-ecmwf-response.xml', res.data)
   const data = parseFmiXmlResponse<FmiEcmwfDataPoint>(res.data)
   await writeDebugFile('fmi-ecmwf-parsed-data.json', data)
-  return data.map((d) => ({ ...d, type: 'ecmwf' }))
+  return data
+    .map((d) => ({ ...d, type: 'ecmwf' as const }))
+    .filter((d) => _.isFinite(d.Temperature))
 }
 
 export async function fetchFmiObservationData(
@@ -90,15 +94,17 @@ export async function fetchFmiObservationData(
   await writeDebugFile('fmi-observation-response.xml', res.data)
   const data = parseFmiXmlResponse<InternalFmiObservationDataPoint>(res.data)
   await writeDebugFile('fmi-observation-parsed-data.json', data)
-  return data.map((d) => ({
-    type: 'observation',
-    time: d.time,
-    location: d.location,
-    Temperature: d.TA_PT1H_AVG,
-    WindSpeedMS: d.WS_PT1H_AVG,
-    WindDirection: d.WD_PT1H_AVG,
-    Precipitation1h: d.PRA_PT1H_ACC,
-  }))
+  return data
+    .map((d) => ({
+      type: 'observation' as const,
+      time: d.time,
+      location: d.location,
+      Temperature: d.TA_PT1H_AVG,
+      WindSpeedMS: d.WS_PT1H_AVG,
+      WindDirection: d.WD_PT1H_AVG,
+      Precipitation1h: d.PRA_PT1H_ACC,
+    }))
+    .filter((d) => _.isFinite(d.Temperature))
 }
 
 function getFmiECMWFParameters({
@@ -133,7 +139,7 @@ function getFmiECMWFParameters({
 }
 
 function getFmiHarmonieParameters({ location }: GenerateOptions) {
-  const startDate = new Date()
+  const startDate = dateFns.subHours(new Date(), 1)
   const endDate = dateFns.addHours(startDate, 50)
   const timeStepMin = 60 // if changing, update precipitation summing
 

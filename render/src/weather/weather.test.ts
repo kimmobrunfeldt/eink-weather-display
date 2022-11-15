@@ -1,7 +1,13 @@
 import * as dateFns from 'date-fns'
+import _ from 'lodash'
 import { GenerateOptions } from 'src/rendering/core'
 import * as utils from 'src/utils/utils'
-import { FmiEcmwfDataPoint, FmiHarmonieDataPoint } from 'src/weather/fmiApi'
+import {
+  FmiEcmwfDataPoint,
+  FmiHarmonieDataPoint,
+  FmiObservationDataPoint,
+} from 'src/weather/fmiApi'
+import { MeteoShortTermForecastResponse } from 'src/weather/meteoApi'
 import {
   calculateLongTermForecast,
   calculateShortTermForecast,
@@ -9,7 +15,7 @@ import {
 } from 'src/weather/weather'
 
 const mockOpts: GenerateOptions = {
-  switchDayAtHour: 9,
+  switchDayAtHour: 18,
   timezone: 'Europe/Helsinki',
   locationName: 'Helsinki',
   batteryLevel: 100,
@@ -163,7 +169,7 @@ describe('calculateTodaySummary', () => {
   })
 })
 
-describe.skip('calculateShortTermForecast', () => {
+describe('calculateShortTermForecast', () => {
   test('calculates data from correct data points', () => {
     const mockTodayDates = {
       // Start of day in Europe/Helsinki time
@@ -173,6 +179,55 @@ describe.skip('calculateShortTermForecast', () => {
     }
 
     jest.spyOn(utils, 'getTodayDates').mockImplementation(() => mockTodayDates)
+
+    const observations: FmiObservationDataPoint[] = [
+      // Before the time
+      {
+        type: 'observation',
+        Temperature: 11,
+        WindSpeedMS: 15,
+        WindDirection: 10,
+        Precipitation1h: 10,
+        // *Just* before the hour
+        time: dateFns.subMilliseconds(
+          dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 8),
+          1
+        ),
+        // Location doesn't matter
+        location: {
+          lat: 0,
+          lon: 0,
+        },
+      },
+
+      {
+        type: 'observation',
+        Temperature: 11,
+        WindSpeedMS: 15,
+        WindDirection: 10,
+        Precipitation1h: 10,
+        time: dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 8),
+        // Location doesn't matter
+        location: {
+          lat: 0,
+          lon: 0,
+        },
+      },
+    ]
+
+    const meteoForecast: MeteoShortTermForecastResponse = {
+      utc_offset_seconds: 0,
+      hourly: {
+        time: _.range(0, 24).map((h) =>
+          dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, h)
+        ),
+        // The weathercode should be taken from here for the observation data point
+        weathercode: [
+          99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99, 99,
+          99, 99, 99, 99, 99, 99, 99,
+        ],
+      },
+    }
 
     const fmiData: FmiHarmonieDataPoint[] = [
       // Before the time
@@ -191,7 +246,7 @@ describe.skip('calculateShortTermForecast', () => {
         WeatherSymbol3: -100000,
         // *Just* before the hour
         time: dateFns.subMilliseconds(
-          dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 9),
+          dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 8),
           1
         ),
         // Location doesn't matter
@@ -203,7 +258,7 @@ describe.skip('calculateShortTermForecast', () => {
 
       // Correct datapoints
 
-      // 1st requested forecast time point
+      // 1st requested forecast time point, howerver the observation data point should be preferred over this
       {
         type: 'harmonie',
         Temperature: 9,
@@ -314,21 +369,30 @@ describe.skip('calculateShortTermForecast', () => {
         },
       },
     ]
-    const forecastTimes = [9, 11, 13].map((h) =>
+    const forecastTimes = [8, 9, 11, 13].map((h) =>
       dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, h)
     )
     expect(
       calculateShortTermForecast(
         fmiData,
-        // TODO: FIX
-        [] as any,
-        [] as any,
+        meteoForecast,
+        observations,
         mockOpts,
         forecastTimes
       )
     ).toEqual([
+      {
+        type: 'observation',
+        precipitation1h: 10,
+        precipitationAmountFromNowToNext: 10,
+        symbol: 63, // 99 code from meteo api -> 63
+        temperature: 11,
+        time: new Date('2022-11-02T06:00:00.000Z'),
+        windSpeedMs: 15,
+      },
       // Forecast for 09-10AM
       {
+        type: 'forecast',
         dewPoint: 8.5,
         precipitation1h: 7, // takes the first hour's data
         precipitationAmountFromNowToNext: 16, // sum of 7 + 9
@@ -341,6 +405,7 @@ describe.skip('calculateShortTermForecast', () => {
       },
       // Forecast for 10-11AM
       {
+        type: 'forecast',
         dewPoint: 8.5,
         precipitation1h: 10,
         precipitationAmountFromNowToNext: 21,

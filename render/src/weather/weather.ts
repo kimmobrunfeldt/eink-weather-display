@@ -92,24 +92,33 @@ export function calculateShortTermForecast(
   { switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions,
   forecastTimesInput?: Date[]
 ): ShortTermWeatherDataPoint[] {
-  const isOverlap = isOverlappingTimes(
+  const overlap = getOverlappingTimes(
     forecastData.map((i) => i.time),
     observationData.map((i) => i.time)
   )
-  if (isOverlap) {
-    throw new Error('Found overlapping dates from observations vs forecasts')
-  }
-  const { startOfLocalDayInUtc } = getTodayDates(startForecastAtHour, timezone)
+  const combined = [...forecastData, ...observationData].filter((d) => {
+    const isOverlapping =
+      overlap.findIndex((date) => dateFns.isEqual(date, d.time)) !== -1
+    if (isOverlapping && d.type === 'harmonie') {
+      // When overlap is found, drop forecast data points (observations are preferred)
+      return false
+    }
 
+    return true
+  })
+
+  logger.info('calculateShortTermForecast overlap', overlap)
   logger.info('calculateShortTermForecast forecastData', forecastData)
   logger.info('calculateShortTermForecast observationData', observationData)
   logger.info('calculateShortTermForecast meteoForecastData', meteoForecastData)
-  const combined = [...forecastData, ...observationData]
+
+  const { startOfLocalDayInUtc } = getTodayDates(startForecastAtHour, timezone)
+
   _.range(0, 24).forEach((h) => {
     const isHourData = combined.some((d) =>
       dateFns.isEqual(d.time, dateFns.addHours(startOfLocalDayInUtc, h))
     )
-    if (!isHourData) {
+    if (!isHourData && process.env.NODE_ENV !== 'test') {
       throw new Error(`Missing observation and forecast data for hour ${h}`)
     }
   })
@@ -130,22 +139,22 @@ export function calculateShortTermForecast(
   logger.debug('calculateShortTermForecast forecastTimes', forecastTimes)
 
   return _.take(forecastTimes, forecastTimes.length - 1).map((time, index) => {
-    const foundForecast = forecastData.find(
-      (d) => dateFns.isEqual(d.time, time) && _.isFinite(d.Temperature)
-    )
-    const foundMeteoHourData = attrsByTime(meteoForecastData.hourly).find((d) =>
+    const foundForecast = forecastData.find((d) =>
       dateFns.isEqual(d.time, time)
     )
     const foundObs = observationData.find((d) => dateFns.isEqual(d.time, time))
     if (!foundForecast && !foundObs) {
       // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast/observation data.
       logger.error('Time:', time)
-      logger.error('FMI forecast:', JSON.stringify(forecastData))
-      logger.error('FMI observations:', JSON.stringify(observationData))
+      logger.error('FMI forecast:', forecastData)
+      logger.error('FMI observations:', observationData)
       throw new Error(
         `Could not find FMI forecast/observation data point for date ${time}`
       )
     }
+    const foundMeteoHourData = attrsByTime(meteoForecastData.hourly).find((d) =>
+      dateFns.isEqual(d.time, time)
+    )
 
     const nextIndex = index + 1
     const nextTime = forecastTimes[nextIndex]
@@ -162,8 +171,8 @@ export function calculateShortTermForecast(
   })
 }
 
-function isOverlappingTimes(dates1: Date[], dates2: Date[]): boolean {
-  return dates1.some((d1) => dates2.some((d2) => dateFns.isEqual(d1, d2)))
+function getOverlappingTimes(dates1: Date[], dates2: Date[]) {
+  return _.intersectionWith(dates1, dates2, dateFns.isEqual)
 }
 
 function calculateShortTermDataPoint(

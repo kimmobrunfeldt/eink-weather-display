@@ -55,7 +55,7 @@ export async function fetchMeteoForecastLongTerm({
       },
     }
   )
-  await writeDebugFile('meteo-response-forecast.json', res.data)
+  await writeDebugFile('meteo-response-long-forecast.json', res.data)
 
   return {
     ...res.data,
@@ -99,7 +99,7 @@ export async function fetchMeteoForecastShortTerm({
   logger.info(
     `fetchMeteoForecastShortTerm request ${res.request.protocol}//${res.request.host}${res.request.path}`
   )
-  await writeDebugFile('meteo-response-forecast.json', res.data)
+  await writeDebugFile('meteo-response-short-forecast.json', res.data)
 
   return {
     ...res.data,
