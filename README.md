@@ -209,6 +209,8 @@ curl -vv -o weather.png \
 * https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
 * https://github.com/waveshare/IT8951-ePaper
 * https://raspberrypi-guide.github.io/other/boot-automation-pijuice
+* https://ropengov.github.io/fmi2/articles/weather_observation_data.html
+
 ### All fields for `fmi::forecast::harmonie::surface::point::simple`
 
 The model can return data up to 50h from now.
