@@ -17,7 +17,6 @@ describe('getTodayDates', () => {
 
     expect(utils.getTodayDates(9, 'Europe/Helsinki')).toEqual({
       // This is exactly the switch day hour to prepare for an edge case
-      hourInUtc: new Date('2022-11-03T07:00:00.000Z'),
       startOfLocalDayInUtc: new Date('2022-11-02T22:00:00.000Z'),
       endOfLocalDayInUtc: new Date('2022-11-03T21:59:59.999Z'),
     })
