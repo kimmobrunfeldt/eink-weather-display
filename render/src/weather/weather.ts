@@ -39,7 +39,7 @@ export async function getLocalWeatherData(
   opts: GenerateOptions
 ): Promise<LocalWeather> {
   logger.debug(
-    'getNextHourDates',
+    'getTodayDates',
     getTodayDates(opts.switchDayAtHour, opts.timezone)
   )
 
