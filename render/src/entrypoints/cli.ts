@@ -66,7 +66,7 @@ async function main() {
   const { png, html } = await generatePng({
     ...otherArgv,
     location: { lat, lon },
-    startForecastAtHour: 9,
+    switchDayAtHour: 21,
   })
   console.log(html)
   await writeDebugFile('render.png', png)
@@ -83,7 +83,7 @@ async function random() {
       ...otherArgv,
       batteryLevel: randomBatteryLevel, // override cli arg with random
       location: { lat, lon },
-      startForecastAtHour: 9,
+      switchDayAtHour: 21,
     })
     const layer = await sharp(png)
       .removeAlpha()

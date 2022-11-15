@@ -209,6 +209,8 @@ curl -vv -o weather.png \
 * https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT
 * https://github.com/waveshare/IT8951-ePaper
 * https://raspberrypi-guide.github.io/other/boot-automation-pijuice
+* https://ropengov.github.io/fmi2/articles/weather_observation_data.html
+
 ### All fields for `fmi::forecast::harmonie::surface::point::simple`
 
 The model can return data up to 50h from now.
@@ -281,3 +283,32 @@ The model can return data up to 10 days from now.
   }
 }
 ```
+
+
+### All fields for `fmi::observations::weather::hourly::simple`
+
+https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedquery_id=fmi::observations::weather::hourly::simple&place=helsinki&
+
+Observations are returned 24 hours in past.
+
+```json
+
+```
+
+
+**ParameterName descriptions**
+
+variable | label | base_phenomenon | unit | stat_function | agg_period
+---|---|--|--|--|---
+1 | TA_PT1H_AVG | Air temperature | Temperature | degC | avg | PT1H
+2 | TA_PT1H_MAX | Highest temperature | Temperature | degC | max | PT1H
+3 | TA_PT1H_MIN | Lowest temperature | Temperature | degC | min | PT1H
+4 | RH_PT1H_AVG | Relative humidity | Humidity | % | avg | PT1H
+5 | WS_PT1H_AVG | Wind speed | Wind | m/s | avg | PT1H
+6 | WS_PT1H_MAX | Maximum wind speed | Wind | m/s | max | PT1H
+7 | WS_PT1H_MIN | Minimum wind speed | Wind | m/s | min | PT1H
+8 | WD_PT1H_AVG | Wind direction | Wind | deg | avg | PT1H
+9 | PRA_PT1H_ACC | Precipitation amount | Amount of precipitation | mm | acc | PT1H
+10 | PRI_PT1H_MAX | Maximum precipitation intensity | Amount of precipitation | mm/h | max | PT1H
+11 | PA_PT1H_AVG | Air pressure | Air pressure | hPa | avg | PT1H
+12 | WAWA_PT1H_RANK | Present weather (auto) | Weather |  | rank | PT1H

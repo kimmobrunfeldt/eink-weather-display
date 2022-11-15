@@ -43,6 +43,7 @@ function generateRandomShortTermDataPoint(
   _opts: GenerateOptions
 ): ShortTermWeatherDataPoint {
   return {
+    type: 'forecast',
     time: randomDate(365 * 2),
     temperature: randomTemperature(),
     ...randomWind(),

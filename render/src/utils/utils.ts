@@ -47,7 +47,7 @@ export async function writeDebugFile(name: string, data: any) {
   if (environment.NODE_ENV === 'development') {
     return writeLocalDebugFile(fileName, data)
   } else {
-    return await saveDebugFileToBucket(fileName, data)
+    return await saveDebugFileToBucket(`${date}/${fileName}`, data)
   }
 }
 
@@ -121,17 +121,19 @@ export function sumByOrNull<T>(
   return sum
 }
 
-export function getNextHourDates(startHour: number, timezone: string) {
+export function getTodayDates(daySwitchHour: number, timezone: string) {
   const startOfLocalTodayInUtc = zonedTimeToUtc(
     dateFns.startOfToday(),
     timezone
   )
 
   const nowUtc = new Date()
-  const hToday = dateFns.addHours(startOfLocalTodayInUtc, startHour)
-  if (dateFns.isBefore(nowUtc, hToday)) {
+  const hAfterToShowNextDay = dateFns.addHours(
+    startOfLocalTodayInUtc,
+    daySwitchHour
+  )
+  if (dateFns.isBefore(nowUtc, hAfterToShowNextDay)) {
     return {
-      hourInUtc: hToday,
       startOfLocalDayInUtc: startOfLocalTodayInUtc,
       endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfToday(), timezone),
     }
@@ -141,9 +143,7 @@ export function getNextHourDates(startHour: number, timezone: string) {
     dateFns.startOfTomorrow(),
     timezone
   )
-  const hTomorrow = dateFns.addHours(startOfLocalTomorrowInUtc, startHour)
   return {
-    hourInUtc: hTomorrow,
     startOfLocalDayInUtc: startOfLocalTomorrowInUtc,
     endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfTomorrow(), timezone),
   }

@@ -31,17 +31,28 @@ export type WeatherTodaySummary = {
 
 // All numbers should be nullable to treat NaN returned by FMI API in type-safe manner...
 // ...but that's a bit more work.
-export type ShortTermWeatherDataPoint = {
-  time: Date
-  temperature: number
-  windSpeedMs: number
-  windGustMs: number
-  pressure: number
-  precipitationAmountFromNowToNext: number | null
-  precipitation1h: number
-  dewPoint: number
-  symbol: WeatherSymbolNumber
-}
+export type ShortTermWeatherDataPoint =
+  | {
+      type: 'forecast'
+      time: Date
+      temperature: number
+      windSpeedMs: number
+      windGustMs: number
+      pressure: number
+      precipitationAmountFromNowToNext: number | null
+      precipitation1h: number
+      dewPoint: number
+      symbol: WeatherSymbolNumber
+    }
+  | {
+      type: 'observation'
+      time: Date
+      temperature: number
+      windSpeedMs: number
+      precipitationAmountFromNowToNext: number | null
+      precipitation1h: number
+      symbol: WeatherSymbolNumber
+    }
 
 export type LongTermWeatherDataPoint = {
   time: Date
