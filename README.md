@@ -292,7 +292,17 @@ https://opendata.fmi.fi/wfs?service=WFS&version=2.0.0&request=getFeature&storedq
 Observations are returned 24 hours in past.
 
 ```json
-
+{
+  "TA_PT1H_AVG": 1.9,
+  "WS_PT1H_AVG": 1.5,
+  "WD_PT1H_AVG": 205,
+  "PRA_PT1H_ACC": 0,
+  "time": "2022-11-14T08:00:00.000Z",
+  "location": {
+    "lat": 60.17797,
+    "lon": 24.78743
+  }
+}
 ```
 
 
