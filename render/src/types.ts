@@ -51,6 +51,7 @@ export type ShortTermWeatherDataPoint =
       windSpeedMs: number
       precipitationAmountFromNowToNext: number | null
       precipitation1h: number
+      symbol: WeatherSymbolNumber
     }
 
 export type LongTermWeatherDataPoint = {

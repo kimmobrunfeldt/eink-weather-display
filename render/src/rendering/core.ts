@@ -12,8 +12,8 @@ import {
   formatNumber,
   formatWindSpeed,
   getBatteryIcon,
-  getNextHourDates,
   getPathWithinSrc,
+  getTodayDates,
   isDark,
   secondsToHoursAndMinutes,
   writeDebugFile,
@@ -29,7 +29,7 @@ export type GenerateOptions = {
   batteryLevel: number // 0-100
   showBatteryPercentage?: boolean
   batteryCharging?: boolean
-  startForecastAtHour: number
+  switchDayAtHour: number
   // Viewport width in headless Chrome
   width?: number
   // Viewport height in headless Chrome
@@ -154,7 +154,7 @@ function getHtmlReplacements(
     {
       match: { attrs: { id: 'date' } },
       newContent: dateFnsTz.formatInTimeZone(
-        getNextHourDates(opts.startForecastAtHour, opts.timezone).hourInUtc,
+        getTodayDates(opts.switchDayAtHour, opts.timezone).startOfLocalDayInUtc,
         opts.timezone,
         'EEEE, MMM d'
       ),
@@ -255,7 +255,8 @@ function getHtmlReplacements(
       match: { attrs: { id: 'forecast-item-pre-header' } },
       newContent: dateFnsTz.formatInTimeZone(
         dateFns.addDays(
-          getNextHourDates(opts.startForecastAtHour, opts.timezone).hourInUtc,
+          getTodayDates(opts.switchDayAtHour, opts.timezone)
+            .startOfLocalDayInUtc,
           1
         ),
         opts.timezone,
@@ -265,6 +266,17 @@ function getHtmlReplacements(
     ...weather.forecastShortTerm
       .map((item, index): Replacement[] => {
         return [
+          {
+            match: { attrs: { id: `forecast-item-${index}` } },
+            modifier: (node) => {
+              node.attrs = {
+                ...node.attrs,
+                class: `${
+                  node.attrs?.class ? node.attrs.class : ''
+                } Forecast-item--${item.type}`,
+              }
+            },
+          },
           {
             match: { attrs: { id: `forecast-item-${index}-time` } },
             newContent: dateFnsTz.formatInTimeZone(
@@ -290,17 +302,15 @@ function getHtmlReplacements(
           },
           {
             match: { attrs: { id: `forecast-item-${index}-icon` } },
-            modifier: (node) =>
-              (node.attrs = {
+            modifier: (node) => {
+              node.attrs = {
                 ...node.attrs,
-                src:
-                  item.type === 'forecast'
-                    ? getSymbolIcon(
-                        item.symbol,
-                        isDark(opts.location, item.time) ? 'dark' : 'light'
-                      )
-                    : '',
-              }),
+                src: getSymbolIcon(
+                  item.symbol,
+                  isDark(opts.location, item.time) ? 'dark' : 'light'
+                ),
+              }
+            },
           },
         ]
       })

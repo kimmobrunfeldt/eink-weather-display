@@ -178,7 +178,7 @@ async function renderHandler(req: Request, res: Response) {
   }
   OPTIONAL_NUMBERS.forEach((attr) => checkOptionalNumber(opts[attr]))
 
-  const { png, html } = await generatePng({ ...opts, startForecastAtHour: 9 })
+  const { png, html } = await generatePng({ ...opts, switchDayAtHour: 21 })
   await writeDebugFile('render.html', html)
   await writeDebugFile('render.png', png)
 

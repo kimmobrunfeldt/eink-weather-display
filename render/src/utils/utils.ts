@@ -121,18 +121,19 @@ export function sumByOrNull<T>(
   return sum
 }
 
-export function getNextHourDates(startHour: number, timezone: string) {
+export function getTodayDates(daySwitchHour: number, timezone: string) {
   const startOfLocalTodayInUtc = zonedTimeToUtc(
     dateFns.startOfToday(),
     timezone
   )
 
   const nowUtc = new Date()
-  const hToday = dateFns.addHours(startOfLocalTodayInUtc, startHour)
-  const hAfterToShowNextday = dateFns.addHours(startOfLocalTodayInUtc, 18) // TODO: Parametrize this 6PM setting
-  if (dateFns.isBefore(nowUtc, hAfterToShowNextday)) {
+  const hAfterToShowNextDay = dateFns.addHours(
+    startOfLocalTodayInUtc,
+    daySwitchHour
+  )
+  if (dateFns.isBefore(nowUtc, hAfterToShowNextDay)) {
     return {
-      hourInUtc: hToday,
       startOfLocalDayInUtc: startOfLocalTodayInUtc,
       endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfToday(), timezone),
     }
@@ -142,9 +143,7 @@ export function getNextHourDates(startHour: number, timezone: string) {
     dateFns.startOfTomorrow(),
     timezone
   )
-  const hTomorrow = dateFns.addHours(startOfLocalTomorrowInUtc, startHour)
   return {
-    hourInUtc: hTomorrow,
     startOfLocalDayInUtc: startOfLocalTomorrowInUtc,
     endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfTomorrow(), timezone),
   }

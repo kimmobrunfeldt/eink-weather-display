@@ -5,12 +5,13 @@ import {
   LocalWeather,
   LongTermWeatherDataPoint,
   MaxUvIndex,
+  MeteoWeatherCode,
   ShortTermWeatherDataPoint,
   WeatherSymbolNumber,
   WeatherTodaySummary,
 } from 'src/types'
 import { logger } from 'src/utils/logger'
-import { getNextHourDates, sumByOrNull } from 'src/utils/utils'
+import { getTodayDates, sumByOrNull } from 'src/utils/utils'
 import {
   fetchFmiEcmwfData,
   fetchFmiHarmonieData,
@@ -20,10 +21,13 @@ import {
   FmiObservationDataPoint,
 } from 'src/weather/fmiApi'
 import {
-  fetchMeteoAirQualityForecast,
-  fetchMeteoForecast,
+  attrsByTime,
+  fetchMeteoAirQualityForecastToday,
+  fetchMeteoForecastLongTerm,
+  fetchMeteoForecastShortTerm,
   MeteoAirQualityForecastResponse,
-  MeteoForecastResponse,
+  MeteoLongTermForecastResponse,
+  MeteoShortTermForecastResponse,
 } from 'src/weather/meteoApi'
 import {
   meteoToFmiWeatherSymbolNumber,
@@ -36,14 +40,17 @@ export async function getLocalWeatherData(
 ): Promise<LocalWeather> {
   logger.debug(
     'getNextHourDates',
-    getNextHourDates(opts.startForecastAtHour, opts.timezone)
+    getTodayDates(opts.switchDayAtHour, opts.timezone)
   )
 
   const fmiHarmonieData = await fetchFmiHarmonieData(opts)
   const fmiEcmwfData = await fetchFmiEcmwfData(opts)
   const fmiObservationData = await fetchFmiObservationData(opts)
-  const meteoForecastData = await fetchMeteoForecast(opts)
-  const meteoAirQualityForecastData = await fetchMeteoAirQualityForecast(opts)
+  const meteoLongTermForecastData = await fetchMeteoForecastLongTerm(opts)
+  const meteoShortTermForecastData = await fetchMeteoForecastShortTerm(opts)
+  const meteoAirQualityForecastData = await fetchMeteoAirQualityForecastToday(
+    opts
+  )
 
   const maxUv = findHighestUVIndex(meteoAirQualityForecastData, opts)
   const todaySummary = calculateTodaySummaryFromFmiData(fmiHarmonieData, opts)
@@ -51,6 +58,7 @@ export async function getLocalWeatherData(
     todaySummary: { ...todaySummary, maxUvIndex: maxUv },
     forecastShortTerm: calculateShortTermForecast(
       fmiHarmonieData,
+      meteoShortTermForecastData,
       fmiObservationData,
       opts
     ),
@@ -58,7 +66,7 @@ export async function getLocalWeatherData(
       (data) => {
         return {
           ...data,
-          symbol: findWeatherSymbolForDay(meteoForecastData, data.time),
+          symbol: findWeatherSymbolForDay(meteoLongTermForecastData, data.time),
         }
       }
     ),
@@ -79,8 +87,9 @@ export async function getLocalWeatherData(
  */
 export function calculateShortTermForecast(
   forecastData: FmiHarmonieDataPoint[],
+  meteoForecastData: MeteoShortTermForecastResponse,
   observationData: FmiObservationDataPoint[],
-  { startForecastAtHour, timezone }: GenerateOptions,
+  { switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions,
   forecastTimesInput?: Date[]
 ): ShortTermWeatherDataPoint[] {
   const isOverlap = isOverlappingTimes(
@@ -90,11 +99,21 @@ export function calculateShortTermForecast(
   if (isOverlap) {
     throw new Error('Found overlapping dates from observations vs forecasts')
   }
+  const { startOfLocalDayInUtc } = getTodayDates(startForecastAtHour, timezone)
 
-  const { startOfLocalDayInUtc } = getNextHourDates(
-    startForecastAtHour,
-    timezone
-  )
+  logger.info('calculateShortTermForecast forecastData', forecastData)
+  logger.info('calculateShortTermForecast observationData', observationData)
+  logger.info('calculateShortTermForecast meteoForecastData', meteoForecastData)
+  const combined = [...forecastData, ...observationData]
+  _.range(0, 24).forEach((h) => {
+    const isHourData = combined.some((d) =>
+      dateFns.isEqual(d.time, dateFns.addHours(startOfLocalDayInUtc, h))
+    )
+    if (!isHourData) {
+      throw new Error(`Missing observation and forecast data for hour ${h}`)
+    }
+  })
+
   const forecastTimes = forecastTimesInput
     ? forecastTimesInput
     : [
@@ -105,8 +124,8 @@ export function calculateShortTermForecast(
         21,
         24, // end of day, when forecast starts at 9AM
         24 + 9,
-        25 + 9 * 2,
-        15 + 9 * 3, // to give end date range for the previous item
+        24 + 9 * 2,
+        24 + 9 * 3, // to give end date range for the previous item
       ].map((h) => dateFns.addHours(startOfLocalDayInUtc, h))
   logger.debug('calculateShortTermForecast forecastTimes', forecastTimes)
 
@@ -114,8 +133,10 @@ export function calculateShortTermForecast(
     const foundForecast = forecastData.find(
       (d) => dateFns.isEqual(d.time, time) && _.isFinite(d.Temperature)
     )
+    const foundMeteoHourData = attrsByTime(meteoForecastData.hourly).find((d) =>
+      dateFns.isEqual(d.time, time)
+    )
     const foundObs = observationData.find((d) => dateFns.isEqual(d.time, time))
-
     if (!foundForecast && !foundObs) {
       // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast/observation data.
       logger.error('Time:', time)
@@ -128,12 +149,16 @@ export function calculateShortTermForecast(
 
     const nextIndex = index + 1
     const nextTime = forecastTimes[nextIndex]
-    const fmiDataBetweenNext = [...forecastData, ...observationData].filter(
+    const fmiDataBetweenNext = combined.filter(
       (f) =>
         dateFns.isEqual(f.time, time) ||
         (dateFns.isAfter(f.time, time) && dateFns.isBefore(f.time, nextTime))
     )
-    return calculateShortTermDataPoint(time, fmiDataBetweenNext)
+    return calculateShortTermDataPoint(
+      time,
+      fmiDataBetweenNext,
+      foundMeteoHourData
+    )
   })
 }
 
@@ -143,7 +168,8 @@ function isOverlappingTimes(dates1: Date[], dates2: Date[]): boolean {
 
 function calculateShortTermDataPoint(
   time: Date,
-  data: (FmiHarmonieDataPoint | FmiObservationDataPoint)[]
+  data: (FmiHarmonieDataPoint | FmiObservationDataPoint)[],
+  foundMeteoData?: { time: Date; weathercode: MeteoWeatherCode }
 ): ShortTermWeatherDataPoint {
   const forecasts = data.filter(
     (d): d is FmiHarmonieDataPoint => d.type === 'harmonie'
@@ -166,9 +192,16 @@ function calculateShortTermDataPoint(
     ),
   }
   if (forecasts.length === 0) {
+    if (!foundMeteoData) {
+      throw new Error(
+        `Meteo data for hour ${time} not found for observation data`
+      )
+    }
+
     return {
       ...baseData,
       type: 'observation',
+      symbol: meteoToFmiWeatherSymbolNumber(foundMeteoData.weathercode),
     }
   }
 
@@ -197,10 +230,10 @@ function calculateShortTermDataPoint(
  */
 export function calculateLongTermForecast(
   fmiData: FmiEcmwfDataPoint[],
-  { startForecastAtHour, timezone }: GenerateOptions,
+  { switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions,
   forecastItemsInput?: Date[]
 ): Omit<LongTermWeatherDataPoint, 'symbol'>[] {
-  const { startOfLocalDayInUtc: start } = getNextHourDates(
+  const { startOfLocalDayInUtc: start } = getTodayDates(
     startForecastAtHour,
     timezone
   )
@@ -264,13 +297,12 @@ export function calculateLongTermForecast(
 
 export function calculateTodaySummaryFromFmiData(
   fmiData: FmiHarmonieDataPoint[],
-  { location, startForecastAtHour, timezone }: GenerateOptions
+  { location, switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions
 ): Omit<WeatherTodaySummary, 'maxUvIndex'> {
-  const {
-    hourInUtc: nextH,
-    startOfLocalDayInUtc,
-    endOfLocalDayInUtc,
-  } = getNextHourDates(startForecastAtHour, timezone)
+  const { startOfLocalDayInUtc, endOfLocalDayInUtc } = getTodayDates(
+    startForecastAtHour,
+    timezone
+  )
   const today = fmiData.filter((d) =>
     isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
   )
@@ -291,8 +323,8 @@ export function calculateTodaySummaryFromFmiData(
 
   // Note! Assumes 60min timesteps within forecast data
   const precipitationAmount = sumByOrNull(today, (d) => d.Precipitation1h)
-  const sunrise = getSunrise(location.lat, location.lon, nextH)
-  const sunset = getSunset(location.lat, location.lon, nextH)
+  const sunrise = getSunrise(location.lat, location.lon, startOfLocalDayInUtc)
+  const sunset = getSunset(location.lat, location.lon, startOfLocalDayInUtc)
 
   return {
     avgTemperature,
@@ -312,35 +344,29 @@ export function calculateTodaySummaryFromFmiData(
 
 function findHighestUVIndex(
   forecast: MeteoAirQualityForecastResponse,
-  { startForecastAtHour, timezone }: GenerateOptions
+  { switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions
 ): MaxUvIndex {
-  const { startOfLocalDayInUtc, endOfLocalDayInUtc } = getNextHourDates(
+  const { startOfLocalDayInUtc, endOfLocalDayInUtc } = getTodayDates(
     startForecastAtHour,
     timezone
   )
-  const hoursToday = forecast.hourly.time
-    .map((time, index) => ({
-      time: new Date(time),
-      uvIndex: forecast.hourly.uv_index[index],
-    }))
-    .filter(({ time }) =>
-      isBetweenInclusive(time, startOfLocalDayInUtc, endOfLocalDayInUtc)
-    )
-
+  const hoursToday = attrsByTime(forecast.hourly).filter(({ time }) =>
+    isBetweenInclusive(time, startOfLocalDayInUtc, endOfLocalDayInUtc)
+  )
   logger.debug('findHighestUVIndex: uv index and hours', hoursToday)
 
-  const maxHour = _.maxBy(hoursToday, ({ uvIndex }) => uvIndex)
+  const maxHour = _.maxBy(hoursToday, ({ uv_index }) => uv_index)
   if (!maxHour) {
     throw new Error('Unable to find max UV index for day')
   }
   return {
     time: maxHour.time,
-    value: maxHour.uvIndex,
+    value: maxHour.uv_index,
   }
 }
 
 function findWeatherSymbolForDay(
-  forecast: MeteoForecastResponse,
+  forecast: MeteoLongTermForecastResponse,
   time: Date
 ): WeatherSymbolNumber {
   const dates = forecast.daily.time.map((time, index) => ({

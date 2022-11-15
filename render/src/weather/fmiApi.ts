@@ -5,7 +5,7 @@ import { XMLParser } from 'fast-xml-parser'
 import _ from 'lodash'
 import { GenerateOptions } from 'src/rendering/core'
 import { Coordinate } from 'src/types'
-import { getNextHourDates, writeDebugFile } from 'src/utils/utils'
+import { getTodayDates, writeDebugFile } from 'src/utils/utils'
 
 type FmiBaseDataPoint = {
   time: Date
@@ -87,7 +87,6 @@ export async function fetchFmiObservationData(
   const res = await axios.get(FMI_API_URL, {
     params: getFmiObservationParameters(opts),
   })
-  console.log(res)
   await writeDebugFile('fmi-observation-response.xml', res.data)
   const data = parseFmiXmlResponse<InternalFmiObservationDataPoint>(res.data)
   await writeDebugFile('fmi-observation-parsed-data.json', data)
@@ -104,13 +103,10 @@ export async function fetchFmiObservationData(
 
 function getFmiECMWFParameters({
   location,
-  startForecastAtHour,
+  switchDayAtHour: startForecastAtHour,
   timezone,
 }: GenerateOptions) {
-  const { startOfLocalDayInUtc } = getNextHourDates(
-    startForecastAtHour,
-    timezone
-  )
+  const { startOfLocalDayInUtc } = getTodayDates(startForecastAtHour, timezone)
   const startDate = dateFns.addDays(startOfLocalDayInUtc, 1)
   const endDate = dateFns.addDays(startDate, 6)
   const timeStepMin = 60 // if changing, update precipitation summing
