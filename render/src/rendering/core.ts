@@ -1,6 +1,7 @@
 import * as dateFns from 'date-fns'
 import * as dateFnsTz from 'date-fns-tz'
 import fs from 'fs'
+import _ from 'lodash'
 import posthtml from 'posthtml'
 import posthtmlInlineAssets from 'posthtml-inline-assets'
 import sharp from 'sharp'
@@ -150,6 +151,15 @@ function getHtmlReplacements(
   weather: LocalWeather
 ): Replacement[] {
   const now = new Date()
+  const closestShortTermDataPoint = _.minBy(weather.forecastShortTerm, (d) =>
+    Math.abs(now.getTime() - d.time.getTime())
+  )
+  if (!closestShortTermDataPoint) {
+    throw new Error(
+      `Unable to find closest short term data point near to ${now.toISOString()}`
+    )
+  }
+
   return [
     {
       match: { attrs: { id: 'date' } },
@@ -194,7 +204,7 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-temperature' } },
-      newContent: String(Math.round(weather.todaySummary.avgTemperature)),
+      newContent: String(Math.round(closestShortTermDataPoint.temperature)),
     },
     {
       match: { attrs: { id: 'current-weather-description' } },
