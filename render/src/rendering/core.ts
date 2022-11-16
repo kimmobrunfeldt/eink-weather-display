@@ -21,7 +21,10 @@ import {
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import { getLocalWeatherData } from 'src/weather/weather'
-import { getSymbolIcon } from 'src/weather/weatherSymbol'
+import {
+  getSymbolIcon,
+  weatherSymbolDescriptions,
+} from 'src/weather/weatherSymbol'
 
 export type GenerateOptions = {
   location: Coordinate
@@ -160,6 +163,18 @@ function getHtmlReplacements(
     )
   }
 
+  // We want to find a forecast data point because weathercodes for forecasts are from FMI,
+  // whereas observation weather codes are from meteo
+  const closestShortTermForecastDataPoint = _.minBy(
+    weather.forecastShortTerm.filter((d) => d.type === 'forecast'),
+    (d) => Math.abs(now.getTime() - d.time.getTime())
+  )
+  if (!closestShortTermForecastDataPoint) {
+    throw new Error(
+      `Unable to find closest short term forecast data point near to ${now.toISOString()}`
+    )
+  }
+
   return [
     {
       match: { attrs: { id: 'date' } },
@@ -199,7 +214,7 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          src: getSymbolIcon(weather.todaySummary.symbol, 'light'),
+          src: getSymbolIcon(closestShortTermForecastDataPoint.symbol, 'light'),
         }),
     },
     {
@@ -208,16 +223,17 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-description' } },
-      newContent: weather.todaySummary.description,
+      newContent:
+        weatherSymbolDescriptions[closestShortTermForecastDataPoint.symbol],
     },
     {
       match: { attrs: { id: 'current-weather-wind' } },
-      newContent: formatWindSpeed(weather.todaySummary.avgWindSpeedMs),
+      newContent: formatWindSpeed(weather.todaySummary.forecast.avgWindSpeedMs),
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },
       newContent: formatNumber(
-        weather.todaySummary.precipitationAmount,
+        weather.todaySummary.forecast.precipitationAmount,
         Math.round
       ),
     },
@@ -240,26 +256,40 @@ function getHtmlReplacements(
     {
       match: { attrs: { id: 'current-weather-daylight-hours' } },
       newContent: String(
-        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).h
+        secondsToHoursAndMinutes(
+          weather.todaySummary.forecast.dayDurationInSeconds
+        ).h
       ),
     },
     {
       match: { attrs: { id: 'current-weather-daylight-minutes' } },
       newContent: String(
-        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).m
+        secondsToHoursAndMinutes(
+          weather.todaySummary.forecast.dayDurationInSeconds
+        ).m
       ),
     },
     {
       match: { attrs: { id: 'current-weather-uvi' } },
-      newContent: formatWindSpeed(weather.todaySummary.maxUvIndex.value),
+      newContent: formatWindSpeed(
+        weather.todaySummary.forecast.maxUvIndex.value
+      ),
     },
     {
       match: { attrs: { id: 'current-weather-uvi-at' } },
       newContent: `UVI at ${dateFnsTz.formatInTimeZone(
-        weather.todaySummary.maxUvIndex.time,
+        weather.todaySummary.forecast.maxUvIndex.time,
         opts.timezone,
         'HH'
       )}`,
+    },
+    {
+      match: { attrs: { id: 'today-weather-min-temperature' } },
+      newContent: String(Math.round(weather.todaySummary.all.minTemperature)),
+    },
+    {
+      match: { attrs: { id: 'today-weather-max-temperature' } },
+      newContent: String(Math.round(weather.todaySummary.all.maxTemperature)),
     },
     {
       match: { attrs: { id: 'forecast-item-pre-header' } },

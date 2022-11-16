@@ -53,9 +53,13 @@ export async function getLocalWeatherData(
   )
 
   const maxUv = findHighestUVIndex(meteoAirQualityForecastData, opts)
-  const todaySummary = calculateTodaySummaryFromFmiData(fmiHarmonieData, opts)
+  const { forecast: todaySummaryForecast, ...todaySummaryRest } =
+    calculateTodaySummaryFromFmiData(fmiHarmonieData, fmiObservationData, opts)
   return {
-    todaySummary: { ...todaySummary, maxUvIndex: maxUv },
+    todaySummary: {
+      ...todaySummaryRest,
+      forecast: { ...todaySummaryForecast, maxUvIndex: maxUv },
+    },
     forecastShortTerm: calculateShortTermForecast(
       fmiHarmonieData,
       meteoShortTermForecastData,
@@ -306,22 +310,38 @@ export function calculateLongTermForecast(
 
 export function calculateTodaySummaryFromFmiData(
   fmiData: FmiHarmonieDataPoint[],
+  fmiObservationData: FmiObservationDataPoint[],
   { location, switchDayAtHour: startForecastAtHour, timezone }: GenerateOptions
-): Omit<WeatherTodaySummary, 'maxUvIndex'> {
+): Omit<WeatherTodaySummary, 'forecast'> & {
+  forecast: Omit<WeatherTodaySummary['forecast'], 'maxUvIndex'>
+} {
   const { startOfLocalDayInUtc, endOfLocalDayInUtc } = getTodayDates(
     startForecastAtHour,
     timezone
   )
-  const today = fmiData.filter((d) =>
+  const fmiForecastDataToday = fmiData.filter((d) =>
     isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
   )
-  const avgWindSpeedMs = _.mean(today.map((d) => d.WindSpeedMS))
-  const maxWindSpeedMs = Math.max(...today.map((d) => d.WindSpeedMS))
-  const minWindSpeedMs = Math.min(...today.map((d) => d.WindSpeedMS))
-  const avgTemperature = _.mean(today.map((d) => d.Temperature))
-  const maxTemperature = Math.max(...today.map((d) => d.Temperature))
-  const minTemperature = Math.min(...today.map((d) => d.Temperature))
-  const symbolCounts = _.countBy(today, (d) => d.WeatherSymbol3)
+  const fmiObservationsDataToday = fmiObservationData.filter((d) =>
+    isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
+  )
+  const combined = [...fmiForecastDataToday, ...fmiObservationsDataToday]
+
+  const avgWindSpeedMs = _.mean(fmiForecastDataToday.map((d) => d.WindSpeedMS))
+  const maxWindSpeedMs = Math.max(
+    ...fmiForecastDataToday.map((d) => d.WindSpeedMS)
+  )
+  const minWindSpeedMs = Math.min(
+    ...fmiForecastDataToday.map((d) => d.WindSpeedMS)
+  )
+  const avgTemperature = _.mean(fmiForecastDataToday.map((d) => d.Temperature))
+  const maxTemperature = Math.max(
+    ...fmiForecastDataToday.map((d) => d.Temperature)
+  )
+  const minTemperature = Math.min(
+    ...fmiForecastDataToday.map((d) => d.Temperature)
+  )
+  const symbolCounts = _.countBy(fmiForecastDataToday, (d) => d.WeatherSymbol3)
   const symbolCountsArr = Object.keys(symbolCounts).map((key) => ({
     key,
     value: symbolCounts[key],
@@ -331,23 +351,32 @@ export function calculateTodaySummaryFromFmiData(
   const symbol = Number(topSymbol) as WeatherSymbolNumber
 
   // Note! Assumes 60min timesteps within forecast data
-  const precipitationAmount = sumByOrNull(today, (d) => d.Precipitation1h)
+  const precipitationAmount = sumByOrNull(
+    fmiForecastDataToday,
+    (d) => d.Precipitation1h
+  )
   const sunrise = getSunrise(location.lat, location.lon, startOfLocalDayInUtc)
   const sunset = getSunset(location.lat, location.lon, startOfLocalDayInUtc)
 
   return {
-    avgTemperature,
-    minTemperature,
-    maxTemperature,
-    avgWindSpeedMs,
-    minWindSpeedMs,
-    maxWindSpeedMs,
-    description: weatherSymbolDescriptions[symbol],
-    symbol,
     sunrise,
     sunset,
-    dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
-    precipitationAmount,
+    all: {
+      minTemperature: Math.min(...combined.map((d) => d.Temperature)),
+      maxTemperature: Math.max(...combined.map((d) => d.Temperature)),
+    },
+    forecast: {
+      avgTemperature,
+      minTemperature,
+      maxTemperature,
+      avgWindSpeedMs,
+      minWindSpeedMs,
+      maxWindSpeedMs,
+      description: weatherSymbolDescriptions[symbol],
+      symbol,
+      dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
+      precipitationAmount,
+    },
   }
 }
 

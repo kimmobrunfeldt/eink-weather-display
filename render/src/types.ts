@@ -14,19 +14,26 @@ export type WeatherSymbolNumber = keyof typeof weatherSymbolIcons['light']
 export type MeteoWeatherCode = keyof typeof meteoCodesToFmi
 
 export type WeatherTodaySummary = {
-  avgTemperature: number
-  minTemperature: number
-  maxTemperature: number
-  avgWindSpeedMs: number
-  minWindSpeedMs: number
-  maxWindSpeedMs: number
-  symbol: WeatherSymbolNumber
-  description: string
+  /* Forecasts and observations */
   sunrise: Date
   sunset: Date
-  dayDurationInSeconds: number
-  maxUvIndex: MaxUvIndex
-  precipitationAmount: number | null
+  all: {
+    minTemperature: number
+    maxTemperature: number
+  }
+  forecast: {
+    avgTemperature: number
+    minTemperature: number
+    maxTemperature: number
+    avgWindSpeedMs: number
+    minWindSpeedMs: number
+    maxWindSpeedMs: number
+    symbol: WeatherSymbolNumber
+    description: string
+    dayDurationInSeconds: number
+    maxUvIndex: MaxUvIndex
+    precipitationAmount: number | null
+  }
 }
 
 // All numbers should be nullable to treat NaN returned by FMI API in type-safe manner...

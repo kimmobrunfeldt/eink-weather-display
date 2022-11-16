@@ -151,7 +151,7 @@ describe('calculateTodaySummary', () => {
         },
       },
     ]
-    expect(calculateTodaySummaryFromFmiData(fmiData, mockOpts)).toEqual(
+    expect(calculateTodaySummaryFromFmiData(fmiData, [], mockOpts)).toEqual(
       expect.objectContaining({
         avgTemperature: 10, // Average of 9, 11, and 10
         minTemperature: 9,

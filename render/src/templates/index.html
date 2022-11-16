@@ -74,6 +74,7 @@
     /* Variables */
 
     :root {
+      --text-size-xxs: 0.7rem;
       --text-size-xs: 0.833rem;
       --text-size-s: 0.9rem;
       --text-size: 1rem;
@@ -122,6 +123,10 @@
 
     .text {
       font-size: var(--text-size);
+    }
+
+    .text-xxs {
+      font-size: var(--text-size-xxs);
     }
 
     .text-xs {
@@ -269,6 +274,7 @@
     }
 
     .CurrentWeather-temperature {
+      position: relative;
       display: flex;
       align-items: flex-start;
     }
@@ -288,7 +294,6 @@
       flex-direction: column;
       padding-left: 0.8rem;
       flex-basis: 40%;
-      margin-top: 1.2rem;
     }
 
     .CurrentWeather-details h2 {
@@ -343,8 +348,9 @@
     /* Bottom section */
 
     .Forecast {
-      padding-left: var(--space-4);
-      padding-right: var(--space-3);
+      --space-4: 2rem;
+      padding-left: 1.5rem;
+      padding-right: 1rem;
     }
 
     .Forecast {
@@ -364,6 +370,51 @@
     .Forecast-today {
       font-size: var(--text-size-xl);
       width: 6rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .Forecast-today-minmax-temperature {
+      margin-top: 0.5rem;
+      align-self: flex-start;
+      display: flex;
+      flex-direction: row;
+      white-space: nowrap;
+      font-size: var(--text-size);
+    }
+
+    .Forecast-today-icon>img {
+      width: 1.4rem;
+      height: 1.4rem;
+      opacity: 0.7;
+    }
+
+    .Forecast-today-minmax-temperature>* {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .Forecast-today-minmax-temperature-values>*,
+    .Forecast-today-minmax-temperature-icons>* {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    .Forecast-today-minmax-temperature-values>* {
+      height: 1.4rem;
+    }
+
+    .Forecast-today-minmax-temperature-icons>* {
+      height: 1.4rem;
+    }
+
+    .Forecast-today-minmax-temperature-unit {
+      font-size: var(--text-size-xs);
+      margin-left: 0.1rem;
+      margin-top: 0.16rem;
+      align-self: flex-start;
     }
 
     .Forecast-week {
@@ -394,9 +445,6 @@
     .Forecast-item--observation .Forecast-item-numbers>* {
       color: var(--color-1) !important;
     }
-
-
-    .Forecast-item--forecast {}
 
     .Forecast-item--has-pre-header {
       margin-left: 1rem;
@@ -493,11 +541,12 @@
           <div class="CurrentWeather-icon">
             <img id="current-weather-icon" src="weather-icons/wi-cloudy.svg" />
           </div>
-          <p class="CurrentWeather-temperature">
+          <div class="CurrentWeather-temperature">
             <span id="current-weather-temperature" class="CurrentWeather-temperature-value">17</span>
             <span class="CurrentWeather-temperature-unit">°C</span>
-          </p>
+          </div>
         </div>
+
         <div class="CurrentWeather-details">
           <h2 id="current-weather-description">Partly sunny</h2>
           <ul class="WeatherDetails">
@@ -563,13 +612,33 @@
           </ul>
         </div>
       </div>
-
     </div>
 
     <div class="Bottom">
       <div class="Forecast">
         <div class="Forecast-today">
-          Today
+          <p>Today</p>
+
+          <div class="Forecast-today-minmax-temperature">
+            <div class="Forecast-today-minmax-temperature-icons">
+              <div class="Forecast-today-icon">
+                <img src="weather-icons/wi-direction-up.svg" />
+              </div>
+              <div class="Forecast-today-icon">
+                <img src="weather-icons/wi-direction-down.svg" />
+              </div>
+            </div>
+            <div class="Forecast-today-minmax-temperature-values">
+              <div>
+                <span id="today-weather-max-temperature" class="Forecast-today-minmax-temperature-value">0</span>
+                <span class="Forecast-today-minmax-temperature-unit">°C</span>
+              </div>
+              <div>
+                <span id="today-weather-min-temperature" class="Forecast-today-minmax-temperature-value">0</span>
+                <span class="Forecast-today-minmax-temperature-unit">°C</span>
+              </div>
+            </div>
+          </div>
         </div>
         <div id="forecast-item-0" class="Forecast-item">
           <div id="forecast-item-0-time" class="Forecast-item-time">09</div>

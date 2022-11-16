@@ -16,19 +16,24 @@ export async function generateRandomLocalWeatherData(
   const symbol = randomSymbol()
   return {
     todaySummary: {
-      ...randomMinMaxAvgTemperature(),
-      ...randomMinMaxAvgTemperature(),
-      ...randomMinMaxAvgWindSpeed(),
-      symbol,
-      description: weatherSymbolDescriptions[symbol],
       sunrise: randomDate(365),
       sunset: randomDate(365),
-      dayDurationInSeconds: _.random(0, 24, true) * 3600,
-      maxUvIndex: {
-        time: randomDate(365),
-        value: _.random(0, 12, true),
+      all: {
+        ...randomMinMaxAvgTemperature(),
       },
-      precipitationAmount: randomPrecipitation1h() * 24,
+      forecast: {
+        ...randomMinMaxAvgTemperature(),
+        ...randomMinMaxAvgWindSpeed(),
+        symbol,
+        description: weatherSymbolDescriptions[symbol],
+
+        dayDurationInSeconds: _.random(0, 24, true) * 3600,
+        maxUvIndex: {
+          time: randomDate(365),
+          value: _.random(0, 12, true),
+        },
+        precipitationAmount: randomPrecipitation1h() * 24,
+      },
     },
     forecastShortTerm: _.range(8).map(() =>
       generateRandomShortTermDataPoint(opts)
