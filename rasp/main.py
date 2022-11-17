@@ -96,9 +96,8 @@ def main(pj):
         res.raw.decode_content = True
         shutil.copyfileobj(res.raw, f)
 
-    if should_clear_display():
-        logging.info('Clearing display ...')
-        display_clear()
+    logging.info('Clearing display ...')
+    display_clear()
 
     logging.info('Render image returned by the API...')
     display_render_image(file_path)
@@ -261,7 +260,7 @@ def display_clear():
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
-@ contextmanager
+@contextmanager
 def edp_display():
     try:
         yield None
