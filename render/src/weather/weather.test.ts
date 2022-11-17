@@ -25,8 +25,7 @@ const mockOpts: GenerateOptions = {
   },
 }
 
-// TODO
-describe.skip('calculateTodaySummary', () => {
+describe('calculateTodaySummary', () => {
   test('calculates data from correct data points', () => {
     const mockTodayDates = {
       // Start of day in Europe/Helsinki time
@@ -37,7 +36,24 @@ describe.skip('calculateTodaySummary', () => {
 
     jest.spyOn(utils, 'getTodayDates').mockImplementation(() => mockTodayDates)
 
-    const fmiData: FmiHarmonieDataPoint[] = [
+    const observations: FmiObservationDataPoint[] = [
+      // Just at the start of day
+      {
+        type: 'observation',
+        Temperature: 2,
+        WindSpeedMS: 4,
+        WindDirection: 200,
+        Precipitation1h: 10,
+        time: mockTodayDates.startOfLocalDayInUtc,
+        // Location doesn't matter
+        location: {
+          lat: 0,
+          lon: 0,
+        },
+      },
+    ]
+
+    const forecastData: FmiHarmonieDataPoint[] = [
       // Before day, set numbers obviously wrong
       {
         type: 'harmonie',
@@ -152,19 +168,28 @@ describe.skip('calculateTodaySummary', () => {
         },
       },
     ]
-    expect(calculateTodaySummaryFromFmiData(fmiData, [], mockOpts)).toEqual(
+    expect(
+      calculateTodaySummaryFromFmiData(forecastData, observations, mockOpts)
+    ).toEqual(
       expect.objectContaining({
-        avgTemperature: 10, // Average of 9, 11, and 10
-        minTemperature: 9,
-        maxTemperature: 11,
-        avgWindSpeedMs: 5, // avg of 4, 6, and 5
-        minWindSpeedMs: 4,
-        maxWindSpeedMs: 6,
-        description: 'Light showers',
-        // 1h counts summed (10 + 30)
-        // using 1h counts seemed more reliable from FMI
-        precipitationAmount: 40,
-        symbol: 31, // from 1, 31, 31 datapoints -> by max count is 31
+        // Observations and forecasts
+        all: {
+          minTemperature: 2,
+          maxTemperature: 11,
+        },
+        forecast: {
+          avgTemperature: 10, // Average of 9, 11, and 10
+          minTemperature: 9,
+          maxTemperature: 11,
+          avgWindSpeedMs: 5, // avg of 4, 6, and 5
+          minWindSpeedMs: 4,
+          maxWindSpeedMs: 6,
+          description: 'Light showers',
+          // 1h counts summed (10 + 30)
+          // using 1h counts seemed more reliable from FMI
+          precipitationAmount: 40,
+          symbol: 31, // from 1, 31, 31 datapoints -> by max count is 31
+        },
       })
     )
   })

@@ -256,17 +256,13 @@ function getHtmlReplacements(
     {
       match: { attrs: { id: 'current-weather-daylight-hours' } },
       newContent: String(
-        secondsToHoursAndMinutes(
-          weather.todaySummary.forecast.dayDurationInSeconds
-        ).h
+        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).h
       ),
     },
     {
       match: { attrs: { id: 'current-weather-daylight-minutes' } },
       newContent: String(
-        secondsToHoursAndMinutes(
-          weather.todaySummary.forecast.dayDurationInSeconds
-        ).m
+        secondsToHoursAndMinutes(weather.todaySummary.dayDurationInSeconds).m
       ),
     },
     {

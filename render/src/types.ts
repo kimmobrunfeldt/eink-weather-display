@@ -17,6 +17,8 @@ export type WeatherTodaySummary = {
   /* Forecasts and observations */
   sunrise: Date
   sunset: Date
+  dayDurationInSeconds: number
+
   all: {
     minTemperature: number
     maxTemperature: number
@@ -30,7 +32,6 @@ export type WeatherTodaySummary = {
     maxWindSpeedMs: number
     symbol: WeatherSymbolNumber
     description: string
-    dayDurationInSeconds: number
     maxUvIndex: MaxUvIndex
     precipitationAmount: number | null
   }

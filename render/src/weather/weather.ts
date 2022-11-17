@@ -361,6 +361,7 @@ export function calculateTodaySummaryFromFmiData(
   return {
     sunrise,
     sunset,
+    dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
     all: {
       minTemperature: Math.min(...combined.map((d) => d.Temperature)),
       maxTemperature: Math.max(...combined.map((d) => d.Temperature)),
@@ -374,7 +375,6 @@ export function calculateTodaySummaryFromFmiData(
       maxWindSpeedMs,
       description: weatherSymbolDescriptions[symbol],
       symbol,
-      dayDurationInSeconds: dateFns.differenceInSeconds(sunset, sunrise),
       precipitationAmount,
     },
   }
