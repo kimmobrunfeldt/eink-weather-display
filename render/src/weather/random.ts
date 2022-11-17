@@ -18,6 +18,7 @@ export async function generateRandomLocalWeatherData(
     todaySummary: {
       sunrise: randomDate(365),
       sunset: randomDate(365),
+      dayDurationInSeconds: _.random(0, 24, true) * 3600,
       all: {
         ...randomMinMaxAvgTemperature(),
       },
@@ -26,8 +27,6 @@ export async function generateRandomLocalWeatherData(
         ...randomMinMaxAvgWindSpeed(),
         symbol,
         description: weatherSymbolDescriptions[symbol],
-
-        dayDurationInSeconds: _.random(0, 24, true) * 3600,
         maxUvIndex: {
           time: randomDate(365),
           value: _.random(0, 12, true),
