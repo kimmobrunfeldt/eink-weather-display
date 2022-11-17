@@ -2,6 +2,7 @@
 
 import os
 import logging
+from datetime import datetime
 import time
 import subprocess
 import argparse
@@ -87,46 +88,63 @@ def main(pj):
 
     wait_until_internet_connection()
 
-    logging.info('Getting image from API...')
-    paddings = {
-        'top': 70,
-        'right': 10,
-        'bottom': 20,
-        'left': 10,
-    }
-    res = requests.get(config['RENDER_URL'], stream=True, params={
-        "batteryLevel": charge_level["data"],
-        "batteryCharging": 'false' if is_on_battery else 'true',
-        "showBatteryPercentage": 'true',
-        "lat": config['RENDER_LATITUDE'],
-        "lon": config['RENDER_LONGITUDE'],
-        "locationName": config['RENDER_LOCATION_NAME'],
-        "timezone": config['RENDER_TIMEZONE'],
-        "apiKey": config['RENDER_API_KEY'],
-        # By default the image rendered is mirrored
-        "flop": 'true',
-        # These values are highly dependent on the physical installation of the screen
-        "width": DISPLAY_WIDTH - paddings['right'] - paddings['left'],
-        "height": DISPLAY_HEIGHT - paddings['top'] - paddings['bottom'],
-        "paddingTop": paddings['top'],
-        "paddingRight": paddings['right'],
-        "paddingBottom": paddings['bottom'],
-        "paddingLeft": paddings['left'],
-    }, timeout=30)
+    res = fetch_image(is_on_battery, charge_level["data"])
     logging.info('Image request done')
-    res.raise_for_status()
-
     logging.info('Saving image to disk...')
     file_path = 'render_api_image.png'
     with open(file_path, 'wb') as f:
         res.raw.decode_content = True
         shutil.copyfileobj(res.raw, f)
 
+    if should_clear_display():
+        logging.info('Clearing display ...')
+        display_clear()
+
     logging.info('Render image returned by the API...')
     display_render_image(file_path)
 
     # Enable again just in case time syncronisation has unset the alarm
     enable_wakeups(pj)
+
+
+def fetch_image(is_on_battery, battery_level, retries=2):
+    for i in range(retries + 1):
+        logging.info('Getting image from API (try number {})...'.format(i + 1))
+        paddings = {
+            'top': 70,
+            'right': 10,
+            'bottom': 20,
+            'left': 10,
+        }
+        res = requests.get(config['RENDER_URL'], stream=True, params={
+            "batteryLevel": battery_level,
+            "batteryCharging": 'false' if is_on_battery else 'true',
+            "showBatteryPercentage": 'true',
+            "lat": config['RENDER_LATITUDE'],
+            "lon": config['RENDER_LONGITUDE'],
+            "locationName": config['RENDER_LOCATION_NAME'],
+            "timezone": config['RENDER_TIMEZONE'],
+            "apiKey": config['RENDER_API_KEY'],
+            # By default the image rendered is mirrored
+            "flop": 'true',
+            # These values are highly dependent on the physical installation of the screen
+            "width": DISPLAY_WIDTH - paddings['right'] - paddings['left'],
+            "height": DISPLAY_HEIGHT - paddings['top'] - paddings['bottom'],
+            "paddingTop": paddings['top'],
+            "paddingRight": paddings['right'],
+            "paddingBottom": paddings['bottom'],
+            "paddingLeft": paddings['left'],
+        }, timeout=30)
+        res.raise_for_status()
+        return res
+
+    raise Exception('Failed to request image API even after retries')
+
+
+def should_clear_display():
+    now = datetime.utcnow()
+    # This should clear the display at least once at the morning run
+    return now.hour < 9
 
 
 def enable_wakeups(pj):
