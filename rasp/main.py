@@ -96,9 +96,6 @@ def main(pj):
         res.raw.decode_content = True
         shutil.copyfileobj(res.raw, f)
 
-    logging.info('Clearing display ...')
-    display_clear()
-
     logging.info('Render image returned by the API...')
     display_render_image(file_path)
 
@@ -108,34 +105,40 @@ def main(pj):
 
 def fetch_image(is_on_battery, battery_level, retries=2):
     for i in range(retries + 1):
-        logging.info('Getting image from API (try number {})...'.format(i + 1))
-        paddings = {
-            'top': 70,
-            'right': 10,
-            'bottom': 20,
-            'left': 10,
-        }
-        res = requests.get(config['RENDER_URL'], stream=True, params={
-            "batteryLevel": battery_level,
-            "batteryCharging": 'false' if is_on_battery else 'true',
-            "showBatteryPercentage": 'true',
-            "lat": config['RENDER_LATITUDE'],
-            "lon": config['RENDER_LONGITUDE'],
-            "locationName": config['RENDER_LOCATION_NAME'],
-            "timezone": config['RENDER_TIMEZONE'],
-            "apiKey": config['RENDER_API_KEY'],
-            # By default the image rendered is mirrored
-            "flop": 'true',
-            # These values are highly dependent on the physical installation of the screen
-            "width": DISPLAY_WIDTH - paddings['right'] - paddings['left'],
-            "height": DISPLAY_HEIGHT - paddings['top'] - paddings['bottom'],
-            "paddingTop": paddings['top'],
-            "paddingRight": paddings['right'],
-            "paddingBottom": paddings['bottom'],
-            "paddingLeft": paddings['left'],
-        }, timeout=30)
-        res.raise_for_status()
-        return res
+        try:
+            logging.info(
+                'Getting image from API (try number {})...'.format(i + 1))
+            paddings = {
+                'top': 70,
+                'right': 10,
+                'bottom': 20,
+                'left': 10,
+            }
+            res = requests.get(config['RENDER_URL'], stream=True, params={
+                "batteryLevel": battery_level,
+                "batteryCharging": 'false' if is_on_battery else 'true',
+                "showBatteryPercentage": 'true',
+                "lat": config['RENDER_LATITUDE'],
+                "lon": config['RENDER_LONGITUDE'],
+                "locationName": config['RENDER_LOCATION_NAME'],
+                "timezone": config['RENDER_TIMEZONE'],
+                "apiKey": config['RENDER_API_KEY'],
+                # By default the image rendered is mirrored
+                "flop": 'true',
+                # These values are highly dependent on the physical installation of the screen
+                "width": DISPLAY_WIDTH - paddings['right'] - paddings['left'],
+                "height": DISPLAY_HEIGHT - paddings['top'] - paddings['bottom'],
+                "paddingTop": paddings['top'],
+                "paddingRight": paddings['right'],
+                "paddingBottom": paddings['bottom'],
+                "paddingLeft": paddings['left'],
+            }, timeout=60)
+            res.raise_for_status()
+            return res
+        except Exception as e:
+            logging.warn('Try number {} failed: {}'.format(i, e))
+            logging.warn(e)
+            continue
 
     raise Exception('Failed to request image API even after retries')
 
@@ -242,6 +245,8 @@ def run_cmd(cmd):
 
 
 def display_render_image(file_path, fit=False):
+    display_clear()
+
     if fit:
         run_cmd('convert {} -thumbnail {}x{} -background white -gravity center -extent {}x{} fitted.png'.format(
             file_path, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH, DISPLAY_HEIGHT))
