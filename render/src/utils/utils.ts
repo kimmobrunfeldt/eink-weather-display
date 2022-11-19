@@ -41,8 +41,9 @@ export function getBatteryIcon(level: number, charging?: boolean): string {
 }
 
 export async function writeDebugFile(name: string, data: any) {
-  const date = dateFns.format(new Date(), 'yyyy-MM-dd_HHmmss')
-  const fileName = `${date}-${name}`
+  const date = dateFns.format(new Date(), 'yyyy-MM-dd')
+  const dateTime = dateFns.format(new Date(), 'yyyy-MM-dd_HHmmss')
+  const fileName = `${dateTime}-${name}`
 
   if (environment.NODE_ENV === 'development') {
     return writeLocalDebugFile(fileName, data)
