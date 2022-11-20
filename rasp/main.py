@@ -30,7 +30,8 @@ WAKEUP_ON_CHARGE_BATTERY_LEVEL = 0
 def main_wrapper():
     args = parse_args()
 
-    logging.info('Running main.py')
+    # Note logging isn't sent to GCP before internet is available
+    logging.info('Running main_wrapper')
 
     pj = get_pijuice()
     # Enable as early as possible in case an exception is raised during processing
@@ -62,6 +63,9 @@ def main_wrapper():
 
 
 def main(pj):
+    wait_until_internet_connection()
+    logging.info('Running main')
+
     charge_level = pj.status.GetChargeLevel()
     logging.info('Charge level: {}'.format(charge_level))
     logging.debug('GetBatteryVoltage: {}'.format(
@@ -85,8 +89,6 @@ def main(pj):
     else:
         logging.info('Raspberry PI is on cable-connected power')
         display_clear()
-
-    wait_until_internet_connection()
 
     res = fetch_image(is_on_battery, charge_level["data"])
     logging.info('Image request done')
