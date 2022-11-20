@@ -101,6 +101,9 @@ def main(pj):
     logging.info('Render image returned by the API...')
     display_render_image(file_path)
 
+    if should_run_morning_tasks():
+        git_pull()
+
     # Enable again just in case time syncronisation has unset the alarm
     enable_wakeups(pj)
 
@@ -109,7 +112,7 @@ def fetch_image(is_on_battery, battery_level, retries=2):
     for i in range(retries + 1):
         try:
             logging.info(
-                'Getting image from API (try number {})...'.format(i + 1))
+                'Getting image from API (attempt {})...'.format(i))
             paddings = {
                 'top': 70,
                 'right': 10,
@@ -138,16 +141,16 @@ def fetch_image(is_on_battery, battery_level, retries=2):
             res.raise_for_status()
             return res
         except Exception as e:
-            logging.warn('Try number {} failed: {}'.format(i, e))
+            logging.warn('Attempt {} failed: {}'.format(i, e))
             logging.warn(e)
             continue
 
     raise Exception('Failed to request image API even after retries')
 
 
-def should_clear_display():
+def should_run_morning_tasks():
     now = datetime.utcnow()
-    # This should clear the display at least once at the morning run
+    # This should return True at least once in the morning
     return now.hour < 9
 
 
@@ -171,6 +174,11 @@ def shutdown(pj):
     pj.power.SetSystemPowerSwitch(0)
     pj.power.SetPowerOff(15)  # Cut power after n seconds
     os.system("sudo shutdown -h now")
+
+
+def git_pull():
+    logging.info('Running git pull ...')
+    run_cmd('cd /home/pi/eink-weather-display && git pull')
 
 
 def is_pijuice_on_battery(pj):
