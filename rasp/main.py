@@ -64,7 +64,9 @@ def main_wrapper():
 
 def main(pj):
     wait_until_internet_connection()
+
     logging.info('Running main')
+    run_cmd("git log --pretty=format:'%H %ad %s' -n 1")
 
     charge_level = pj.status.GetChargeLevel()
     logging.info('Charge level: {}'.format(charge_level))
