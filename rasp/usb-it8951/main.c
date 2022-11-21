@@ -369,10 +369,10 @@ print_vcom(int fd)
 		0x00,
 	};
 
-
 	unsigned char get_vcom_result[2];
 	memset(&get_vcom_result, 0, 2);
 
+	sg_io_hdr_t io_hdr;
 	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 	io_hdr.interface_id = 'S';
 	io_hdr.cmd_len = 16;
