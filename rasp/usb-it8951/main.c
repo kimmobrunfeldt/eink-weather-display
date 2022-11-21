@@ -175,17 +175,26 @@ display_area(int fd, int addr, int x, int y, int w, int h, int mode)
 	return 0;
 }
 
-int
-pmic_set(int fd, int power, int vcom)
+int pmic_set(int fd, int vcom)
 {
-
-
-	unsigned char load_image_cmd[16] = {
-		0xfe, 0x00, 0x00, 0x00, 0x00, 0x00,
-		0xa3,
-		(vcom >> 8) & 0xff, vcom & 0xff,
-		0x01,
-		0x01, power & 0xff
+	unsigned char set_vcom_cmd[16] = {
+		0xfe, // Customer command.
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0xa3, // PMIC (Power Management Integrated Circuits) command.
+		// Vcom millivolts interger value as big endian  // E.g. 2500 => -2500 mV = -2.5V
+		(vcom >> 8) & 0xff,
+		vcom & 0xff,
+		0x01, // Do Set VCom? (0 – no, 1 – yes)
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
 	};
 
 	sg_io_hdr_t io_hdr;
@@ -195,7 +204,7 @@ pmic_set(int fd, int power, int vcom)
 	io_hdr.cmd_len = 16;
 	io_hdr.dxfer_direction = SG_DXFER_TO_DEV;
 	io_hdr.dxfer_len = 0;
-	io_hdr.cmdp = load_image_cmd;
+	io_hdr.cmdp = set_vcom_cmd;
 	io_hdr.timeout = 5000;
 
 	if (ioctl(fd, SG_IO, &io_hdr) < 0) {
@@ -221,17 +230,8 @@ update_region(const char *filename, int x, int y, int w, int h, int mode)
 		exit(EXIT_FAILURE);
 	}
 
-
 	unsigned char inquiry_cmd[6] = {0x12, 0, 0, 0, 0, 0};
 	unsigned char inquiry_result[96];
-	unsigned char deviceinfo_cmd[12] = {
-		0xfe, 0x00, // SCSI Customer command
-		0x38, 0x39, 0x35, 0x31, // Chip signature
-		0x80, 0x00, // Get System Info
-		0x01, 0x00, 0x02, 0x00 // Version
-	};
-	unsigned char deviceinfo_result[112];
-
 
 	sg_io_hdr_t io_hdr;
 
@@ -264,8 +264,23 @@ update_region(const char *filename, int x, int y, int w, int h, int mode)
 	}
 
 	if (debug == 1) {
+		printf("Setting vcom value\n");
+	}
+
+	pmic_set(fd, 1150); // Set vcom value to -1.15
+	print_vcom(fd);
+
+	if (debug == 1) {
 		printf("Fetching device info\n");
 	}
+
+	unsigned char deviceinfo_cmd[12] = {
+		0xfe, 0x00, // SCSI Customer command
+		0x38, 0x39, 0x35, 0x31, // Chip signature
+		0x80, 0x00, // Get System Info
+		0x01, 0x00, 0x02, 0x00 // Version
+	};
+	unsigned char deviceinfo_result[112];
 
 	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 	io_hdr.interface_id = 'S';
@@ -333,17 +348,70 @@ update_region(const char *filename, int x, int y, int w, int h, int mode)
 }
 
 void
+print_vcom(int fd)
+{
+	unsigned char get_vcom_cmd[16] = {
+		0xfe, // Customer command.
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0xa3,	// PMIC (Power Management Integrated Circuits) command.
+		0x00,
+		0x00,
+		0x00,	 // Do Set VCom? (0 – no, 1 – yes)
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+	};
+
+
+	unsigned char get_vcom_result[2];
+	memset(&get_vcom_result, 0, 2);
+
+	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
+	io_hdr.interface_id = 'S';
+	io_hdr.cmd_len = 16;
+	io_hdr.dxfer_direction = SG_DXFER_TO_DEV;
+	io_hdr.dxfer_len = 2;
+	io_hdr.dxferp = get_vcom_result;
+	io_hdr.cmdp = get_vcom_cmd;
+	io_hdr.timeout = 5000;
+
+	if (ioctl(fd, SG_IO, &io_hdr) < 0) {
+		perror("SG_IO get_vcom failed");
+	}
+
+	printf("Get vcom response:\n");
+	print_bytes(&get_vcom_result, 2);
+}
+
+void print_bytes(void *ptr, int size)
+{
+		unsigned char *p = ptr;
+		int i;
+		for (i=0; i<size; i++) {
+				printf("%02hhX ", p[i]);
+		}
+		printf("\n");
+}
+
+void
 print_usage(const char *name)
 {
 	fprintf(stderr, "Usage: %s [-m mode] [-dc] device x y w h\n", name);
 	fprintf(stderr, "Options are:\n"
-			"    -m: Refresh mode, 0=blank, 2=G16 (default), 4=A2\n"
-			"    -d: Enable debug output\n"
-			"    -c: Use a clean image instead of stdin\n"
-			"    device: path to the disk device\n"
-			"    x y: position of the image\n"
-			"    w h: width and height of the image\n\n"
-			"    Send the image to stdin as 8 bit grayscale\n");
+			"		-m: Refresh mode, 0=blank, 2=G16 (default), 4=A2\n"
+			"		-d: Enable debug output\n"
+			"		-c: Use a clean image instead of stdin\n"
+			"		device: path to the disk device\n"
+			"		x y: position of the image\n"
+			"		w h: width and height of the image\n\n"
+			"		Send the image to stdin as 8 bit grayscale\n");
 	exit(EXIT_FAILURE);
 }
 
