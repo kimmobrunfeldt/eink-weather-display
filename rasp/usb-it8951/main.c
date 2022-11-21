@@ -175,6 +175,59 @@ display_area(int fd, int addr, int x, int y, int w, int h, int mode)
 	return 0;
 }
 
+void print_bytes(void *ptr, int size)
+{
+		unsigned char *p = ptr;
+		int i;
+		for (i=0; i<size; i++) {
+				printf("%02hhX ", p[i]);
+		}
+		printf("\n");
+}
+
+void
+print_vcom(int fd)
+{
+	unsigned char get_vcom_cmd[16] = {
+		0xfe, // Customer command.
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0xa3,	// PMIC (Power Management Integrated Circuits) command.
+		0x00,
+		0x00,
+		0x00,	 // Do Set VCom? (0 – no, 1 – yes)
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+		0x00,
+	};
+
+	unsigned char get_vcom_result[2];
+	memset(&get_vcom_result, 0, 2);
+
+	sg_io_hdr_t io_hdr;
+	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
+	io_hdr.interface_id = 'S';
+	io_hdr.cmd_len = 16;
+	io_hdr.dxfer_direction = SG_DXFER_TO_DEV;
+	io_hdr.dxfer_len = 2;
+	io_hdr.dxferp = get_vcom_result;
+	io_hdr.cmdp = get_vcom_cmd;
+	io_hdr.timeout = 5000;
+
+	if (ioctl(fd, SG_IO, &io_hdr) < 0) {
+		perror("SG_IO get_vcom failed");
+	}
+
+	printf("Get vcom response:\n");
+	print_bytes(&get_vcom_result, 2);
+}
+
 int pmic_set(int fd, int vcom)
 {
 	unsigned char set_vcom_cmd[16] = {
@@ -345,59 +398,6 @@ update_region(const char *filename, int x, int y, int w, int h, int mode, int vc
 		printf("Starting refresh\n");
 	}
 	display_area(fd, addr, x, y, w, h, mode);
-}
-
-void
-print_vcom(int fd)
-{
-	unsigned char get_vcom_cmd[16] = {
-		0xfe, // Customer command.
-		0x00,
-		0x00,
-		0x00,
-		0x00,
-		0x00,
-		0xa3,	// PMIC (Power Management Integrated Circuits) command.
-		0x00,
-		0x00,
-		0x00,	 // Do Set VCom? (0 – no, 1 – yes)
-		0x00,
-		0x00,
-		0x00,
-		0x00,
-		0x00,
-		0x00,
-	};
-
-	unsigned char get_vcom_result[2];
-	memset(&get_vcom_result, 0, 2);
-
-	sg_io_hdr_t io_hdr;
-	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
-	io_hdr.interface_id = 'S';
-	io_hdr.cmd_len = 16;
-	io_hdr.dxfer_direction = SG_DXFER_TO_DEV;
-	io_hdr.dxfer_len = 2;
-	io_hdr.dxferp = get_vcom_result;
-	io_hdr.cmdp = get_vcom_cmd;
-	io_hdr.timeout = 5000;
-
-	if (ioctl(fd, SG_IO, &io_hdr) < 0) {
-		perror("SG_IO get_vcom failed");
-	}
-
-	printf("Get vcom response:\n");
-	print_bytes(&get_vcom_result, 2);
-}
-
-void print_bytes(void *ptr, int size)
-{
-		unsigned char *p = ptr;
-		int i;
-		for (i=0; i<size; i++) {
-				printf("%02hhX ", p[i]);
-		}
-		printf("\n");
 }
 
 void
