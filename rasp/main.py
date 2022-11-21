@@ -268,12 +268,12 @@ def display_render_image(file_path, fit=False):
     run_cmd('stream -map r -storage-type char {} image.raw'.format(file_path))
 
     # Run process to update the image
-    run_cmd('sudo /home/pi/usb-it8951/build/it8951 /dev/sda 0 0 {} {} < image.raw'.format(
+    run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d /dev/sda 0 0 {} {} < image.raw'.format(
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
 def display_clear():
-    run_cmd('sudo /home/pi/usb-it8951/build/it8951 -c -m 0 /dev/sda 0 0 {} {} < image.raw'.format(
+    run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d -c -m 0 /dev/sda 0 0 {} {} < image.raw'.format(
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
