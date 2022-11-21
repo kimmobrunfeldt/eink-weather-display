@@ -268,11 +268,19 @@ def display_render_image(file_path, fit=False):
     run_cmd('stream -map r -storage-type char {} image.raw'.format(file_path))
 
     # Run process to update the image
+    # The default mode is -m 2 (= Mode 2 GC16)
+    # more here https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT and https://www.waveshare.com/w/upload/c/c4/E-paper-mode-declaration.pdf
     run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d /dev/sda 0 0 {} {} < image.raw'.format(
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
 def display_clear():
+    # Waveshare Wiki states:
+    #  "INIT This mode is used for clearing the display. If you use A2 mode for
+    #   updating, we recommend you use the INIT mode to clear display after
+    #   updating several times."
+    #
+    # In the command, -m 0 refers to the INIT mode (Mode 0).
     run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d -c -m 0 /dev/sda 0 0 {} {} < image.raw'.format(
         DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
