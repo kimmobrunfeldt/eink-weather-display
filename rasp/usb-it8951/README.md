@@ -1,3 +1,8 @@
+**Note, copied from https://sr.ht/~martijnbraam/it8951/**
+
+
+Original readme below:
+
 # IT8951 e-paper controller
 
 This is a small utility to send images to an e-paper display using an IT8951
