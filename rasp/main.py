@@ -14,6 +14,11 @@ import requests
 import shutil
 
 
+BINARY_PATH = '/home/pi/eink-weather-display/rasp/usb-it8951/build/it8951'
+# Millivoltages as positive integer. E.g. 2500 => -2500 mV = -2.5V
+VCOM = 1150
+
+
 def parse_args():
     p = argparse.ArgumentParser(description='eink-weather-display main.py')
     p.add_argument('--no-shutdown', action='store_true',
@@ -270,8 +275,8 @@ def display_render_image(file_path, fit=False):
     # Run process to update the image
     # The default mode is -m 2 (= Mode 2 GC16)
     # more here https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT and https://www.waveshare.com/w/upload/c/c4/E-paper-mode-declaration.pdf
-    run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d /dev/sda 0 0 {} {} < image.raw'.format(
-        DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    run_cmd('sudo {} -v {} -d /dev/sda 0 0 {} {} < image.raw'.format(BINARY_PATH, VCOM,
+                                                                     DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
 def display_clear():
@@ -281,8 +286,8 @@ def display_clear():
     #   updating several times."
     #
     # In the command, -m 0 refers to the INIT mode (Mode 0).
-    run_cmd('sudo /home/pi/usb-it8951/build/it8951 -d -c -m 0 /dev/sda 0 0 {} {} < image.raw'.format(
-        DISPLAY_WIDTH, DISPLAY_HEIGHT))
+    run_cmd('sudo {} -v {} -d -c -m 0 /dev/sda 0 0 {} {} < image.raw'.format(BINARY_PATH, VCOM,
+                                                                             DISPLAY_WIDTH, DISPLAY_HEIGHT))
 
 
 @contextmanager

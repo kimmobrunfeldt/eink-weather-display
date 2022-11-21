@@ -215,7 +215,7 @@ int pmic_set(int fd, int vcom)
 
 
 void
-update_region(const char *filename, int x, int y, int w, int h, int mode)
+update_region(const char *filename, int x, int y, int w, int h, int mode, int vcom)
 {
 	int fd, to, res;
 	fd = open(filename, O_RDWR | O_NONBLOCK);
@@ -267,7 +267,7 @@ update_region(const char *filename, int x, int y, int w, int h, int mode)
 		printf("Setting vcom value\n");
 	}
 
-	pmic_set(fd, 1150); // Set vcom value to -1.15
+	pmic_set(fd, vcom);
 	print_vcom(fd);
 
 	if (debug == 1) {
@@ -403,11 +403,12 @@ void print_bytes(void *ptr, int size)
 void
 print_usage(const char *name)
 {
-	fprintf(stderr, "Usage: %s [-m mode] [-dc] device x y w h\n", name);
+	fprintf(stderr, "Usage: %s [-v vcom] [-m mode] [-dc] device x y w h\n", name);
 	fprintf(stderr, "Options are:\n"
 			"		-m: Refresh mode, 0=blank, 2=G16 (default), 4=A2\n"
 			"		-d: Enable debug output\n"
 			"		-c: Use a clean image instead of stdin\n"
+			"		-v: Set vcom value as positive millivoltage integer. E.g. 2500 (-2500 mV = -2.5V)\n"
 			"		device: path to the disk device\n"
 			"		x y: position of the image\n"
 			"		w h: width and height of the image\n\n"
@@ -420,10 +421,15 @@ main(int argc, char *argv[])
 {
 	int opt;
 	int mode = 2;
-	while ((opt = getopt(argc, argv, "m:dc")) != -1) {
+	int vcom = 1500;
+
+	while ((opt = getopt(argc, argv, "v:m:dc")) != -1) {
 		switch (opt) {
 			case 'm':
 				mode = strtol(optarg, NULL, 10);
+				break;
+			case 'v':
+				vcom = strtol(optarg, NULL, 10);
 				break;
 			case 'd':
 				debug = 1;
@@ -444,6 +450,6 @@ main(int argc, char *argv[])
 	int w = strtol(argv[optind + 3], NULL, 10);
 	int h = strtol(argv[optind + 4], NULL, 10);
 
-	update_region(argv[optind], x, y, w, h, mode);
+	update_region(argv[optind], x, y, w, h, mode, vcom);
 	return 0;
 }
