@@ -317,7 +317,7 @@ update_region(const char *filename, int x, int y, int w, int h, int mode, int vc
 	}
 
 	if (debug == 1) {
-		printf("Setting vcom value\n");
+		printf("Setting vcom value to %d\n", vcom);
 	}
 
 	pmic_set(fd, vcom);
