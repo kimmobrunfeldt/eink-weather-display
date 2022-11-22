@@ -224,8 +224,10 @@ print_vcom(int fd)
 		perror("SG_IO get_vcom failed");
 	}
 
-	printf("Get vcom response:\n");
+	printf("Get vcom response (bytes):\n");
 	print_bytes(&get_vcom_result, 2);
+
+	printf("Vcom value: %u\n", (unsigned int) __bswap_16(get_vcom_result));
 }
 
 int pmic_set(int fd, int vcom)
