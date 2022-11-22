@@ -214,7 +214,7 @@ print_vcom(int fd)
 	memset(&io_hdr, 0, sizeof(sg_io_hdr_t));
 	io_hdr.interface_id = 'S';
 	io_hdr.cmd_len = 16;
-	io_hdr.dxfer_direction = SG_DXFER_TO_DEV;
+	io_hdr.dxfer_direction = SG_DXFER_FROM_DEV;
 	io_hdr.dxfer_len = 2;
 	io_hdr.dxferp = get_vcom_result;
 	io_hdr.cmdp = get_vcom_cmd;
