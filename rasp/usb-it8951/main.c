@@ -328,10 +328,18 @@ update_region(const char *filename, int x, int y, int w, int h, int mode, int vc
 	}
 
 	unsigned char deviceinfo_cmd[12] = {
-		0xfe, 0x00, // SCSI Customer command
-		0x38, 0x39, 0x35, 0x31, // Chip signature
-		0x80, 0x00, // Get System Info
-		0x01, 0x00, 0x02, 0x00 // Version
+		0xfe,
+		0x00, // SCSI Customer command
+		0x38,
+		0x39,
+		0x35,
+		0x31, // Chip signature
+		0x80,
+		0x00, // Get System Info
+		0x01,
+		0x00,
+		0x02,
+		0x00 // Version
 	};
 	unsigned char deviceinfo_result[112];
 
