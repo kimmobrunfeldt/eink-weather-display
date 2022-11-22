@@ -215,7 +215,7 @@ print_vcom(int fd)
 	io_hdr.interface_id = 'S';
 	io_hdr.cmd_len = 16;
 	io_hdr.dxfer_direction = SG_DXFER_FROM_DEV;
-	io_hdr.dxfer_len = 2;
+	io_hdr.dxfer_len = sizeof(get_vcom_result);
 	io_hdr.dxferp = get_vcom_result;
 	io_hdr.cmdp = get_vcom_cmd;
 	io_hdr.timeout = 5000;
@@ -225,9 +225,11 @@ print_vcom(int fd)
 	}
 
 	printf("Get vcom response (bytes):\n");
-	print_bytes(&get_vcom_result, 2);
+	print_bytes(&get_vcom_result, sizeof(get_vcom_result));
 
-	printf("Vcom value: %u\n", (unsigned int) __bswap_16(get_vcom_result));
+	int vcom_value = 0;
+	vcom_value = (int)get_vcom_result[0] << 8 | (int)get_vcom_result[1]; // Convert BE -> LE
+	printf("Vcom value: %d\n", vcom_value);
 }
 
 int pmic_set(int fd, int vcom)
