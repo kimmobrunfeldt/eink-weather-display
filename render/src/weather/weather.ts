@@ -195,8 +195,13 @@ function calculateShortTermDataPoint(
 
   const baseData = {
     time,
-    temperature: _.mean(data.map((d) => d.Temperature)),
-    windSpeedMs: _.mean(data.map((d) => d.WindSpeedMS)),
+    // Averages could be used here to give a sense of the weather between e.g.
+    // 12 - 15:00. However after using the average temperatures for a while, it
+    // felt that the temperatures don't fluctuate as much as they "should" compared
+    // to my weather app. It's easy to interpolation between the 12 and 15:00 forecasts
+    // so having the exact values during that hour makes sense.
+    temperature: exactMatch.Temperature,
+    windSpeedMs: exactMatch.WindSpeedMS,
     precipitation1h: exactMatch.Precipitation1h,
     // Note! Assumes 60min timesteps within forecast data
     precipitationAmountFromNowToNext: sumByOrNull(
