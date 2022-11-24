@@ -137,7 +137,8 @@ Most of the software lives in Google Cloud. This off-loads a lot of processing a
 * Setup crontab. Run refresh on boot, and shutdown device if on battery.
 
     ```
-    @reboot cd /home/pi/eink-weather-display/rasp && python main.py
+    @reboot cd /home/pi/eink-weather-display/rasp && ./wait-for-network.sh || python main.py
+
 
     # Every minute
     * * * * * cd /home/pi/eink-weather-display/rasp && python shutdown_if_on_battery.py
