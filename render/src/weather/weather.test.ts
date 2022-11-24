@@ -437,10 +437,10 @@ describe('calculateShortTermForecast', () => {
         precipitationAmountFromNowToNext: 21,
         pressure: 1000,
         symbol: 1,
-        temperature: 12.5, // avg of 10 and 15
+        temperature: 15, // takes the temperature of the exact forecast time (15)
         time: new Date('2022-11-02T09:00:00.000Z'),
-        windGustMs: 20, // avg of 15 and 25
-        windSpeedMs: 7.5, // avg of 5 and 10
+        windGustMs: 25, // takes the max gust speed of forecast points (15 and 25)
+        windSpeedMs: 5, // takes the wind speed of the exact forecast time (5)
       },
     ])
   })
