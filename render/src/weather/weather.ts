@@ -234,7 +234,7 @@ function calculateShortTermDataPoint(
   return {
     ...baseData,
     type: 'forecast',
-    windGustMs: _.mean(forecasts.map((d) => d.WindGust)),
+    windGustMs: Math.max(...forecasts.map((d) => d.WindGust)),
     pressure: _.mean(forecasts.map((d) => d.Pressure)),
     dewPoint: _.mean(forecasts.map((d) => d.DewPoint)),
     symbol: symbol as WeatherSymbolNumber,
