@@ -137,11 +137,11 @@ Most of the software lives in Google Cloud. This off-loads a lot of processing a
 * Setup crontab. Run refresh on boot, and shutdown device if on battery.
 
     ```
-    @reboot cd /home/pi/eink-weather-display/rasp && ./wait-for-network.sh || python main.py
+    @reboot (cd /home/pi/eink-weather-display/rasp; ./wait-for-network.sh; python main.py;) >> /home/pi/cron.log 2>&1
 
 
     # Every minute
-    * * * * * cd /home/pi/eink-weather-display/rasp && python shutdown_if_on_battery.py
+    * * * * * (cd /home/pi/eink-weather-display/rasp; python shutdown_if_on_battery.py;) >> /home/pi/cron.log 2>&1
     ```
 
 Side note: I did all the steps until here using Raspberry PI GPIO headers. However they ended up being too tall for the frame. Instead of soldering GPIO pins to make everything fit, I checked if the IT8951 controller was possible to use via its USB interface.
