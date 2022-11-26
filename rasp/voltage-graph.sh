@@ -25,7 +25,7 @@ gnuplot -p -e '
   set xdata time;
   set timefmt "%Y-%m-%dT%H:%M:%SZ";
   set format x "%d.%m.\n%H:%M";
-  set xrange [time(0) - 3600 * 24 * 7:time(0 + 3600 * 12)];
+  set xrange [time(0) - 3600 * 24 * 7:time(0) + 3600 * 24 * 90];
 
 
   set style data lines;
@@ -45,8 +45,13 @@ gnuplot -p -e '
 
   set multiplot layout 3,1;
 
+  a=10e-10;
+  f(x) = a*x + b;
+  fit [time(0) - 3600 * 24 * 3:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
+
   set yr [0:100];
-  plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints;
+  plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints,
+       [time(0) - 3600 * 24 * 3:] f(x);
   unset yr;
   plot ".temp-data-voltage.tsv" using 1:2 title "Voltage" linestyle 2 with linespoints;
   set yr [0:80];
