@@ -1,15 +1,38 @@
 #!/bin/bash
 
 
-set -x
+function usage() {
+  echo "Usage: $0 [-l true/false]" 1>&2
+  echo -e "\nExample: use local log files instead of fetching from GCP" 1>&2
+  echo "   \$ $0 -l true" 1>&2
+  exit 1
+}
 
-USE_LOCAL_LOGS=${1:-"no"}
+USE_LOCAL_LOGS=false
+
+while getopts "l:" opt; do
+    case "${opt}" in
+        l)
+            USE_LOCAL_LOGS=${OPTARG}
+            if [[ "$USE_LOCAL_LOGS" != "true" && "$USE_LOCAL_LOGS" != "false" ]]; then
+              echo "Error: -l must be 'true' or 'false'. Got '$USE_LOCAL_LOGS'" 1>&2
+              exit 1
+            fi
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND - 1))
+
+set -x
 
 LOG_QUERY_LEVEL="-logName=\"projects/weather-display-367406/logs/cloudbuild\" logName=\"projects/weather-display-367406/logs/python\" \"Charge level:\""
 LOG_QUERY_VOLTAGE="-logName=\"projects/weather-display-367406/logs/cloudbuild\" logName=\"projects/weather-display-367406/logs/python\" GetBatteryVoltage"
 LOG_QUERY_TEMPERATURE="-logName=\"projects/weather-display-367406/logs/cloudbuild\" logName=\"projects/weather-display-367406/logs/python\" GetBatteryTemperature"
 
-if [ -z "$1" ]; then
+if [ "$USE_LOCAL_LOGS" != "true" ]; then
   gcloud logging read "$LOG_QUERY_LEVEL" --limit 1000 --freshness 60d --format json --project weather-display-367406 > .temp-logs-level.json
   gcloud logging read "$LOG_QUERY_VOLTAGE" --limit 1000 --freshness 60d --format json --project weather-display-367406 > .temp-logs-voltage.json
   gcloud logging read "$LOG_QUERY_TEMPERATURE" --limit 1000 --freshness 60d --format json --project weather-display-367406 > .temp-logs-temperature.json
@@ -38,7 +61,6 @@ gnuplot -p -e '
   set rmargin 10;
   set tmargin 2;
 
-
   set datafile separator "\t";
   set terminal pngcairo size 2000,1400;
   set output "graph.png";
@@ -51,7 +73,7 @@ gnuplot -p -e '
 
   set yr [0:100];
   plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints,
-       [time(0) - 3600 * 24 * 3:] f(x);
+       [time(0) - 3600 * 24 * 3:] f(x) title "Predicted level";
   unset yr;
   plot ".temp-data-voltage.tsv" using 1:2 title "Voltage" linestyle 2 with linespoints;
   set yr [0:80];
