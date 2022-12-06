@@ -167,6 +167,9 @@ def should_run_morning_tasks():
 
 
 def enable_wakeups(pj):
+    alarm_config = {'second': 0, 'minute': 0, 'hour': '4;7;10;13;16;19', 'day': 'EVERY_DAY'}
+    logging.debug('pj.rtcAlarm.SetAlarm() with params: {}'.format(alarm_config))
+    pj.rtcAlarm.SetAlarm(alarm_config)
     logging.debug('pj.rtcAlarm.GetAlarm(): {}'.format(pj.rtcAlarm.GetAlarm()))
     # It looked like it's possible that time sync unsets the RTC alarm.
     # https://github.com/PiSupply/PiJuice/issues/362
