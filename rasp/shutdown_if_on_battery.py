@@ -3,7 +3,7 @@
 import logging
 from main import shutdown, get_pijuice, is_pijuice_on_battery, enable_wakeups, is_ssh_active
 
-MIN_UPTIME_SECONDS = 60 * 2
+
 MAX_SSH_UPTIME_SECONDS = 60 * 60
 
 

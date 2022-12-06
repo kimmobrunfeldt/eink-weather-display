@@ -327,8 +327,35 @@ variable | label | base_phenomenon | unit | stat_function | agg_period
 
 ## Maintenance guide
 
+### SSS connection
+
+There are two methods:
+
+1. Method 1: SSH while on battery. Note: the device shuts down after max ssh time (see shutdown_if_on_battery.py)
+
+  * Run `until ssh -o ConnectTimeout=2 raspzero2 ; do ; done;` on laptop and move to next step.
+
+      SSH connection needs to be active before the main.py shuts down the device.
+
+  * Press the physical on switch in PiJuice board.
+
+2. Method 2: SSH while plugged on power.
+
+    * Take the display off the wall, and plug micro usb to PiJuice usb connector.
+    * Wait until on
+    * `ssh raspzero2`
+
+        The device won't automatically shutdown while power is connected.
+
+**After SSH session*
+
+Use `shutd` (`alias shutd='cd ~/eink-weather-display/rasp && python shutdown.py'`) to shutdown the Pi after SSH session.
+
+This ensures that the RTC alarm is set correctly.
+
+### Tips
+
 * Logs are at GCP Logging Explorer
 * Power should turn on automatically when cable is connected
 * Power should keep on even on battery if any SSH session is active, unless max uptime is exceeded (safely timeout to avoid draining battery)
-* `ssh raspzero2` to connect via SSH
 * `git pull` is executed once a day within Raspberry Pi
