@@ -2,7 +2,8 @@
 
 import os
 import logging
-from datetime import datetime
+import pytz
+from datetime import datetime, date
 import time
 import subprocess
 import argparse
@@ -163,11 +164,29 @@ def fetch_image(is_on_battery, battery_level, retries=2):
 def should_run_morning_tasks():
     now = datetime.utcnow()
     # This should return True at least once in the morning
-    return now.hour < 9
+    return now.hour <= 5
+
+
+def get_local_hour_as_utc(hour):
+    local_tz = pytz.timezone('Europe/Helsinki')
+    offset_secs = local_tz.utcoffset(datetime.now()).total_seconds()
+    offset_hour = int(offset_secs / 60 / 60)
+    utc_hour = hour - offset_hour
+    if utc_hour < 0:
+        return 24 - abs(utc_hour)
+    return utc_hour % 24  # Wrap to max 23
 
 
 def enable_wakeups(pj):
-    alarm_config = {'second': 0, 'minute': 0, 'hour': '4;7;10;13;16;19', 'day': 'EVERY_DAY'}
+    # Wakeup at 6:00, 9, 12, 15, 18, and 21 at Europe/Helsinki time
+    local_hours = [6, 9, 12, 15, 18, 21]
+    utc_hours = [get_local_hour_as_utc(h) for h in local_hours]
+    alarm_config = {
+        'second': 0,
+        'minute': 0,
+        'hour': ';'.join(map(str, utc_hours)),
+        'day': 'EVERY_DAY'
+    }
     logging.debug('pj.rtcAlarm.SetAlarm() with params: {}'.format(alarm_config))
     pj.rtcAlarm.SetAlarm(alarm_config)
     logging.debug('pj.rtcAlarm.GetAlarm(): {}'.format(pj.rtcAlarm.GetAlarm()))

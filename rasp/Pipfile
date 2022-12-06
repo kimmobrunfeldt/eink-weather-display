@@ -8,6 +8,7 @@ google-cloud-logging = "*"
 requests = "*"
 pillow = "==9.3.0"
 "rpi.gpio" = "*"
+pytz = "*"
 
 [dev-packages]
 

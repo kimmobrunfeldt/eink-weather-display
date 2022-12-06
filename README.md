@@ -110,7 +110,7 @@ Most of the software lives in Google Cloud. This off-loads a lot of processing a
 
 * `sudo apt install python3-pip`
 * ~`pip install pipenv`~  Edit: I wasn't able to get pipenv working due to pijuice being system-wide package. Ended up going with all-system-wide packages.
-* `cd eink-weather-display && pip install Pillow==9.3.0 google-cloud-logging requests python-dotenv` Install Python deps
+* `cd eink-weather-display && pip install Pillow==9.3.0 google-cloud-logging requests python-dotenv pytz` Install Python deps
 * Setup env variables: `cp .env.example .env` and fill in the details
 * Follow installation guide from https://www.waveshare.com/wiki/10.3inch_e-Paper_HAT to get the E-Ink display working
 * After install, test that the demo software (in C) works
