@@ -3,7 +3,7 @@
 import logging
 from main import shutdown, get_pijuice, is_pijuice_on_battery, enable_wakeups, is_ssh_active
 
-
+MIN_UPTIME_SECONDS = 60 * 2
 MAX_SSH_UPTIME_SECONDS = 60 * 60
 
 
@@ -21,6 +21,9 @@ if __name__ == '__main__':
 
     pj = get_pijuice()
     is_on_battery = is_pijuice_on_battery(pj)
+    if uptime_secs < MIN_UPTIME_SECONDS:
+        logging.info('Min uptime not exceeded yet ({}s), keeping power on'.format(
+            MIN_UPTIME_SECONDS))
     if not is_on_battery:
         logging.info(
             'Raspberry PI connected to power cable, keeping power on!')
