@@ -132,7 +132,7 @@ Most of the software lives in Google Cloud. This off-loads a lot of processing a
 
     * System events
         * ~Low charge, Low battery voltage and No power: SYS_FUNC_HALT_POW_OFF (docs: https://github.com/PiSupply/PiJuice/blob/master/Software/README.md#user-functions)~. Edit: these seemed to shutdown the device every once in a while. Everything worked more stable without setting any of these.
-    * Wake-up alarm: every day at 04:00 UTC (6AM Helsinki time in the winter, 7AM in the summer)
+    * ~Wake-up alarm: every day at 04:00 UTC (6AM Helsinki time in the winter, 7AM in the summer)~ Edit: code will set these, edit main.py
 * After that's done, you can test the PiJuice + E-Ink display together.
 * Setup crontab. Run refresh on boot, and shutdown device if on battery.
 
@@ -148,7 +148,7 @@ Side note: I did all the steps until here using Raspberry PI GPIO headers. Howev
 
 And fortunately, it was!
 
-* Install https://git.sr.ht/~martijnbraam/it8951 at `/home/pi/usb-it8591` directory and build it in Raspberry
+* cd `rasp/usb-it8951/` and follow README.md instructions to get it build and working. Build it in Raspberry Pi.
   * Find which /dev/sdX your usb device is, and change all commands from `main.py` accordingly
 * `sudo apt install imagemagick`
 * Finally, edit main.py to have correct paddings. Due to the physical installation, not all pixels of the E-Ink display are visible.
