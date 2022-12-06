@@ -323,3 +323,12 @@ variable | label | base_phenomenon | unit | stat_function | agg_period
 10 | PRI_PT1H_MAX | Maximum precipitation intensity | Amount of precipitation | mm/h | max | PT1H
 11 | PA_PT1H_AVG | Air pressure | Air pressure | hPa | avg | PT1H
 12 | WAWA_PT1H_RANK | Present weather (auto) | Weather |  | rank | PT1H
+
+
+## Maintenance guide
+
+* Logs are at GCP Logging Explorer
+* Power should turn on automatically when cable is connected
+* Power should keep on even on battery if any SSH session is active, unless max uptime is exceeded (safely timeout to avoid draining battery)
+* `ssh raspzero2` to connect via SSH
+* `git pull` is executed once a day within Raspberry Pi
