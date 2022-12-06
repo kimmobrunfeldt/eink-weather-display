@@ -48,13 +48,14 @@ gnuplot -p -e '
   set xdata time;
   set timefmt "%Y-%m-%dT%H:%M:%SZ";
   set format x "%d.%m.\n%H:%M";
-  set xrange [time(0) - 3600 * 24 * 7:time(0) + 3600 * 24 * 90];
+  set xrange [time(0) - 3600 * 24 * 21:time(0) + 3600 * 24 * 200];
 
 
   set style data lines;
   set style line 1 linewidth 2 linecolor "#00FF00" pointtype 7 pointsize 0.5;
   set style line 2 linewidth 2 linecolor "#9900FF" pointtype 7 pointsize 0.5;
   set style line 3 linewidth 2 linecolor "#FF0000" pointtype 7 pointsize 0.5;
+  set style fill transparent solid 0.1 noborder;
   set grid;
   set bmargin 2;
   set lmargin 10;
@@ -67,13 +68,16 @@ gnuplot -p -e '
 
   set multiplot layout 3,1;
 
-  a=10e-10;
+  a = 10e-10;
   f(x) = a*x + b;
-  fit [time(0) - 3600 * 24 * 3:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
+  fit [time(0) - 3600 * 24 * 7:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
+
+  stddev_y = 10;
 
   set yr [0:100];
   plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints,
-       [time(0) - 3600 * 24 * 3:] f(x) title "Predicted level";
+       [time(0) - 3600 * 24 * 7:] f(x) title "Predicted level",
+       [time(0) - 3600 * 24 * 7:] "+" using ($1):(f($1) - stddev_y):(f($1) + stddev_y) with filledcurves title "Confidence interval";
   unset yr;
   plot ".temp-data-voltage.tsv" using 1:2 title "Voltage" linestyle 2 with linespoints;
   set yr [0:80];

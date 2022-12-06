@@ -56,13 +56,18 @@ def main_wrapper():
             if shutdown_already_handled:
                 logging.info('main_wrapper: shutdown already handled')
             elif is_pijuice_on_battery(pj):
-                if not args.no_shutdown:
+                ssh_active = is_ssh_active()
+                if ssh_active:
+                    logging.info(
+                        'Raspberry PI is on battery, but ssh session is active, keeping power on')
+                elif args.no_shutdown:
+                    logging.info(
+                        'Raspberry PI is on battery, but --no-shutdown set, keeping power on')
+                else:
                     logging.info(
                         'Raspberry PI is on battery, shutting down ...')
                     shutdown(pj)
-                else:
-                    logging.info(
-                        'Raspberry PI is on battery, but --no-shutdown set')
+
             else:
                 logging.info('Raspberry PI is on charging, keeping power on!')
 
@@ -188,6 +193,12 @@ def git_pull():
     run_cmd('cd /home/pi/eink-weather-display && git pull')
 
 
+def is_ssh_active():
+    result = run_cmd('ss -a | grep ssh | grep ESTAB')
+    lines = result.stdout.decode('utf-8').strip().split()
+    return len(lines) > 0
+
+
 def is_pijuice_on_battery(pj):
     stat = pj.status.GetStatus()
     data = stat['data']
@@ -259,6 +270,7 @@ def run_cmd(cmd):
     logging.info('stderr:')
     logging.info(result.stderr)
     logging.info('End of process output.')
+    return result
 
 
 def display_render_image(file_path, fit=False):
