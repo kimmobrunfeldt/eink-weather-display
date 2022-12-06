@@ -72,12 +72,14 @@ gnuplot -p -e '
   f(x) = a*x + b;
   fit [time(0) - 3600 * 24 * 7:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
 
-  stddev_y = 10;
+  stddev_y = sqrt(FIT_WSSR / (FIT_NDF + 1));
+  print "stddev_y is:", stddev_y;
+  stddev_y_10x = stddev_y * 10;
 
   set yr [0:100];
   plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints,
        [time(0) - 3600 * 24 * 7:] f(x) title "Predicted level",
-       [time(0) - 3600 * 24 * 7:] "+" using ($1):(f($1) - stddev_y):(f($1) + stddev_y) with filledcurves title "Confidence interval";
+       [time(0):] "+" using ($1):(f($1) - stddev_y_10x):(f($1) + stddev_y_10x) with filledcurves title "Standard deviation 10{/Symbol \163}";
   unset yr;
   plot ".temp-data-voltage.tsv" using 1:2 title "Voltage" linestyle 2 with linespoints;
   set yr [0:80];
