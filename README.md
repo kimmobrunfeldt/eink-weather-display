@@ -359,3 +359,6 @@ This ensures that the RTC alarm is set correctly.
 * Power should turn on automatically when cable is connected
 * Power should keep on even on battery if any SSH session is active, unless max uptime is exceeded (safely timeout to avoid draining battery)
 * `git pull` is executed once a day within Raspberry Pi
+* To plot battery level and other measurements history and predicted levels, run `./battery-graph.sh && open graph.png`.
+
+    If you don't want to re-fetch data from GCP Logs on consecutive runs, use `./battery-graph.sh -l true && open graph.png` and it'll use locally saved files instead.
