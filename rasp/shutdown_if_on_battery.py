@@ -24,7 +24,7 @@ if __name__ == '__main__':
     if uptime_secs < MIN_UPTIME_SECONDS:
         logging.info('Min uptime not exceeded yet ({}s), keeping power on'.format(
             MIN_UPTIME_SECONDS))
-    if not is_on_battery:
+    elif not is_on_battery:
         logging.info(
             'Raspberry PI connected to power cable, keeping power on!')
     elif is_ssh_active():
