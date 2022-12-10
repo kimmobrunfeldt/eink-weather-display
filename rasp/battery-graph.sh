@@ -44,13 +44,23 @@ jq -r "$JQ_COMMAND" .temp-logs-voltage.json > .temp-data-voltage.tsv
 jq -r "$JQ_COMMAND" .temp-logs-temperature.json > .temp-data-temperature.tsv
 
 gnuplot -p -e '
+  PREDICTION_DAYS_BEFORE = 14;
+  SHOW_DAYS_BEFORE = 30;
+
   set autoscale;
   set xdata time;
   set timefmt "%Y-%m-%dT%H:%M:%SZ";
   set format x "%d.%m.\n%H:%M";
-  set xrange [time(0) - 3600 * 24 * 21:time(0) + 3600 * 24 * 200];
+  set datafile separator "\t";
 
+  a = 10e-10;
+  f(x) = a*x + b;
+  fit [time(0) - 3600 * 24 * PREDICTION_DAYS_BEFORE:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
+  g(y) = (y - b) / a;
+  timeframe_end = g(0) + 3600 * 24 * 1;
+  print "date at y=0 (battery level 0%) is", (g(0) - time(0)) / 3600 / 24, "days ahead";
 
+  set xrange [time(0) - 3600 * 24 * SHOW_DAYS_BEFORE:timeframe_end];
   set style data lines;
   set style line 1 linewidth 2 linecolor "#00FF00" pointtype 7 pointsize 0.5;
   set style line 2 linewidth 2 linecolor "#9900FF" pointtype 7 pointsize 0.5;
@@ -61,16 +71,10 @@ gnuplot -p -e '
   set lmargin 10;
   set rmargin 10;
   set tmargin 2;
-
-  set datafile separator "\t";
   set terminal pngcairo size 2000,1400;
   set output "graph.png";
-
   set multiplot layout 3,1;
 
-  a = 10e-10;
-  f(x) = a*x + b;
-  fit [time(0) - 3600 * 24 * 7:*] f(x) ".temp-data-level.tsv" using 1:2 via a, b;
 
   stddev_y = sqrt(FIT_WSSR / (FIT_NDF + 1));
   print "stddev_y is:", stddev_y;
@@ -78,7 +82,7 @@ gnuplot -p -e '
 
   set yr [0:100];
   plot ".temp-data-level.tsv" using 1:2 title "Battery level" linestyle 1 with linespoints,
-       [time(0) - 3600 * 24 * 7:] f(x) title "Predicted level",
+       [time(0) - 3600 * 24 * PREDICTION_DAYS_BEFORE:] f(x) title "Predicted level",
        [time(0):] "+" using ($1):(f($1) - stddev_y_10x):(f($1) + stddev_y_10x) with filledcurves title "Standard deviation 10{/Symbol \163}";
   unset yr;
   plot ".temp-data-voltage.tsv" using 1:2 title "Voltage" linestyle 2 with linespoints;
