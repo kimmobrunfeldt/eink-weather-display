@@ -214,7 +214,9 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          src: getSymbolIcon(closestShortTermForecastDataPoint.symbol, 'light'),
+          src: getSymbolIcon(
+            closestShortTermForecastDataPoint.symbol,
+            isDark(opts.location, closestShortTermDataPoint.time) ? 'dark' : 'light')
         }),
     },
     {
