@@ -79,7 +79,29 @@ describe('calculateTodaySummary', () => {
 
       // Correct datapoints
 
-      // Just at the start of day
+      // Just at the start of day (same time as observation so this should be ignored)
+      {
+        type: 'harmonie',
+        Temperature: -10000,
+        Humidity: -10000,
+        WindSpeedMS: -10000,
+        WindGust: -10000,
+        WindDirection: -10000,
+        Pressure: -10000,
+        Visibility: -10000,
+        PrecipitationAmount: -10000,
+        Precipitation1h: -10000,
+        DewPoint: -10000,
+        WeatherSymbol3: -10000,
+        time: mockTodayDates.startOfLocalDayInUtc,
+        // Location doesn't matter
+        location: {
+          lat: 0,
+          lon: 0,
+        },
+      },
+
+      // Beginning of the day
       {
         type: 'harmonie',
         Temperature: 9,
@@ -93,7 +115,7 @@ describe('calculateTodaySummary', () => {
         Precipitation1h: 10,
         DewPoint: 8.5,
         WeatherSymbol3: 1,
-        time: mockTodayDates.startOfLocalDayInUtc,
+        time: dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 8),
         // Location doesn't matter
         location: {
           lat: 0,
@@ -115,7 +137,7 @@ describe('calculateTodaySummary', () => {
         Precipitation1h: 0,
         DewPoint: 8.5,
         WeatherSymbol3: 31,
-        time: mockTodayDates.startOfLocalDayInUtc,
+        time: dateFns.addHours(mockTodayDates.startOfLocalDayInUtc, 12),
         // Location doesn't matter
         location: {
           lat: 0,
@@ -178,7 +200,7 @@ describe('calculateTodaySummary', () => {
           maxTemperature: 11,
         },
         forecast: {
-          avgTemperature: 10, // Average of 9, 11, and 10
+          avgTemperature: 10, // Average of 9, 11, and 10 (first forecast point is not taken into account because observation exists at the same time)
           minTemperature: 9,
           maxTemperature: 11,
           avgWindSpeedMs: 5, // avg of 4, 6, and 5

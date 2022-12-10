@@ -324,12 +324,22 @@ export function calculateTodaySummaryFromFmiData(
     startForecastAtHour,
     timezone
   )
-  const fmiForecastDataToday = fmiData.filter((d) =>
-    isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
-  )
   const fmiObservationsDataToday = fmiObservationData.filter((d) =>
     isBetweenInclusive(d.time, startOfLocalDayInUtc, endOfLocalDayInUtc)
   )
+  const fmiForecastDataToday = fmiData.filter((d) => {
+    const isBetween = isBetweenInclusive(
+      d.time,
+      startOfLocalDayInUtc,
+      endOfLocalDayInUtc
+    )
+    const isInObservations =
+      fmiObservationsDataToday.findIndex((obs) =>
+        dateFns.isEqual(obs.time, d.time)
+      ) !== -1
+    return isBetween && !isInObservations
+  })
+
   const combined = [...fmiForecastDataToday, ...fmiObservationsDataToday]
 
   const avgWindSpeedMs = _.mean(fmiForecastDataToday.map((d) => d.WindSpeedMS))
