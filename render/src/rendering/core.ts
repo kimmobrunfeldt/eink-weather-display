@@ -11,13 +11,14 @@ import { createPuppeteer, takeScreenshot } from 'src/rendering/puppeteer'
 import { Coordinate, LocalWeather } from 'src/types'
 import {
   formatNumber,
-  formatWindSpeed,
+  formatAccurateNumber,
   getBatteryIcon,
   getPathWithinSrc,
   getTodayDates,
   isDark,
   secondsToHoursAndMinutes,
   writeDebugFile,
+  formatPrecipitationNumber,
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import { getLocalWeatherData } from 'src/weather/weather'
@@ -230,13 +231,13 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-wind' } },
-      newContent: formatWindSpeed(weather.todaySummary.forecast.avgWindSpeedMs),
+      newContent: formatNumber(weather.todaySummary.forecast.avgWindSpeedMs, formatAccurateNumber),
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },
       newContent: formatNumber(
         weather.todaySummary.forecast.precipitationAmount,
-        Math.round
+        formatPrecipitationNumber
       ),
     },
     {
@@ -269,7 +270,7 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-uvi' } },
-      newContent: formatWindSpeed(
+      newContent: formatAccurateNumber(
         weather.todaySummary.forecast.maxUvIndex.value
       ),
     },
@@ -329,13 +330,13 @@ function getHtmlReplacements(
           },
           {
             match: { attrs: { id: `forecast-item-${index}-wind` } },
-            newContent: formatWindSpeed(item.windSpeedMs),
+            newContent: formatAccurateNumber(item.windSpeedMs),
           },
           {
             match: { attrs: { id: `forecast-item-${index}-precipitation` } },
             newContent: formatNumber(
               item.precipitationAmountFromNowToNext,
-              Math.round
+              formatPrecipitationNumber
             ),
           },
           {

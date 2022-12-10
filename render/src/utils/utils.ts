@@ -23,9 +23,18 @@ export function isDark(location: Coordinate, time: Date) {
   return dateFns.isBefore(time, sunrise) || dateFns.isAfter(time, sunset)
 }
 
-export function formatWindSpeed(n: number): string {
+export function formatAccurateNumber(n: number): string {
   const str = n.toFixed(1)
   if (str.endsWith('.0')) {
+    return String(Math.round(n))
+  }
+
+  return str
+}
+
+export function formatPrecipitationNumber(n: number): string {
+  const str = n.toFixed(1)
+  if (str.endsWith('.0') || n >= 1) {
     return String(Math.round(n))
   }
 
