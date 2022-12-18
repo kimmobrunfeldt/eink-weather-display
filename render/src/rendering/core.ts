@@ -10,15 +10,15 @@ import posthtmlReplace, { Replacement } from 'src/rendering/posthtmlReplace'
 import { createPuppeteer, takeScreenshot } from 'src/rendering/puppeteer'
 import { Coordinate, LocalWeather } from 'src/types'
 import {
-  formatNumber,
   formatAccurateNumber,
+  formatAccurateNumberWhenLow,
+  formatNumber,
   getBatteryIcon,
   getPathWithinSrc,
   getTodayDates,
   isDark,
   secondsToHoursAndMinutes,
   writeDebugFile,
-  formatPrecipitationNumber,
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import { getLocalWeatherData } from 'src/weather/weather'
@@ -175,6 +175,18 @@ function getHtmlReplacements(
       `Unable to find closest short term forecast data point near to ${now.toISOString()}`
     )
   }
+  const minWindSpeedToday = formatNumber(
+    weather.todaySummary.forecast.minWindSpeedMs,
+    formatAccurateNumberWhenLow
+  )
+  const maxWindSpeedToday = formatNumber(
+    weather.todaySummary.forecast.maxWindSpeedMs,
+    formatAccurateNumberWhenLow
+  )
+  const windSpeedLabelToday =
+    minWindSpeedToday === maxWindSpeedToday
+      ? minWindSpeedToday
+      : `${minWindSpeedToday} - ${maxWindSpeedToday}`
 
   return [
     {
@@ -217,7 +229,10 @@ function getHtmlReplacements(
           ...node.attrs,
           src: getSymbolIcon(
             closestShortTermForecastDataPoint.symbol,
-            isDark(opts.location, closestShortTermDataPoint.time) ? 'dark' : 'light')
+            isDark(opts.location, closestShortTermDataPoint.time)
+              ? 'dark'
+              : 'light'
+          ),
         }),
     },
     {
@@ -231,13 +246,16 @@ function getHtmlReplacements(
     },
     {
       match: { attrs: { id: 'current-weather-wind' } },
-      newContent: formatNumber(weather.todaySummary.forecast.avgWindSpeedMs, formatAccurateNumber),
+      newContent:
+        windSpeedLabelToday.length > 8
+          ? windSpeedLabelToday.replaceAll(' ', '')
+          : windSpeedLabelToday,
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },
       newContent: formatNumber(
         weather.todaySummary.forecast.precipitationAmount,
-        formatPrecipitationNumber
+        formatAccurateNumberWhenLow
       ),
     },
     {
@@ -336,7 +354,7 @@ function getHtmlReplacements(
             match: { attrs: { id: `forecast-item-${index}-precipitation` } },
             newContent: formatNumber(
               item.precipitationAmountFromNowToNext,
-              formatPrecipitationNumber
+              formatAccurateNumberWhenLow
             ),
           },
           {

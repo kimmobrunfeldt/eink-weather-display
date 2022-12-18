@@ -32,7 +32,7 @@ export function formatAccurateNumber(n: number): string {
   return str
 }
 
-export function formatPrecipitationNumber(n: number): string {
+export function formatAccurateNumberWhenLow(n: number): string {
   const str = n.toFixed(1)
   if (str.endsWith('.0') || n >= 1) {
     return String(Math.round(n))
