@@ -158,3 +158,36 @@ export function getTodayDates(daySwitchHour: number, timezone: string) {
     endOfLocalDayInUtc: zonedTimeToUtc(dateFns.endOfTomorrow(), timezone),
   }
 }
+
+export function precipitationToBarHeight(precipitation: number): number {
+  if (precipitation < 0.01) {
+    return 0
+  }
+
+  if (precipitation < 1) {
+    return 5
+  }
+
+  return scaleTo(precipitation, 1, 10, 5, 100)
+}
+
+const linearEasing = (val: number): number => val
+
+export function scaleTo(
+  val: number,
+  oldMin: number,
+  oldMax: number,
+  newMin: number,
+  newMax: number,
+  easing = linearEasing
+) {
+  // 0.0 - 1.0 in the old range
+  const oldRatio = (val - oldMin) / (oldMax - oldMin)
+
+  // Normalize in case value was out of range bounds
+  const cappedOldRatio = Math.max(Math.min(oldRatio, 1), 0)
+  const easedRatio = easing(cappedOldRatio)
+
+  const newVal = easedRatio * (newMax - newMin) + newMin
+  return newVal
+}

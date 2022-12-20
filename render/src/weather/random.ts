@@ -37,6 +37,9 @@ export async function generateRandomLocalWeatherData(
     forecastShortTerm: _.range(8).map(() =>
       generateRandomShortTermDataPoint(opts)
     ),
+    hourlyDataPoints: _.range(60).map(() =>
+      generateRandomShortTermDataPoint(opts)
+    ),
     forecastLongTerm: _.range(6).map(() =>
       generateRandomLongTermDataPoint(opts)
     ),

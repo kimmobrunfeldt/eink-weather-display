@@ -77,5 +77,6 @@ export type LongTermWeatherDataPoint = {
 export type LocalWeather = {
   todaySummary: WeatherTodaySummary
   forecastShortTerm: ShortTermWeatherDataPoint[]
+  hourlyDataPoints: ShortTermWeatherDataPoint[]
   forecastLongTerm: LongTermWeatherDataPoint[]
 }

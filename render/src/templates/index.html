@@ -95,10 +95,11 @@
       --space-8: 32rem;
 
       --color-0: #eee;
-      --color-1: #999;
-      --color-2: #666;
-      --color-3: #333;
-      --color-4: #000;
+      --color-1: #ccc;
+      --color-2: #999;
+      --color-3: #666;
+      --color-4: #333;
+      --color-5: #000;
 
       --icon-opacity: 0.7;
     }
@@ -348,7 +349,6 @@
     /* Bottom section */
 
     .Forecast {
-      --space-4: 2rem;
       padding-left: 1.5rem;
       padding-right: 1rem;
     }
@@ -359,15 +359,130 @@
       padding-bottom: var(--space-3);
     }
 
-    .Forecast>* {
-      width: 6rem;
+    .Forecast-items {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+    }
+
+    .Forecast-items>* {
+      width: 5.3rem;
+    }
+
+    .Histogram,
+    .Temperature-points {
+      height: 20%;
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+    }
+
+    .Temperature-points {
+      height: 15%;
+    }
+
+    .Histogram-bar,
+    .Temperature-point {
+      display: block;
+      position: relative;
+      --height: 0%;
+      height: var(--height);
+      flex: 1;
+      bottom: 0;
+      background: var(--color-1);
+    }
+
+
+    .Temperature-point {
+      background: none;
+    }
+
+    .Histogram-bar:first-of-type,
+    .Histogram-bar:last-of-type,
+    .Temperature-point:first-of-type,
+    .Temperature-point:last-of-type {
+      /* Manually calibrated to make middle histograms align with hour headers */
+      width: 1.5rem;
+      flex: 0 1 auto;
+    }
+
+    /* Last 3 and last 3 */
+    #histogram-tomorrow .Histogram-bar:nth-of-type(-n + 3),
+    #histogram-tomorrow .Histogram-bar:nth-last-of-type(-n + 3),
+    #histogram-tomorrow .Temperature-point:nth-of-type(-n + 3),
+    #histogram-tomorrow .Temperature-point:nth-last-of-type(-n + 3) {
+      /* Manually calibrated to make middle histograms align with hour headers */
+      width: 0.7rem;
+    }
+
+    /* To debug histogram hour alignments, set this block visible */
+    .Histogram-bar::before {
+      display: none;
+      content: var(--hour);
+      font-size: 10px;
+      position: absolute;
+      top: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    /* Temperature dots */
+    .Temperature-point {
+      display: block;
+      /* Full height of histogram */
+      height: 100%;
+      width: 100%;
+      position: relative;
+    }
+
+    .Temperature-point::after {
+      display: block;
+      content: "";
+      width: 4px;
+      height: 4px;
+      border-radius: 9999px;
+      background: var(--color-2);
+      position: absolute;
+      bottom: calc(2px + var(--temp-p-of-day-minmax));
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 20;
+    }
+
+    .Forecast-items-background1,
+    .Forecast-items-background2 {
+      position: absolute;
+      overflow: hidden;
+      top: 1.7rem;
+      background: var(--color-0);
+      height: 4.2rem;
+      border-radius: 1rem;
+      z-index: -1;
+      left: calc(5.3rem * var(--start-index) + var(--padding));
+      width: calc(5.3rem * (var(--end-index) + 1 - var(--start-index)) - 2 * var(--padding));
+    }
+
+    .Forecast-items-background1 {
+      --padding: 0.3rem;
+      --start-index: 0;
+      --end-index: 4;
+    }
+
+    .Forecast-items-background2 {
+      --padding: 0.3rem;
+      --start-index: 0;
+      --end-index: 2;
     }
 
     .Forecast:first-of-type {
       padding-bottom: 2.3rem;
     }
 
-    .Forecast-today {
+    .Forecast-today-info {
       font-size: var(--text-size-xl);
       width: 6rem;
       display: flex;
@@ -417,7 +532,11 @@
       align-self: flex-start;
     }
 
-    .Forecast-week {
+    .Forecast-week .Forecast-items>* {
+      width: 6.3rem;
+    }
+
+    .Forecast-week-info {
       font-size: var(--text-size-xl);
       width: 6rem;
     }
@@ -429,7 +548,7 @@
     }
 
     .Forecast-item--observation {
-      opacity: 0.5;
+      opacity: 0.2;
     }
 
     .Forecast-item--observation .Forecast-item-icon-container {
@@ -437,17 +556,16 @@
       background: none;
     }
 
-    .Forecast-item--observation .Forecast-item-icon {
-      opacity: 0.2;
-    }
-
     .Forecast-item--observation .Forecast-item-time,
     .Forecast-item--observation .Forecast-item-numbers>* {
-      color: var(--color-1) !important;
+      color: var(--color-5) !important;
+    }
+
+    .Forecast-items--tomorrow {
+      margin-left: 1rem;
     }
 
     .Forecast-item--has-pre-header {
-      margin-left: 1rem;
       position: relative;
     }
 
@@ -476,6 +594,10 @@
       border-radius: 1rem;
     }
 
+    .Forecast-today .Forecast-item-icon-container {
+      background: none;
+    }
+
     .Forecast-item-icon {
       width: 100%;
       height: 100%;
@@ -493,7 +615,7 @@
     }
 
     .Forecast-item-numbers>*:not(:first-child) {
-      color: var(--color-4);
+      color: var(--color-5);
       font-weight: normal;
     }
 
@@ -615,8 +737,8 @@
     </div>
 
     <div class="Bottom">
-      <div class="Forecast">
-        <div class="Forecast-today">
+      <div class="Forecast Forecast-today">
+        <div class="Forecast-today-info">
           <p>Today</p>
 
           <div class="Forecast-today-minmax-temperature">
@@ -640,211 +762,266 @@
             </div>
           </div>
         </div>
-        <div id="forecast-item-0" class="Forecast-item">
-          <div id="forecast-item-0-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-cloudy-windy.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-0-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+
+        <div class="Forecast-items">
+          <div id="forecast-items-background1" class="Forecast-items-background1">
+            <div id="histogram-today" class="Histogram" style="--start-index: 0; --count: 5;">
+              <div class="Histogram-bar" style="--height: 90%;"></div>
+              <div class="Histogram-bar" style="--height: 20%;"></div>
+              <div class="Histogram-bar" style="--height: 30%;"></div>
+              <div class="Histogram-bar" style="--height: 70%;"></div>
+              <div class="Histogram-bar" style="--height: 100%;"></div>
+              <div class="Histogram-bar" style="--height: 0%;"></div>
+              <div class="Histogram-bar" style="--height: 4%;"></div>
             </div>
-            <div>
-              <span id="forecast-item-0-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
+            <div id="temperature-points-today" class="Temperature-points" style="--start-index: 0; --count: 5;">
+            </div>
+          </div>
+
+          <div id="forecast-item-0" class="Forecast-item">
+            <div id="forecast-item-0-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-cloudy-windy.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-0-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-0-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="forecast-item-1" class="Forecast-item">
+            <div id="forecast-item-1-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-1-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-1-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="forecast-item-2" class="Forecast-item">
+            <div id="forecast-item-2-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-2-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-2-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="forecast-item-3" class="Forecast-item">
+            <div id="forecast-item-3-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-3-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-3-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="forecast-item-4" class="Forecast-item">
+            <div id="forecast-item-4-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-4-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-4-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div id="forecast-item-1" class="Forecast-item">
-          <div id="forecast-item-1-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-1-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+        <div class="Forecast-items Forecast-items--tomorrow">
+          <div class="Forecast-items-background2">
+            <div id="histogram-tomorrow" class="Histogram" style="--start-index: 0; --count: 3;">
+              <div class="Histogram-bar" style="--height: 90%;"></div>
+              <div class="Histogram-bar" style="--height: 20%;"></div>
+              <div class="Histogram-bar" style="--height: 30%;"></div>
+              <div class="Histogram-bar" style="--height: 70%;"></div>
+              <div class="Histogram-bar" style="--height: 100%;"></div>
+              <div class="Histogram-bar" style="--height: 0%;"></div>
+              <div class="Histogram-bar" style="--height: 4%;"></div>
             </div>
-            <div>
-              <span id="forecast-item-1-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
+            <div id="temperature-points-tomorrow" class="Temperature-points" style="--start-index: 0; --count: 3;">
             </div>
           </div>
-        </div>
 
-        <div id="forecast-item-2" class="Forecast-item">
-          <div id="forecast-item-2-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-2-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-2-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
-            </div>
-          </div>
-        </div>
+          <div id="forecast-item-5" class="Forecast-item Forecast-item--has-pre-header">
+            <div id="forecast-item-pre-header" class="Forecast-item-pre-header">Thu</div>
 
-        <div id="forecast-item-3" class="Forecast-item">
-          <div id="forecast-item-3-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-3-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+            <div id="forecast-item-5-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-5-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
             </div>
-            <div>
-              <span id="forecast-item-3-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-5-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-5-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="forecast-item-4" class="Forecast-item">
-          <div id="forecast-item-4-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-4-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+          <div id="forecast-item-6" class="Forecast-item">
+            <div id="forecast-item-6-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-6-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
             </div>
-            <div>
-              <span id="forecast-item-4-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-6-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-6-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="forecast-item-5" class="Forecast-item Forecast-item--has-pre-header">
-          <div id="forecast-item-pre-header" class="Forecast-item-pre-header">Thu</div>
-
-          <div id="forecast-item-5-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-5-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-5-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+          <div id="forecast-item-7" class="Forecast-item">
+            <div id="forecast-item-7-time" class="Forecast-item-time">09</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-item-7-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
             </div>
-            <div>
-              <span id="forecast-item-5-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
-            </div>
-          </div>
-        </div>
-
-        <div id="forecast-item-6" class="Forecast-item">
-          <div id="forecast-item-6-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-6-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-6-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-6-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
-            </div>
-          </div>
-        </div>
-
-        <div id="forecast-item-7" class="Forecast-item">
-          <div id="forecast-item-7-time" class="Forecast-item-time">09</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-item-7-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-item-7-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
-            </div>
-            <div>
-              <span id="forecast-item-7-precipitation" class="Forecast-item-value">2</span><span
-                class="Forecast-item-unit">mm</span>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-item-7-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-item-7-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="Forecast">
-        <div class="Forecast-week">
+      <div class="Forecast Forecast-week">
+        <div class="Forecast-week-info">
           5 days
         </div>
 
-        <div class="Forecast-item">
-          <div id="forecast-5days-item-0-time" class="Forecast-item-time">Tue</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-5days-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-5days-item-0-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+        <div class="Forecast-items">
+          <div class="Forecast-item">
+            <div id="forecast-5days-item-0-time" class="Forecast-item-time">Tue</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-5days-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-5days-item-0-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-5days-0-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="Forecast-item">
-          <div id="forecast-5days-item-1-time" class="Forecast-item-time">Wed</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-5days-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-5days-item-1-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+          <div class="Forecast-item">
+            <div id="forecast-5days-item-1-time" class="Forecast-item-time">Wed</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-5days-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-5days-item-1-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-5days-1-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="Forecast-item">
-          <div id="forecast-5days-item-2-time" class="Forecast-item-time">Thu</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-5days-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-5days-item-2-temperature" class="Forecast-item-value">7</span><span
-                class="Forecast-item-unit">°C</span>
+          <div class="Forecast-item">
+            <div id="forecast-5days-item-2-time" class="Forecast-item-time">Thu</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-5days-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-5days-item-2-temperature" class="Forecast-item-value">7</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-5days-2-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="Forecast-item">
-          <div id="forecast-5days-item-3-time" class="Forecast-item-time">Fri</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-5days-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-5days-item-3-temperature" class="Forecast-item-value">6</span><span
-                class="Forecast-item-unit">°C</span>
+          <div class="Forecast-item">
+            <div id="forecast-5days-item-3-time" class="Forecast-item-time">Fri</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-5days-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-5days-item-3-temperature" class="Forecast-item-value">6</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-5days-3-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div class="Forecast-item">
-          <div id="forecast-5days-item-4-time" class="Forecast-item-time">Sat</div>
-          <div class="Forecast-item-icon-container">
-            <img id="forecast-5days-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
-          </div>
-          <div class="Forecast-item-numbers">
-            <div class="Forecast-item-temperature">
-              <span id="forecast-5days-item-4-temperature" class="Forecast-item-value">5</span><span
-                class="Forecast-item-unit">°C</span>
+          <div class="Forecast-item">
+            <div id="forecast-5days-item-4-time" class="Forecast-item-time">Sat</div>
+            <div class="Forecast-item-icon-container">
+              <img id="forecast-5days-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+            </div>
+            <div class="Forecast-item-numbers">
+              <div class="Forecast-item-temperature">
+                <span id="forecast-5days-item-4-temperature" class="Forecast-item-value">5</span><span
+                  class="Forecast-item-unit">°C</span>
+              </div>
+              <div>
+                <span id="forecast-5days-4-precipitation" class="Forecast-item-value">2</span><span
+                  class="Forecast-item-unit">mm</span>
+              </div>
             </div>
           </div>
         </div>

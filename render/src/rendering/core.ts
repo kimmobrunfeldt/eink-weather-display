@@ -8,7 +8,8 @@ import sharp from 'sharp'
 import posthtmlInlineStyleCssImports from 'src/rendering/posthtmlInlineStyleCssImports'
 import posthtmlReplace, { Replacement } from 'src/rendering/posthtmlReplace'
 import { createPuppeteer, takeScreenshot } from 'src/rendering/puppeteer'
-import { Coordinate, LocalWeather } from 'src/types'
+import { Coordinate, LocalWeather, ShortTermWeatherDataPoint } from 'src/types'
+import { logger } from 'src/utils/logger'
 import {
   formatAccurateNumber,
   formatAccurateNumberWhenLow,
@@ -17,11 +18,17 @@ import {
   getPathWithinSrc,
   getTodayDates,
   isDark,
+  precipitationToBarHeight,
+  scaleTo,
   secondsToHoursAndMinutes,
   writeDebugFile,
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
-import { getLocalWeatherData } from 'src/weather/weather'
+import {
+  getLocalWeatherData,
+  SHORT_TERM_FORECAST_HOURS_TODAY,
+  SHORT_TERM_FORECAST_HOURS_TOMORROW,
+} from 'src/weather/weather'
 import {
   getSymbolIcon,
   weatherSymbolDescriptions,
@@ -188,6 +195,55 @@ function getHtmlReplacements(
       ? minWindSpeedToday
       : `${minWindSpeedToday} - ${maxWindSpeedToday}`
 
+  const findDataPoint = (h: number) => {
+    const time = dateFns.addHours(dates.startOfLocalDayInUtc, h)
+    const found = weather.hourlyDataPoints.find((d) =>
+      dateFns.isEqual(d.time, time)
+    )
+    if (!found) {
+      logger.error('Time:', time)
+      logger.error('Hourly data points:', weather.hourlyDataPoints)
+      throw new Error(
+        `Could not find FMI hourly data point for date ${time.toISOString()}`
+      )
+    }
+    return found
+  }
+  const dates = getTodayDates(opts.switchDayAtHour, opts.timezone)
+
+  const earliestShortTermForecastDataPoint = _.minBy(
+    weather.forecastShortTerm.filter((d) => d.type === 'forecast'),
+    (d) => d.time.getTime()
+  )
+  if (!earliestShortTermForecastDataPoint) {
+    throw new Error(`Unable to find earliest short term forecast data point`)
+  }
+  const firstHour = parseInt(
+    dateFnsTz.formatInTimeZone(
+      earliestShortTermForecastDataPoint.time,
+      opts.timezone,
+      'HH'
+    ),
+    10
+  )
+  // Visually, we want the histogram bars align to the hour labels. That means that
+  // for the first hour range (9-12AM at the time of writing), we actually need to get data for
+  // 1h before that. Also for the last hour we need to get 1h
+  const todayHistogramHours = _.range(
+    firstHour - 1,
+    _.last(SHORT_TERM_FORECAST_HOURS_TODAY)! + 2 // +1h  +1 for how _.range works
+  )
+  logger.info('todayHistogramHours', todayHistogramHours)
+  const todayHistogramDataPoints = todayHistogramHours.map(findDataPoint)
+
+  const tomorrowHistogramHours = _.range(
+    SHORT_TERM_FORECAST_HOURS_TOMORROW[0] - 3, // -3h
+    // -6h  +1 for how _.range works. It's not symmetric.. but the historgrams align nicely with hour headers
+    _.last(SHORT_TERM_FORECAST_HOURS_TOMORROW)! - 6 + 1
+  )
+  logger.info('tomorrowHistogramHours', tomorrowHistogramHours)
+  const tomorrowHistogramDataPoints = tomorrowHistogramHours.map(findDataPoint)
+
   return [
     {
       match: { attrs: { id: 'date' } },
@@ -320,6 +376,52 @@ function getHtmlReplacements(
         'EEE'
       ),
     },
+    {
+      match: { attrs: { id: 'forecast-items-background1' } },
+      modifier: (node) => {
+        const count = _.sumBy(_.take(weather.forecastShortTerm, 5), (f) =>
+          f.type === 'forecast' ? 1 : 0
+        )
+        node.attrs = {
+          ...node.attrs,
+          style: `--start-index: ${5 - count}; --end-index: 4;`,
+        }
+      },
+    },
+    {
+      match: { attrs: { id: 'histogram-today' } },
+      modifier: (node) => {
+        const count = _.sumBy(_.take(weather.forecastShortTerm, 5), (f) =>
+          f.type === 'forecast' ? 1 : 0
+        )
+        const nodes = createGraphNodes(todayHistogramDataPoints, opts, count)
+        node.content = nodes.map((n) => n.histogramBar)
+      },
+    },
+    {
+      match: { attrs: { id: 'temperature-points-today' } },
+      modifier: (node) => {
+        const count = _.sumBy(_.take(weather.forecastShortTerm, 5), (f) =>
+          f.type === 'forecast' ? 1 : 0
+        )
+        const nodes = createGraphNodes(todayHistogramDataPoints, opts, count)
+        node.content = nodes.map((n) => n.temperaturePoint)
+      },
+    },
+    {
+      match: { attrs: { id: 'histogram-tomorrow' } },
+      modifier: (node) => {
+        const nodes = createGraphNodes(tomorrowHistogramDataPoints, opts, 3)
+        node.content = nodes.map((n) => n.histogramBar)
+      },
+    },
+    {
+      match: { attrs: { id: 'temperature-points-tomorrow' } },
+      modifier: (node) => {
+        const nodes = createGraphNodes(tomorrowHistogramDataPoints, opts, 3)
+        node.content = nodes.map((n) => n.temperaturePoint)
+      },
+    },
     ...weather.forecastShortTerm
       .map((item, index): Replacement[] => {
         return [
@@ -391,6 +493,15 @@ function getHtmlReplacements(
             newContent: String(Math.round(item.avgTemperature)),
           },
           {
+            match: {
+              attrs: { id: `forecast-5days-item-${index}-precipitation` },
+            },
+            newContent: formatNumber(
+              item.precipitationAmountFromNowToNext,
+              formatAccurateNumberWhenLow
+            ),
+          },
+          {
             match: { attrs: { id: `forecast-5days-item-${index}-icon` } },
             modifier: (node) =>
               (node.attrs = {
@@ -402,4 +513,39 @@ function getHtmlReplacements(
       })
       .flat(),
   ]
+}
+
+const createGraphNodes = (
+  dataPoints: ShortTermWeatherDataPoint[],
+  opts: GenerateOptions,
+  count: number
+) => {
+  const minTemp = _.minBy(dataPoints.map((d) => d.temperature))!
+  const maxTemp = _.maxBy(dataPoints.map((d) => d.temperature))!
+  const nodes = dataPoints.map((d) => {
+    const heightVar = `--height: ${precipitationToBarHeight(
+      d.precipitation1h
+    )}%`
+    const hourVar = `--hour: '${dateFnsTz.formatInTimeZone(
+      d.time,
+      opts.timezone,
+      'HH'
+    )}'`
+    const tempVar = `--temp-p-of-day-minmax: ${scaleTo(
+      d.temperature,
+      minTemp,
+      maxTemp,
+      0,
+      100
+    )}%;`
+    const countVar = `--count: ${count}`
+    // Both have all vars but it's ok
+    const vars = [heightVar, countVar, hourVar, tempVar].join(';')
+    return {
+      histogramBar: `<div class="Histogram-bar" style="${vars};"></div>`,
+      temperaturePoint: `<span class="Temperature-point" style="${vars};"></span>`,
+    }
+  })
+
+  return nodes
 }

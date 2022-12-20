@@ -38,10 +38,8 @@ import { getSunrise, getSunset } from 'sunrise-sunset-js'
 export async function getLocalWeatherData(
   opts: GenerateOptions
 ): Promise<LocalWeather> {
-  logger.debug(
-    'getTodayDates',
-    getTodayDates(opts.switchDayAtHour, opts.timezone)
-  )
+  const dates = getTodayDates(opts.switchDayAtHour, opts.timezone)
+  logger.debug('getTodayDates', dates)
 
   const fmiHarmonieData = await fetchFmiHarmonieData(opts)
   const fmiEcmwfData = await fetchFmiEcmwfData(opts)
@@ -66,6 +64,16 @@ export async function getLocalWeatherData(
       fmiObservationData,
       opts
     ),
+    hourlyDataPoints: calculateShortTermForecast(
+      fmiHarmonieData,
+      meteoShortTermForecastData,
+      fmiObservationData,
+      opts,
+      // Harmonie returns "up to 50h forecast", the earliest we query is at 6AM
+      // It should be safe to add 54 hours to the start of local day, since those
+      // hours are max 48h from the query time
+      _.range(55).map((h) => dateFns.addHours(dates.startOfLocalDayInUtc, h))
+    ),
     forecastLongTerm: calculateLongTermForecast(fmiEcmwfData, opts).map(
       (data) => {
         return {
@@ -76,6 +84,15 @@ export async function getLocalWeatherData(
     ),
   }
 }
+
+// Hours are relative to start of local day
+export const SHORT_TERM_FORECAST_HOURS_TODAY = [9, 12, 15, 18, 21]
+export const SHORT_TERM_FORECAST_HOURS_TOMORROW = [
+  24, // start of tomorrow
+  24 + 9,
+  24 + 9 * 2,
+  24 + 9 * 3, // to give end date range for the previous item
+]
 
 /**
  * Calculates short term forecast from FMI data points
@@ -130,15 +147,8 @@ export function calculateShortTermForecast(
   const forecastTimes = forecastTimesInput
     ? forecastTimesInput
     : [
-        9,
-        12,
-        15,
-        18,
-        21,
-        24, // end of day, when forecast starts at 9AM
-        24 + 9,
-        24 + 9 * 2,
-        24 + 9 * 3, // to give end date range for the previous item
+        ...SHORT_TERM_FORECAST_HOURS_TODAY,
+        ...SHORT_TERM_FORECAST_HOURS_TOMORROW,
       ].map((h) => dateFns.addHours(startOfLocalDayInUtc, h))
   logger.debug('calculateShortTermForecast forecastTimes', forecastTimes)
 
@@ -149,11 +159,11 @@ export function calculateShortTermForecast(
     const foundObs = observationData.find((d) => dateFns.isEqual(d.time, time))
     if (!foundForecast && !foundObs) {
       // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast/observation data.
-      logger.error('Time:', time)
+      logger.error('Time:', time.toISOString())
       logger.error('FMI forecast:', forecastData)
       logger.error('FMI observations:', observationData)
       throw new Error(
-        `Could not find FMI forecast/observation data point for date ${time}`
+        `Could not find FMI forecast/observation data point for date ${time.toISOString()}`
       )
     }
     const foundMeteoHourData = attrsByTime(meteoForecastData.hourly).find((d) =>
@@ -190,7 +200,9 @@ function calculateShortTermDataPoint(
 
   const exactMatch = data.find((f) => dateFns.isEqual(f.time, time))
   if (!exactMatch) {
-    throw new Error(`Unexpected: exact match not found for time ${time}`)
+    throw new Error(
+      `Unexpected: exact match not found for time ${time.toISOString()}`
+    )
   }
 
   const baseData = {
@@ -268,9 +280,11 @@ export function calculateLongTermForecast(
     const found = fmiData[fmiIndex]
     if (!found) {
       // Throw if we can't find the exact data point. It should be there so this might indicate incorrect forecast data.
-      logger.error('Time:', time)
+      logger.error('Time:', time.toISOString())
       logger.error('FMI Data:', JSON.stringify(fmiData))
-      throw new Error(`Could not find FMI forecast data point for date ${time}`)
+      throw new Error(
+        `Could not find FMI forecast data point for date ${time.toISOString()}`
+      )
     }
 
     const nextIndex = index + 1

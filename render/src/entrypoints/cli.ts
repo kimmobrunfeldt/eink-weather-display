@@ -70,6 +70,7 @@ async function main() {
   })
   console.log(html)
   await writeDebugFile('render.png', png)
+  await writeDebugFile('render.html', html)
 }
 
 async function random() {
