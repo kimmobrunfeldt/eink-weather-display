@@ -159,16 +159,17 @@ export function getTodayDates(daySwitchHour: number, timezone: string) {
   }
 }
 
+const MIN_PRECIPITATION_BAR_HEIGHT = 8
 export function precipitationToBarHeight(precipitation: number): number {
   if (precipitation < 0.01) {
     return 0
   }
 
   if (precipitation < 1) {
-    return 5
+    return MIN_PRECIPITATION_BAR_HEIGHT
   }
 
-  return scaleTo(precipitation, 1, 10, 5, 100)
+  return scaleTo(precipitation, 1, 10, MIN_PRECIPITATION_BAR_HEIGHT, 100)
 }
 
 const linearEasing = (val: number): number => val
