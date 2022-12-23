@@ -68,7 +68,6 @@ async function main() {
     location: { lat, lon },
     switchDayAtHour: 23,
   })
-  console.log(html)
   await writeDebugFile('render.png', png)
   await writeDebugFile('render.html', html)
 }

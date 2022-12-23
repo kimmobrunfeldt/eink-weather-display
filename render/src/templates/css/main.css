@@ -266,6 +266,7 @@
 
 .Forecast-today-minmax-temperature-values-divider {
   border-top: 1px solid var(--color-1);
+  margin: 0 10%;
 }
 
 .Forecast-today-minmax-temperature-unit {

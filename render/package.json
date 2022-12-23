@@ -8,7 +8,7 @@
     "start": "http-server src/templates/ -c-1",
     "clean": "rm -r dist/",
     "build": "ttsc && cp -r src/templates dist/templates && cp package.json package-lock.json tsconfig.json dist/",
-    "render": "./src/entrypoints/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 > src/templates/render.html",
+    "render": "./src/entrypoints/cli.ts --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100 --width 1852 --height 1314 --paddingTop 70 --paddingRight 10 --paddingBottom 20 --paddingLeft 10",
     "random": "./src/entrypoints/cli.ts --random --lat 60.222 --lon 24.83 --timezone Europe/Helsinki --locationName Espoo --batteryLevel 100"
   },
   "author": "",
