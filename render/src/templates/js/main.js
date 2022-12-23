@@ -94,20 +94,19 @@ function drawPrecipitationHistogram(svgInfo, dataPoints, { outer = false } = {})
   } = svgInfo
 
   const minPrec = 0
-  const maxPrec = 5
+  const maxPrec = 4
   const minHeight = 2
 
   const scalePrecHeight = d3.scaleLinear()
     .domain([minPrec, maxPrec]) // min and the max of the data
-    .range([minHeight + canvasPaddingY, canvasHeight - canvasPaddingY])
+    .range([minHeight, canvasHeight - canvasPaddingY])
     .clamp(true)
 
   const getHeight = (d) => {
     if (d.precipitation1h < 0.01) {
       return 0
-    } else if (d.precipitation1h < 1) {
-      return minHeight
     }
+
     return scalePrecHeight(d.precipitation1h)
   }
 
