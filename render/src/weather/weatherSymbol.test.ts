@@ -22,7 +22,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['light'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          getPathWithinSrc('templates/weather-icons', `${icon}.svg`)
+          getPathWithinSrc('templates/weather-icons/svg-icons/', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
@@ -33,7 +33,7 @@ describe('weatherSymbol', () => {
       const icon = weatherSymbolIcons['dark'][symbol as WeatherSymbolNumber]
       if (
         !fs.existsSync(
-          getPathWithinSrc('templates/weather-icons', `${icon}.svg`)
+          getPathWithinSrc('templates/weather-icons/svg-icons/', `${icon}.svg`)
         )
       ) {
         throw new Error(`${icon}.svg not found from weather-icons/ directory`)
