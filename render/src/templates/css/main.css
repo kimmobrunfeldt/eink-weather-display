@@ -209,26 +209,69 @@
   flex-direction: column;
 }
 
-.Forecast-today-minmax-temperature-values>*,
-.Forecast-today-minmax-temperature-icons>* {
+.Forecast-today-minmax-meter {
+  height: 3.2rem;
+  width: 0.4rem;
+  position: relative;
+  margin-right: 0.8rem;
+  margin-left: 0.3rem;
+}
+
+.Forecast-today-minmax-meter-background,
+.Forecast-today-minmax-meter-foreground {
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  border-radius: 9999px;
+}
+
+.Forecast-today-minmax-meter-background {
+  background: var(--color-0);
+}
+
+.Forecast-today-minmax-meter-foreground {
+  background: var(--color-1);
+  top: calc(100% - var(--current-percentage-of-max));
+  height: var(--current-percentage-of-max);
+}
+
+.Forecast-today-minmax-meter-current {
+  position: absolute;
+  background: var(--color-2);
+  border: 3px solid white;
+  top: calc(100% - var(--current-percentage-of-max));
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  left: 50%;
+  transform: translate(-50%, -50%)
+}
+
+
+.Forecast-today-minmax-temperature-values {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.04rem 0;
+  top: 0.1rem;
+  position: relative;
+}
+
+.Forecast-today-minmax-temperature-values>* {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: flex-end;
 }
 
-.Forecast-today-minmax-temperature-values>* {
-  height: 1.4rem;
-}
-
-.Forecast-today-minmax-temperature-icons>* {
-  height: 1.4rem;
+.Forecast-today-minmax-temperature-values-divider {
+  border-top: 1px solid var(--color-1);
 }
 
 .Forecast-today-minmax-temperature-unit {
   font-size: var(--text-size-xs);
   margin-left: 0.1rem;
-  margin-top: 0.16rem;
+  margin-top: 0.04rem;
   align-self: flex-start;
 }
 

@@ -229,9 +229,10 @@ function getHtmlReplacements(
   logger.info('todayHistogramHours', todayHistogramHours)
   const todayHistogramDataPoints = todayHistogramHours.map(findDataPoint)
 
+  // The random constants we subtract from those hours are to align graphs nicely with hour headers
   const tomorrowHistogramHours = _.range(
-    SHORT_TERM_FORECAST_HOURS_TOMORROW[0] - 4, // -3h
-    // -6h  +1 for how _.range works. It's not symmetric.. but the historgrams align nicely with hour headers
+    SHORT_TERM_FORECAST_HOURS_TOMORROW[0] - 4, // -4h
+    // -5h  +1 for how _.range works.
     _.last(SHORT_TERM_FORECAST_HOURS_TOMORROW)! - 5 + 1
   )
   logger.info('tomorrowHistogramHours', tomorrowHistogramHours)
@@ -367,6 +368,21 @@ function getHtmlReplacements(
       )}`,
     },
     {
+      match: { attrs: { id: 'forecast-today-minmax-meter' } },
+      modifier: (node) => {
+        node.attrs = {
+          ...node.attrs,
+          style: `--current-percentage-of-max: ${scaleTo(
+            closestShortTermDataPoint.temperature,
+            weather.todaySummary.all.minTemperature,
+            weather.todaySummary.all.maxTemperature,
+            0,
+            100
+          )}%`,
+        }
+      },
+    },
+    {
       match: { attrs: { id: 'today-weather-min-temperature' } },
       newContent: String(Math.round(weather.todaySummary.all.minTemperature)),
     },
@@ -394,42 +410,8 @@ function getHtmlReplacements(
         )
         node.attrs = {
           ...node.attrs,
-          style: `--start-index: ${5 - count}; --end-index: 4;`,
+          style: `--start-index: ${5 - count};`,
         }
-      },
-    },
-    {
-      match: { attrs: { id: 'histogram-today' } },
-      modifier: (node) => {
-        const count = _.sumBy(_.take(weather.forecastShortTerm, 5), (f) =>
-          f.type === 'forecast' ? 1 : 0
-        )
-        const nodes = createGraphNodes(todayHistogramDataPoints, opts, count)
-        node.content = nodes.map((n) => n.histogramBar)
-      },
-    },
-    {
-      match: { attrs: { id: 'temperature-points-today' } },
-      modifier: (node) => {
-        const count = _.sumBy(_.take(weather.forecastShortTerm, 5), (f) =>
-          f.type === 'forecast' ? 1 : 0
-        )
-        const nodes = createGraphNodes(todayHistogramDataPoints, opts, count)
-        node.content = nodes.map((n) => n.temperaturePoint)
-      },
-    },
-    {
-      match: { attrs: { id: 'histogram-tomorrow' } },
-      modifier: (node) => {
-        const nodes = createGraphNodes(tomorrowHistogramDataPoints, opts, 3)
-        node.content = nodes.map((n) => n.histogramBar)
-      },
-    },
-    {
-      match: { attrs: { id: 'temperature-points-tomorrow' } },
-      modifier: (node) => {
-        const nodes = createGraphNodes(tomorrowHistogramDataPoints, opts, 3)
-        node.content = nodes.map((n) => n.temperaturePoint)
       },
     },
     ...weather.forecastShortTerm

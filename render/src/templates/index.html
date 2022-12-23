@@ -154,19 +154,20 @@
           <p>Today</p>
 
           <div class="Forecast-today-minmax-temperature">
-            <div class="Forecast-today-minmax-temperature-icons">
-              <div class="Forecast-today-icon">
-                <img src="weather-icons/svg-icons/wi-direction-up.svg" />
-              </div>
-              <div class="Forecast-today-icon">
-                <img src="weather-icons/svg-icons/wi-direction-down.svg" />
-              </div>
+
+            <div id="forecast-today-minmax-meter" class="Forecast-today-minmax-meter"
+              style="--current-percentage-of-max: 50%;">
+              <div class="Forecast-today-minmax-meter-background"></div>
+              <div class="Forecast-today-minmax-meter-foreground"></div>
+              <div class="Forecast-today-minmax-meter-current"></div>
             </div>
+
             <div class="Forecast-today-minmax-temperature-values">
               <div>
-                <span id="today-weather-max-temperature" class="Forecast-today-minmax-temperature-value">0</span>
+                <span id="today-weather-max-temperature" class="Forecast-today-minmax-temperature-value">-10</span>
                 <span class="Forecast-today-minmax-temperature-unit">°C</span>
               </div>
+              <div class="Forecast-today-minmax-temperature-values-divider"></div>
               <div>
                 <span id="today-weather-min-temperature" class="Forecast-today-minmax-temperature-value">0</span>
                 <span class="Forecast-today-minmax-temperature-unit">°C</span>
@@ -176,7 +177,7 @@
         </div>
 
         <div class="Forecast-items Forecast-items--today">
-          <div id="forecast-items-background1" class="Forecast-items-background" style="--start-index: 2; --count: 5;">
+          <div id="forecast-items-background1" class="Forecast-items-background" style="--start-index: 2;">
             <svg id="temperature-graph-today-precipitation-outer" class="Graph Graph-outer"></svg>
             <div class="Forecast-items-graybox">
               <svg id="temperature-graph-today-precipitation-inner" class="Graph Graph-inner"></svg>
