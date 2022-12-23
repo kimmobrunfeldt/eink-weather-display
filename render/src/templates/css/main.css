@@ -1,0 +1,343 @@
+/* Middle section */
+
+.CurrentWeather {
+  display: flex;
+}
+
+.CurrentWeather>* {
+  flex-wrap: nowrap;
+  display: flex;
+  justify-content: center;
+}
+
+.CurrentWeather-summary {
+  flex-basis: 60%;
+  margin-right: 5%;
+}
+
+.CurrentWeather-icon {
+  position: relative;
+  width: 100%;
+}
+
+.CurrentWeather-icon>img {
+  position: absolute;
+  left: 50%;
+  top: 46%;
+  transform: translate(-50%, -50%);
+  height: 40vh;
+}
+
+.CurrentWeather-temperature {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+}
+
+.CurrentWeather-temperature-value {
+  font-size: 26vh;
+  font-weight: normal;
+}
+
+.CurrentWeather-temperature-unit {
+  font-size: 5vh;
+  margin-top: 4.8vh;
+  margin-left: 4px;
+}
+
+.CurrentWeather-details {
+  flex-direction: column;
+  padding-left: 0.8rem;
+  flex-basis: 40%;
+}
+
+.CurrentWeather-details h2 {
+  margin-bottom: var(--space-2);
+}
+
+.WeatherDetails {
+  list-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  max-width: 18rem;
+}
+
+.WeatherDetails-item {
+  display: flex;
+  align-items: center;
+  height: 2.2rem;
+  width: 50%;
+}
+
+.WeatherDetails-item-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: var(--text-size-xl);
+  margin-right: var(--space-2);
+  opacity: var(--icon-opacity);
+}
+
+.WeatherDetails-item-icon {
+  height: var(--text-size-l);
+}
+
+.WeatherDetails-item-icon-raindrops {
+  height: 2.7rem;
+  position: relative;
+  left: -0.1rem;
+  top: 0.05rem;
+}
+
+.WeatherDetails-item-value {
+  margin-right: 4px;
+  font-size: var(--text-size-m);
+}
+
+.WeatherDetails-item-unit {
+  font-size: var(--text-size-s);
+}
+
+/* Bottom section */
+
+.Forecast {
+  padding-left: 1.5rem;
+  padding-right: 1rem;
+}
+
+.Forecast {
+  display: flex;
+  flex-direction: row;
+  padding-bottom: var(--space-3);
+}
+
+.Forecast-items {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+}
+
+.Forecast-items--today {
+  width: var(--today-forecast-width);
+}
+
+.Forecast-items--tomorrow {
+  width: var(--tomorrow-forecast-width);
+}
+
+.Forecast-items>* {
+  flex: 1;
+}
+
+.Graph {
+  display: block;
+  position: absolute;
+  height: var(--graph-height);
+  bottom: 0;
+  width: 100%;
+  z-index: 20;
+}
+
+.Forecast-items--tomorrow .Graph-inner {
+  width: var(--tomorrow-forecast-width);
+  right: 0;
+}
+
+.Forecast-items--today .Graph-inner {
+  width: var(--today-forecast-width);
+  right: 0;
+}
+
+.Forecast-items-background {
+  position: absolute;
+  top: 1.7rem;
+  height: var(--gray-box-height);
+  z-index: -1;
+  width: 100%;
+}
+
+.Forecast-items-graybox {
+  border-radius: 1rem;
+  position: absolute;
+  background: var(--color-0);
+  overflow: hidden;
+  height: 100%;
+}
+
+.Forecast-items--today .Forecast-items-graybox {
+  --start-index: 4;
+  --item-width: calc(var(--today-forecast-width) / 5);
+  --left: calc(var(--start-index) * var(--item-width));
+  left: var(--left);
+  width: calc(var(--today-forecast-width) - var(--left));
+}
+
+.Forecast-items--tomorrow .Forecast-items-graybox {
+  width: 100%;
+}
+
+.Forecast:first-of-type {
+  padding-bottom: 2.3rem;
+}
+
+.Forecast-today-info {
+  font-size: var(--text-size-xl);
+  width: 6rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.Forecast-today-minmax-temperature {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  display: flex;
+  flex-direction: row;
+  white-space: nowrap;
+  font-size: var(--text-size);
+}
+
+.Forecast-today-icon>img {
+  width: 1.4rem;
+  height: 1.4rem;
+  opacity: 0.7;
+}
+
+.Forecast-today-minmax-temperature>* {
+  display: flex;
+  flex-direction: column;
+}
+
+.Forecast-today-minmax-temperature-values>*,
+.Forecast-today-minmax-temperature-icons>* {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.Forecast-today-minmax-temperature-values>* {
+  height: 1.4rem;
+}
+
+.Forecast-today-minmax-temperature-icons>* {
+  height: 1.4rem;
+}
+
+.Forecast-today-minmax-temperature-unit {
+  font-size: var(--text-size-xs);
+  margin-left: 0.1rem;
+  margin-top: 0.16rem;
+  align-self: flex-start;
+}
+
+.Forecast-week .Forecast-items>* {
+  margin-right: calc(var(--gray-box-margin) + 40px);
+}
+
+.Forecast-week-info {
+  font-size: var(--text-size-xl);
+  margin-right: 50px;
+}
+
+.Forecast-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.Forecast-item--observation {
+  opacity: 0.2;
+}
+
+.Forecast-item--observation .Forecast-item-icon-container {
+  background-color: transparent;
+  background: none;
+}
+
+.Forecast-item--observation .Forecast-item-time,
+.Forecast-item--observation .Forecast-item-numbers>* {
+  color: var(--color-5) !important;
+}
+
+.Forecast-items--tomorrow {
+  margin-left: var(--gray-box-margin);
+}
+
+.Forecast-item--has-pre-header {
+  position: relative;
+}
+
+.Forecast-item-pre-header {
+  position: absolute;
+  left: -1.3rem;
+  top: 0.05rem;
+  font-size: var(--text-size-s);
+  color: var(--color-2);
+}
+
+.Forecast-item-time {
+  font-size: var(--text-size-m);
+  margin-bottom: var(--space-1);
+}
+
+.Forecast-item-icon-container {
+  margin-bottom: var(--space-2);
+  background: var(--color-0);
+  width: var(--gray-box-height);
+  height: var(--gray-box-height);
+  padding: 0.6rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 1rem;
+}
+
+.Forecast-today .Forecast-item-icon-container {
+  background: none;
+}
+
+.Forecast-item-icon {
+  width: 100%;
+  height: 100%;
+}
+
+.Forecast-item-numbers {
+  text-align: left;
+}
+
+.Forecast-item-value {
+  display: inline-block;
+  margin-right: var(--space-1);
+  width: 1.8rem;
+  text-align: right;
+}
+
+.Forecast-item-numbers>*:not(:first-child) {
+  color: var(--color-5);
+  font-weight: normal;
+}
+
+.Forecast-item-unit {
+  display: inline-block;
+  font-size: var(--text-size-xs);
+  width: 1.8rem;
+}
+
+.Forecast-item-temperature {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.Forecast-item-temperature .Forecast-item-value {
+  margin-right: 2px;
+  font-size: var(--text-size-m);
+}
+
+.Forecast-item-temperature .Forecast-item-unit {
+  font-size: var(--text-size-s);
+  position: relative;
+  top: 1px;
+}

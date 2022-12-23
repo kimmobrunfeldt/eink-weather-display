@@ -1,0 +1,38 @@
+/* Variables */
+
+:root {
+  --text-size-xxs: 0.7rem;
+  --text-size-xs: 0.833rem;
+  --text-size-s: 0.9rem;
+  --text-size: 1rem;
+  --text-size-m: 1.2rem;
+  --text-size-l: 1.44rem;
+  --text-size-xl: 1.728rem;
+  --text-size-xxl: 2.074rem;
+  --text-size-xxxl: 2.488rem;
+
+  --space-0: 0.125rem;
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 2rem;
+  --space-5: 4rem;
+  --space-6: 8rem;
+  --space-7: 16rem;
+  --space-8: 32rem;
+
+  --color-0: #eee;
+  --color-1: #ccc;
+  --color-2: #999;
+  --color-3: #666;
+  --color-4: #333;
+  --color-5: #000;
+
+  --icon-opacity: 0.7;
+
+  --gray-box-height: 150px;
+  --gray-box-margin: 40px;
+  --today-forecast-width: 910px;
+  --graph-height: 35px;
+  --tomorrow-forecast-width: calc(var(--today-forecast-width) / 5 * 3);
+}

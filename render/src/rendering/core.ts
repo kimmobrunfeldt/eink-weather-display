@@ -212,20 +212,13 @@ function getHtmlReplacements(
   const dates = getTodayDates(opts.switchDayAtHour, opts.timezone)
 
   const earliestShortTermForecastDataPoint = _.minBy(
-    weather.forecastShortTerm.filter((d) => d.type === 'forecast'),
+    weather.forecastShortTerm,
     (d) => d.time.getTime()
   )
   if (!earliestShortTermForecastDataPoint) {
-    throw new Error(`Unable to find earliest short term forecast data point`)
+    throw new Error(`Unable to find earliest short term data point`)
   }
-  const firstHour = parseInt(
-    dateFnsTz.formatInTimeZone(
-      earliestShortTermForecastDataPoint.time,
-      opts.timezone,
-      'HH'
-    ),
-    10
-  )
+  const firstHour = getLocalHour(earliestShortTermForecastDataPoint.time, opts)
   // Visually, we want the histogram bars align to the hour labels. That means that
   // for the first hour range (9-12AM at the time of writing), we actually need to get data for
   // 1h before that. Also for the last hour we need to get 1h
@@ -237,14 +230,28 @@ function getHtmlReplacements(
   const todayHistogramDataPoints = todayHistogramHours.map(findDataPoint)
 
   const tomorrowHistogramHours = _.range(
-    SHORT_TERM_FORECAST_HOURS_TOMORROW[0] - 3, // -3h
+    SHORT_TERM_FORECAST_HOURS_TOMORROW[0] - 4, // -3h
     // -6h  +1 for how _.range works. It's not symmetric.. but the historgrams align nicely with hour headers
-    _.last(SHORT_TERM_FORECAST_HOURS_TOMORROW)! - 6 + 1
+    _.last(SHORT_TERM_FORECAST_HOURS_TOMORROW)! - 5 + 1
   )
   logger.info('tomorrowHistogramHours', tomorrowHistogramHours)
   const tomorrowHistogramDataPoints = tomorrowHistogramHours.map(findDataPoint)
 
   return [
+    {
+      match: { attrs: { id: 'data' } },
+      newContent: `const DATA = \`${JSON.stringify({
+        todayDataPoints: todayHistogramDataPoints.map((d) =>
+          dataPointToD3Data(d, opts)
+        ),
+        tomorrowDataPoints: tomorrowHistogramDataPoints.map((d) =>
+          dataPointToD3Data(d, opts)
+        ),
+        todayMinTemperature: weather.todaySummary.all.minTemperature,
+        todayMaxTemperature: weather.todaySummary.all.maxTemperature,
+        timeNow: new Date().toISOString(),
+      })}\``,
+    },
     {
       match: { attrs: { id: 'date' } },
       newContent: dateFnsTz.formatInTimeZone(
@@ -551,4 +558,23 @@ const createGraphNodes = (
   })
 
   return nodes
+}
+
+function getLocalHour(date: Date, opts: GenerateOptions): number {
+  return parseInt(dateFnsTz.formatInTimeZone(date, opts.timezone, 'HH'), 10)
+}
+
+function dataPointToD3Data(
+  dataPoint: ShortTermWeatherDataPoint,
+  opts: GenerateOptions
+) {
+  return {
+    temperature: dataPoint.temperature,
+    precipitation1h: dataPoint.precipitation1h,
+    localHour: parseInt(
+      dateFnsTz.formatInTimeZone(dataPoint.time, opts.timezone, 'HH'),
+      10
+    ),
+    time: dataPoint.time.toISOString(),
+  }
 }

@@ -1,0 +1,48 @@
+/* Top section */
+
+.Top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: var(--space-2);
+}
+
+.SystemInfo {
+  display: flex;
+  align-items: center;
+  height: 1.2rem;
+}
+
+.SystemInfo-refresh-time {
+  display: flex;
+  align-items: center;
+  margin-right: var(--space-3);
+}
+
+.SystemInfo-battery-value {
+  margin-left: var(--space-1);
+}
+
+.SystemInfo-battery-value,
+.SystemInfo-refresh-time-value {
+  margin-top: 0.12rem;
+}
+
+.SystemInfo-refresh-time-icon {
+  height: var(--text-size-s);
+  margin-right: var(--space-1);
+}
+
+.SystemInfo-battery-icon {
+  height: var(--text-size-xl);
+}
+
+.Location {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: var(--space-2);
+}

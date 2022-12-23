@@ -1,0 +1,60 @@
+/* Typography */
+
+html {
+  font-family: 'Hyperlegible';
+  /*
+   * Base font-size. Ideally, everything else scales appropriately when this is changed.
+   * This is large because we render the page as a PNG. The device has quite high DPI.
+   * @see: https://dpi.lv/
+   */
+  font-size: 36px;
+}
+
+.Container {
+  /* Default to bold */
+  font-weight: bold;
+}
+
+.text {
+  font-size: var(--text-size);
+}
+
+.text-xxs {
+  font-size: var(--text-size-xxs);
+}
+
+.text-xs {
+  font-size: var(--text-size-xs);
+}
+
+.text-s {
+  font-size: var(--text-size-s);
+}
+
+.text-m {
+  font-size: var(--text-size-m);
+}
+
+.text-l {
+  font-size: var(--text-size-l);
+}
+
+.text-xl {
+  font-size: var(--text-size-xl);
+}
+
+.text-xxl {
+  font-size: var(--text-size-xxl);
+}
+
+.text-xxxl {
+  font-size: var(--text-size-xxxl);
+}
+
+h1 {
+  font-size: var(--text-size-xxl)
+}
+
+h2 {
+  font-size: var(--text-size-xl);
+}
