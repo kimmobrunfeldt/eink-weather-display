@@ -7,36 +7,36 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Home Weather</title>
 
-  <link rel="stylesheet" href="weather-icons.css" />
-  <link rel="stylesheet" href="weather-icons-wind.css" />
+  <link rel="stylesheet" href="weather-icons/weather-icons.css" />
+  <link rel="stylesheet" href="weather-icons/weather-icons-wind.css" />
 
   <style>
     @font-face {
       font-family: 'Hyperlegible';
       font-style: normal;
       font-weight: 400;
-      src: url('Atkinson-Hyperlegible-Regular-102a.woff2');
+      src: url('fonts/Atkinson-Hyperlegible-Regular-102a.woff2');
     }
 
     @font-face {
       font-family: 'Hyperlegible';
       font-style: italic;
       font-weight: 400;
-      src: url('Atkinson-Hyperlegible-Italic-102a.woff2');
+      src: url('fonts/Atkinson-Hyperlegible-Italic-102a.woff2');
     }
 
     @font-face {
       font-family: 'Hyperlegible';
       font-style: normal;
       font-weight: 700;
-      src: url('Atkinson-Hyperlegible-Bold-102a.woff2');
+      src: url('fonts/Atkinson-Hyperlegible-Bold-102a.woff2');
     }
 
     @font-face {
       font-family: 'Hyperlegible';
       font-style: italic;
       font-weight: 700;
-      src: url('Atkinson-Hyperlegible-BoldItalic-102a.woff2');
+      src: url('fonts/Atkinson-Hyperlegible-BoldItalic-102a.woff2');
     }
 
     /* Reset styles */
@@ -650,9 +650,9 @@
       <p id="date" class="Date">Monday, Oct 17</p>
       <h1 id="location" class="Location text-xl">Espoo</h1>
       <div class="SystemInfo">
-        <span class="SystemInfo-refresh-time"><img class="SystemInfo-refresh-time-icon" src="refresh.svg" /> <span
-            class="SystemInfo-refresh-time-value" id="refresh-timestamp">06:12</span></span>
-        <img id="battery-icon" class="SystemInfo-battery-icon" src="battery_75.svg" />
+        <span class="SystemInfo-refresh-time"><img class="SystemInfo-refresh-time-icon" src="assets/refresh.svg" />
+          <span class="SystemInfo-refresh-time-value" id="refresh-timestamp">06:12</span></span>
+        <img id="battery-icon" class="SystemInfo-battery-icon" src="assets/battery_75.svg" />
         <span class="SystemInfo-battery-value" id="battery-value">17%</span>
       </div>
     </div>
@@ -661,7 +661,7 @@
       <div class="CurrentWeather">
         <div class="CurrentWeather-summary">
           <div class="CurrentWeather-icon">
-            <img id="current-weather-icon" src="weather-icons/wi-cloudy.svg" />
+            <img id="current-weather-icon" src="weather-icons/svg-icons/wi-cloudy.svg" />
           </div>
           <div class="CurrentWeather-temperature">
             <span id="current-weather-temperature" class="CurrentWeather-temperature-value">17</span>
@@ -674,7 +674,7 @@
           <ul class="WeatherDetails">
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/wi-strong-wind.svg" />
+                <img src="weather-icons/svg-icons/wi-strong-wind.svg" />
               </div>
               <div>
                 <span id="current-weather-wind" class="WeatherDetails-item-value">5</span><span
@@ -685,7 +685,7 @@
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
                 <img class="WeatherDetails-item-icon WeatherDetails-item-icon-raindrops"
-                  src="weather-icons/wi-raindrops.svg" />
+                  src="weather-icons/svg-icons/wi-raindrops.svg" />
               </div>
               <div>
                 <span id="current-weather-precipitation" class="WeatherDetails-item-value">23</span><span
@@ -695,7 +695,7 @@
 
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/wi-sunrise.svg" />
+                <img src="weather-icons/svg-icons/wi-sunrise.svg" />
               </div>
               <div>
                 <span id="current-weather-sunrise" class="WeatherDetails-item-value">6:12</span>
@@ -704,7 +704,7 @@
 
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/wi-sunset.svg" />
+                <img src="weather-icons/svg-icons/wi-sunset.svg" />
               </div>
               <div>
                 <span id="current-weather-sunset" class="WeatherDetails-item-value">19:01</span>
@@ -713,7 +713,7 @@
 
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/wi-day-sunny.svg" />
+                <img src="weather-icons/svg-icons/wi-day-sunny.svg" />
               </div>
               <div>
                 <span id="current-weather-daylight-hours" class="WeatherDetails-item-value">10</span><span
@@ -724,7 +724,7 @@
 
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/wi-hot.svg" />
+                <img src="weather-icons/svg-icons/wi-hot.svg" />
               </div>
               <div>
                 <span id="current-weather-uvi" class="WeatherDetails-item-value">UVI 3</span> <span
@@ -744,10 +744,10 @@
           <div class="Forecast-today-minmax-temperature">
             <div class="Forecast-today-minmax-temperature-icons">
               <div class="Forecast-today-icon">
-                <img src="weather-icons/wi-direction-up.svg" />
+                <img src="weather-icons/svg-icons/wi-direction-up.svg" />
               </div>
               <div class="Forecast-today-icon">
-                <img src="weather-icons/wi-direction-down.svg" />
+                <img src="weather-icons/svg-icons/wi-direction-down.svg" />
               </div>
             </div>
             <div class="Forecast-today-minmax-temperature-values">
@@ -781,7 +781,8 @@
           <div id="forecast-item-0" class="Forecast-item">
             <div id="forecast-item-0-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-cloudy-windy.svg" />
+              <img id="forecast-item-0-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-cloudy-windy.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -798,7 +799,8 @@
           <div id="forecast-item-1" class="Forecast-item">
             <div id="forecast-item-1-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-1-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -815,7 +817,8 @@
           <div id="forecast-item-2" class="Forecast-item">
             <div id="forecast-item-2-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-2-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -832,7 +835,8 @@
           <div id="forecast-item-3" class="Forecast-item">
             <div id="forecast-item-3-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-3-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -849,7 +853,8 @@
           <div id="forecast-item-4" class="Forecast-item">
             <div id="forecast-item-4-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-4-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -884,7 +889,8 @@
 
             <div id="forecast-item-5-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-5-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-5-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -901,7 +907,8 @@
           <div id="forecast-item-6" class="Forecast-item">
             <div id="forecast-item-6-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-6-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-6-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -918,7 +925,8 @@
           <div id="forecast-item-7" class="Forecast-item">
             <div id="forecast-item-7-time" class="Forecast-item-time">09</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-item-7-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-item-7-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -943,7 +951,8 @@
           <div class="Forecast-item">
             <div id="forecast-5days-item-0-time" class="Forecast-item-time">Tue</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-5days-item-0-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-5days-item-0-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -960,7 +969,8 @@
           <div class="Forecast-item">
             <div id="forecast-5days-item-1-time" class="Forecast-item-time">Wed</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-5days-item-1-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-5days-item-1-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -977,7 +987,8 @@
           <div class="Forecast-item">
             <div id="forecast-5days-item-2-time" class="Forecast-item-time">Thu</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-5days-item-2-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-5days-item-2-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -994,7 +1005,8 @@
           <div class="Forecast-item">
             <div id="forecast-5days-item-3-time" class="Forecast-item-time">Fri</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-5days-item-3-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-5days-item-3-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">
@@ -1011,7 +1023,8 @@
           <div class="Forecast-item">
             <div id="forecast-5days-item-4-time" class="Forecast-item-time">Sat</div>
             <div class="Forecast-item-icon-container">
-              <img id="forecast-5days-item-4-icon" class="Forecast-item-icon" src="weather-icons/wi-day-sunny.svg" />
+              <img id="forecast-5days-item-4-icon" class="Forecast-item-icon"
+                src="weather-icons/svg-icons/wi-day-sunny.svg" />
             </div>
             <div class="Forecast-item-numbers">
               <div class="Forecast-item-temperature">

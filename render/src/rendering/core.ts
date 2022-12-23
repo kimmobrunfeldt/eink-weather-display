@@ -266,7 +266,10 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          src: getBatteryIcon(opts.batteryLevel, opts.batteryCharging),
+          src: `assets/${getBatteryIcon(
+            opts.batteryLevel,
+            opts.batteryCharging
+          )}`,
         }),
     },
     {

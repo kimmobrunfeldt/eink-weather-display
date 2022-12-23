@@ -8,7 +8,7 @@ export function getSymbolIcon(
     throw new Error(`Weather symbol not found for number: ${symbol} (${theme})`)
   }
 
-  return `weather-icons/${weatherSymbolIcons[theme][symbol]}.svg`
+  return `weather-icons/svg-icons/${weatherSymbolIcons[theme][symbol]}.svg`
 }
 
 export function getSymbolClass(
