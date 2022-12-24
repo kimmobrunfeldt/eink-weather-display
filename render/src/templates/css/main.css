@@ -167,7 +167,6 @@
 }
 
 .Forecast-items--today .Forecast-items-graybox {
-  --start-index: 4;
   --item-width: calc(var(--today-forecast-width) / 5);
   --left: calc(var(--start-index) * var(--item-width));
   left: var(--left);
