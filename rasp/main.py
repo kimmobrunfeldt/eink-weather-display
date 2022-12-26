@@ -51,7 +51,7 @@ def main_wrapper():
             logging.error('Error during main:')
             logging.error(e)
             logging.info('Attempting to display error image...')
-            display_render_image('images/error.png')
+            display_render_image('images/error.png', fit=True)
             raise e
         finally:
             if shutdown_already_handled:
