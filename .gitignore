@@ -1,6 +1,8 @@
 # Custom
 .temp-*
 
+error.jpg
+
 # Ignore generated credentials from google-github-actions/auth
 gha-creds-*.json
 gcloud-key.json
