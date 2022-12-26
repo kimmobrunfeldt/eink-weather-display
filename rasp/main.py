@@ -212,7 +212,7 @@ def shutdown(pj):
 
 def git_pull():
     logging.info('Running git pull ...')
-    run_cmd('cd /home/pi/eink-weather-display && git pull')
+    run_cmd('cd /home/pi/eink-weather-display && git stash && git pull && git stash apply')
 
 
 def is_ssh_active():
