@@ -33,6 +33,6 @@
   --gray-box-height: 150px;
   --gray-box-margin: 40px;
   --today-forecast-width: 880px;
-  --graph-height: 35px;
+  --graph-height: 40px;
   --tomorrow-forecast-width: calc(var(--today-forecast-width) / 5 * 3);
 }

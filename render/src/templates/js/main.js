@@ -46,7 +46,7 @@ window.addEventListener('load', () => {
   drawTemperatureLineGraph(
     initSvg("#temperature-graph-tomorrow-temp", data.tomorrowDataPoints, tomorrowOpts),
     data.tomorrowDataPoints,
-    { dotRadius: 1.5 }
+    { dotRadius: 2 }
   )
 })
 
@@ -160,7 +160,7 @@ function drawTemperatureLineGraph(svgInfo, dataPoints, { dotRadius = 3, minTemp 
     .datum(dataPoints)
     .attr("fill", "none")
     .attr("stroke", "var(--color-1)")
-    .attr("stroke-width", 1)
+    .attr("stroke-width", 1.5)
     .attr("d", line)
 
   if (dotRadius !== null) {
