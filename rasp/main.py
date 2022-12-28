@@ -299,7 +299,7 @@ def display_render_image(file_path, fit=False):
     display_clear()
 
     if fit:
-        run_cmd('convert {} -thumbnail {}x{} -background white -gravity center -extent {}x{} fitted.png'.format(
+        run_cmd('convert {} -resize {}x{}^ -background white -gravity center -extent {}x{} fitted.png'.format(
             file_path, DISPLAY_WIDTH, DISPLAY_HEIGHT, DISPLAY_WIDTH, DISPLAY_HEIGHT))
         file_path = 'fitted.png'
 
