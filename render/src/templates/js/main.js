@@ -160,7 +160,7 @@ function drawTemperatureLineGraph(svgInfo, dataPoints, { dotRadius = 3, minTemp 
     .datum(dataPoints)
     .attr("fill", "none")
     .attr("stroke", "var(--color-1)")
-    .attr("stroke-width", 1.5)
+    .attr("stroke-width", 2)
     .attr("d", line)
 
   if (dotRadius !== null) {
