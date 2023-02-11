@@ -86,11 +86,12 @@
           <ul class="WeatherDetails">
             <li class="WeatherDetails-item">
               <div class="WeatherDetails-item-icon-container">
-                <img src="weather-icons/svg-icons/wi-strong-wind.svg" />
+                <img id="current-weather-wind-icon" src="weather-icons/svg-icons/wi-strong-wind.svg" />
               </div>
               <div>
                 <span id="current-weather-wind" class="WeatherDetails-item-value">5</span><span
-                  class="WeatherDetails-item-unit">m/s</span>
+                  id="current-weather-wind-unit" class="WeatherDetails-item-unit">m/s</span><span
+                  id="current-weather-wind-alert" class="WeatherDetails-item-value CurrentWeather-wind-alert"></span>
               </div>
             </li>
 
@@ -177,7 +178,7 @@
         </div>
 
         <div class="Forecast-items Forecast-items--today">
-          <div id="forecast-items-background1" class="Forecast-items-background" style="--start-index: 2;">
+          <div id="forecast-items-background1" class="Forecast-items-background" style="--start-index: 0;">
             <svg id="temperature-graph-today-precipitation-outer" class="Graph Graph-outer"></svg>
             <div class="Forecast-items-graybox">
               <svg id="temperature-graph-today-precipitation-inner" class="Graph Graph-inner"></svg>

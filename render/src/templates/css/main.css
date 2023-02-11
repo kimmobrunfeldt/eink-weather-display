@@ -55,6 +55,10 @@
   margin-bottom: var(--space-2);
 }
 
+.CurrentWeather-wind-alert {
+  padding-left: var(--space-1);
+}
+
 .WeatherDetails {
   list-style: none;
   display: flex;

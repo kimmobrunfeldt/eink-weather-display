@@ -69,6 +69,8 @@ export type GenerateOptions = {
 export const DEFAULT_IMAGE_WIDTH = 1872
 export const DEFAULT_IMAGE_HEIGHT = 1404
 
+const MIN_WIND_MS_TO_SHOW_ALERT_ICON = 10
+
 export async function generateHtml(opts: GenerateOptions): Promise<string> {
   const weather = opts.random
     ? await generateRandomLocalWeatherData(opts)
@@ -312,11 +314,60 @@ function getHtmlReplacements(
         weatherSymbolDescriptions[closestShortTermForecastDataPoint.symbol],
     },
     {
+      match: { attrs: { id: 'current-weather-wind-icon' } },
+      modifier: (node) =>
+        (node.attrs = {
+          ...node.attrs,
+          src:
+            weather.todaySummary.forecast.maxWindSpeedMs >=
+            MIN_WIND_MS_TO_SHOW_ALERT_ICON
+              ? 'weather-icons/wind-warning.png'
+              : 'weather-icons/svg-icons/wi-strong-wind.svg',
+          style:
+            weather.todaySummary.forecast.maxWindSpeedMs >=
+            MIN_WIND_MS_TO_SHOW_ALERT_ICON
+              ? 'width: 50px;'
+              : '',
+        }),
+    },
+    {
       match: { attrs: { id: 'current-weather-wind' } },
       newContent:
         windSpeedLabelToday.length > 8
           ? windSpeedLabelToday.replaceAll(' ', '')
           : windSpeedLabelToday,
+    },
+    {
+      match: { attrs: { id: 'current-weather-wind' } },
+      modifier: (node) =>
+        (node.attrs = {
+          ...node.attrs,
+          style:
+            weather.todaySummary.forecast.maxWindSpeedMs >=
+            MIN_WIND_MS_TO_SHOW_ALERT_ICON
+              ? 'text-decoration: underline;'
+              : '',
+        }),
+    },
+    {
+      match: { attrs: { id: 'current-weather-wind-unit' } },
+      modifier: (node) =>
+        (node.attrs = {
+          ...node.attrs,
+          style:
+            weather.todaySummary.forecast.maxWindSpeedMs >=
+            MIN_WIND_MS_TO_SHOW_ALERT_ICON
+              ? 'text-decoration: underline;'
+              : '',
+        }),
+    },
+    {
+      match: { attrs: { id: 'current-weather-wind-alert' } },
+      newContent:
+        weather.todaySummary.forecast.maxWindSpeedMs >=
+        MIN_WIND_MS_TO_SHOW_ALERT_ICON
+          ? '!'
+          : '',
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },
