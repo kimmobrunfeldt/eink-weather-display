@@ -18,7 +18,6 @@ import {
   getPathWithinSrc,
   getTodayDates,
   isDark,
-  precipitationToBarHeight,
   scaleTo,
   secondsToHoursAndMinutes,
   writeDebugFile,
@@ -556,41 +555,6 @@ function getHtmlReplacements(
       })
       .flat(),
   ]
-}
-
-const createGraphNodes = (
-  dataPoints: ShortTermWeatherDataPoint[],
-  opts: GenerateOptions,
-  count: number
-) => {
-  const minTemp = _.minBy(dataPoints.map((d) => d.temperature))!
-  const maxTemp = _.maxBy(dataPoints.map((d) => d.temperature))!
-  const nodes = dataPoints.map((d) => {
-    const heightVar = `--height: ${precipitationToBarHeight(
-      d.precipitation1h
-    )}%`
-    const hourVar = `--hour: '${dateFnsTz.formatInTimeZone(
-      d.time,
-      opts.timezone,
-      'HH'
-    )}'`
-    const tempVar = `--temp-p-of-day-minmax: ${scaleTo(
-      d.temperature,
-      minTemp,
-      maxTemp,
-      0,
-      100
-    )}%;`
-    const countVar = `--count: ${count}`
-    // Both have all vars but it's ok
-    const vars = [heightVar, countVar, hourVar, tempVar].join(';')
-    return {
-      histogramBar: `<div class="Histogram-bar" style="${vars};"></div>`,
-      temperaturePoint: `<span class="Temperature-point" style="${vars};"></span>`,
-    }
-  })
-
-  return nodes
 }
 
 function getLocalHour(date: Date, opts: GenerateOptions): number {
