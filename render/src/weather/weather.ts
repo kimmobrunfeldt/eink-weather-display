@@ -441,7 +441,8 @@ function findWeatherSymbolForDay(
     index,
   }))
 
-  const found = dates.find((d) => dateFns.isEqual(d.time, time))
+  // Take DST into account when finding matching date
+  const found = dates.find((d) => dateFns.differenceInSeconds(d.time, time) <= dateFns.hoursToSeconds(1))
   if (!found) {
     logger.error('Unable to find matching date', {
       dates,
