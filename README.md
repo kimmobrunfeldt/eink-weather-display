@@ -17,6 +17,8 @@ You can read more about the build in my [blog post](https://kimmo.blog/posts/7-b
 * Always visible and doesn't light up the hallway during evening / night -> e-Ink display.
 * Primarily for our use case, but with reusability in mind. For example custom location and timezone (some [tests](render/src/utils/utils.test.ts) too).
 
+**2023 UPDATE:** Battery lasted roughly 4 months, when updating the screen 6 times a day. Updating the screen more times a day ended up making the UX better. The information is always recent enough. When updating only once in the morning, I sometimes ended up checking the latest weather status from a phone app later during the day.
+
 **Challenges:**
 
 * Battery life.
