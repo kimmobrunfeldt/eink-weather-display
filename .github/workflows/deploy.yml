@@ -94,7 +94,7 @@ jobs:
         with:
           version: '408.0.0'
       # https://cloud.google.com/sdk/gcloud/reference/functions/deploy
-      - run: gcloud functions deploy weather-display --entry-point render --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
+      - run: gcloud functions deploy weather-display --update-build-env-vars="GOOGLE_NODE_RUN_SCRIPTS=" --entry-point render --source=$FILE_URL --region $GCP_REGION --project $GCP_PROJECT
       - name: 'Test rendering'
         env:
           WEATHER_DISPLAY_API_KEY: ${{ secrets.WEATHER_DISPLAY_API_KEY }}
