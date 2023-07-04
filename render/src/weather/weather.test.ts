@@ -107,7 +107,7 @@ describe('calculateTodaySummary', () => {
         Temperature: 9,
         Humidity: 49,
         WindSpeedMS: 4,
-        WindGust: 15,
+        WindGust: 10,
         WindDirection: 200,
         Pressure: 1000,
         Visibility: 10000,
@@ -129,7 +129,7 @@ describe('calculateTodaySummary', () => {
         Temperature: 10,
         Humidity: 50,
         WindSpeedMS: 6,
-        WindGust: 15,
+        WindGust: 10,
         WindDirection: 200,
         Pressure: 1000,
         Visibility: 10000,
@@ -151,7 +151,7 @@ describe('calculateTodaySummary', () => {
         Temperature: 11,
         Humidity: 51,
         WindSpeedMS: 5,
-        WindGust: 15,
+        WindGust: 10,
         WindDirection: 200,
         Pressure: 1000,
         Visibility: 10000,
@@ -206,6 +206,7 @@ describe('calculateTodaySummary', () => {
           avgWindSpeedMs: 5, // avg of 4, 6, and 5
           minWindSpeedMs: 4,
           maxWindSpeedMs: 6,
+          maxWindGustMs: 10,
           description: 'Light showers',
           // 1h counts summed (10 + 30)
           // using 1h counts seemed more reliable from FMI

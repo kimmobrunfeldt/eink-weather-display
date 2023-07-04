@@ -30,6 +30,7 @@ export type WeatherTodaySummary = {
     avgWindSpeedMs: number
     minWindSpeedMs: number
     maxWindSpeedMs: number
+    maxWindGustMs: number
     symbol: WeatherSymbolNumber
     description: string
     maxUvIndex: MaxUvIndex

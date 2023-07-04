@@ -13,21 +13,21 @@ import {
 import { logger } from 'src/utils/logger'
 import { getTodayDates, sumByOrNull } from 'src/utils/utils'
 import {
-  fetchFmiEcmwfData,
-  fetchFmiHarmonieData,
-  fetchFmiObservationData,
   FmiEcmwfDataPoint,
   FmiHarmonieDataPoint,
   FmiObservationDataPoint,
+  fetchFmiEcmwfData,
+  fetchFmiHarmonieData,
+  fetchFmiObservationData,
 } from 'src/weather/fmiApi'
 import {
+  MeteoAirQualityForecastResponse,
+  MeteoLongTermForecastResponse,
+  MeteoShortTermForecastResponse,
   attrsByTime,
   fetchMeteoAirQualityForecastToday,
   fetchMeteoForecastLongTerm,
   fetchMeteoForecastShortTerm,
-  MeteoAirQualityForecastResponse,
-  MeteoLongTermForecastResponse,
-  MeteoShortTermForecastResponse,
 } from 'src/weather/meteoApi'
 import {
   meteoToFmiWeatherSymbolNumber,
@@ -356,6 +356,7 @@ export function calculateTodaySummaryFromFmiData(
 
   const combined = [...fmiForecastDataToday, ...fmiObservationsDataToday]
 
+  const maxWindGustMs = Math.max(...fmiForecastDataToday.map((d) => d.WindGust))
   const avgWindSpeedMs = _.mean(fmiForecastDataToday.map((d) => d.WindSpeedMS))
   const maxWindSpeedMs = Math.max(
     ...fmiForecastDataToday.map((d) => d.WindSpeedMS)
@@ -402,6 +403,7 @@ export function calculateTodaySummaryFromFmiData(
       avgWindSpeedMs,
       minWindSpeedMs,
       maxWindSpeedMs,
+      maxWindGustMs,
       description: weatherSymbolDescriptions[symbol],
       symbol,
       precipitationAmount,
@@ -442,7 +444,10 @@ function findWeatherSymbolForDay(
   }))
 
   // Take DST into account when finding matching date
-  const found = dates.find((d) => dateFns.differenceInSeconds(d.time, time) <= dateFns.hoursToSeconds(1))
+  const found = dates.find(
+    (d) =>
+      dateFns.differenceInSeconds(d.time, time) <= dateFns.hoursToSeconds(1)
+  )
   if (!found) {
     logger.error('Unable to find matching date', {
       dates,

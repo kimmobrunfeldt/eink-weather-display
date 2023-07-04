@@ -24,9 +24,9 @@ import {
 } from 'src/utils/utils'
 import { generateRandomLocalWeatherData } from 'src/weather/random'
 import {
-  getLocalWeatherData,
   SHORT_TERM_FORECAST_HOURS_TODAY,
   SHORT_TERM_FORECAST_HOURS_TOMORROW,
+  getLocalWeatherData,
 } from 'src/weather/weather'
 import {
   getSymbolIcon,
@@ -187,8 +187,12 @@ function getHtmlReplacements(
     weather.todaySummary.forecast.minWindSpeedMs,
     formatAccurateNumberWhenLow
   )
+
   const maxWindSpeedToday = formatNumber(
-    weather.todaySummary.forecast.maxWindSpeedMs,
+    Math.max(
+      weather.todaySummary.forecast.maxWindSpeedMs,
+      weather.todaySummary.forecast.maxWindGustMs
+    ),
     formatAccurateNumberWhenLow
   )
   const windSpeedLabelToday =
@@ -238,6 +242,12 @@ function getHtmlReplacements(
   )
   logger.info('tomorrowHistogramHours', tomorrowHistogramHours)
   const tomorrowHistogramDataPoints = tomorrowHistogramHours.map(findDataPoint)
+
+  const shouldWarnAboutWind =
+    weather.todaySummary.forecast.maxWindSpeedMs >=
+      MIN_WIND_MS_TO_SHOW_ALERT_ICON ||
+    weather.todaySummary.forecast.maxWindGustMs >=
+      MIN_WIND_MS_TO_SHOW_ALERT_ICON
 
   return [
     {
@@ -317,16 +327,10 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          src:
-            weather.todaySummary.forecast.maxWindSpeedMs >=
-            MIN_WIND_MS_TO_SHOW_ALERT_ICON
-              ? 'weather-icons/wind-warning.png'
-              : 'weather-icons/svg-icons/wi-strong-wind.svg',
-          style:
-            weather.todaySummary.forecast.maxWindSpeedMs >=
-            MIN_WIND_MS_TO_SHOW_ALERT_ICON
-              ? 'width: 50px;'
-              : '',
+          src: shouldWarnAboutWind
+            ? 'weather-icons/wind-warning.png'
+            : 'weather-icons/svg-icons/wi-strong-wind.svg',
+          style: shouldWarnAboutWind ? 'width: 50px;' : '',
         }),
     },
     {
@@ -341,11 +345,7 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          style:
-            weather.todaySummary.forecast.maxWindSpeedMs >=
-            MIN_WIND_MS_TO_SHOW_ALERT_ICON
-              ? 'text-decoration: underline;'
-              : '',
+          style: shouldWarnAboutWind ? 'text-decoration: underline;' : '',
         }),
     },
     {
@@ -353,20 +353,12 @@ function getHtmlReplacements(
       modifier: (node) =>
         (node.attrs = {
           ...node.attrs,
-          style:
-            weather.todaySummary.forecast.maxWindSpeedMs >=
-            MIN_WIND_MS_TO_SHOW_ALERT_ICON
-              ? 'text-decoration: underline;'
-              : '',
+          style: shouldWarnAboutWind ? 'text-decoration: underline;' : '',
         }),
     },
     {
       match: { attrs: { id: 'current-weather-wind-alert' } },
-      newContent:
-        weather.todaySummary.forecast.maxWindSpeedMs >=
-        MIN_WIND_MS_TO_SHOW_ALERT_ICON
-          ? '!'
-          : '',
+      newContent: shouldWarnAboutWind ? '!' : '',
     },
     {
       match: { attrs: { id: 'current-weather-precipitation' } },

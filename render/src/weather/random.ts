@@ -25,6 +25,7 @@ export async function generateRandomLocalWeatherData(
       forecast: {
         ...randomMinMaxAvgTemperature(),
         ...randomMinMaxAvgWindSpeed(),
+        maxWindGustMs: randomMinMaxAvgWindSpeed().maxWindSpeedMs,
         symbol,
         description: weatherSymbolDescriptions[symbol],
         maxUvIndex: {
