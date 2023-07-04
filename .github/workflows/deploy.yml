@@ -65,7 +65,6 @@ jobs:
           FILE_NAME: weather-display-${{ steps.timestamp.outputs.timestamp }}-${{ env.GITHUB_SHA }}.zip
         run: |
           cd dist/
-          rm tsconfig.json
           zip -r ../$FILE_NAME .
           cd ..
           gcloud storage cp $FILE_NAME gs://$GCP_BUCKET
