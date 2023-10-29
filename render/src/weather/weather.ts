@@ -167,7 +167,7 @@ export function calculateShortTermForecast(
       )
     }
     const foundMeteoHourData = attrsByTime(meteoForecastData.hourly).find((d) =>
-      dateFns.isEqual(d.time, time)
+      isApproximatelyMatchingDate(d.time, time)
     )
 
     const nextIndex = index + 1
@@ -445,8 +445,7 @@ function findWeatherSymbolForDay(
 
   // Take DST into account when finding matching date
   const found = dates.find(
-    (d) =>
-      dateFns.differenceInSeconds(d.time, time) <= dateFns.hoursToSeconds(1)
+    (d) => isApproximatelyMatchingDate(d.time, time)
   )
   if (!found) {
     logger.error('Unable to find matching date', {
@@ -464,4 +463,8 @@ function isBetweenInclusive(time: Date, start: Date, end: Date): boolean {
     (dateFns.isAfter(time, start) || dateFns.isEqual(time, start)) &&
     (dateFns.isBefore(time, end) || dateFns.isEqual(time, end))
   )
+}
+
+function isApproximatelyMatchingDate(a: Date, b: Date): boolean {
+  return Math.abs(dateFns.differenceInSeconds(a, b)) <= dateFns.hoursToSeconds(1)
 }
